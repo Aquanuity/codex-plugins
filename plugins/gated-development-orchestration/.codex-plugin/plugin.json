@@ -1,6 +1,6 @@
 {
   "name": "gated-development-orchestration",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Coordinate checkpoint development with GitHub-routed Codex implementation and independent ChatGPT review.",
   "author": {
     "name": "Aquanuity"
@@ -18,7 +18,7 @@
   "interface": {
     "displayName": "Gated Development Orchestration",
     "shortDescription": "Orchestrate checkpointed Codex work and independent review",
-    "longDescription": "Coordinates gated software development through pinned source documents, frozen GitHub work orders, bounded Codex implementation, durable evidence, routed independent ChatGPT review, correction cycles, and explicit acceptance.",
+    "longDescription": "Coordinates gated software development through pinned product source documents, frozen GitHub work orders, the currently installed orchestration plugin, bounded Codex implementation, durable evidence, routed independent ChatGPT review, correction cycles, and explicit acceptance.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
     "capabilities": [
