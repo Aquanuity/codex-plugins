@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate checkpoint development through pinned source documents, frozen GitHub work orders, local Codex execution, GitHub-routed return review, and independent ChatGPT review. Use for gate creation, activation, implementation, evidence review, bounded corrections, and review routing. Choose the current role before acting; reading or reviewing this skill does not authorize a checkpoint or a GitHub write.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration does not require access to the user's local filesystem.
 metadata:
-  version: "1.4.2"
+  version: "1.4.3"
   workflow: "github-codex-gated-development"
 ---
 
@@ -68,6 +68,7 @@ Read the references required for the current phase. Record the skill version and
 21. If the active implementation introduced the failure and the repair fits the authorized scope, paths, architecture, and repository operations, Codex must repair it and rerun the failed verification.
 22. A dependent verification step may pause after its prerequisite build/check fails, but the implementation session continues while an in-scope repair remains available.
 23. Stop and report a blocker only when resolving the failure requires unauthorized scope/path/repository operations, a product or architecture decision, unsafe runtime ownership, unavailable required tool/environment/access, or an external/baseline defect that cannot be resolved within the active gate.
+24. Runtime reasoning effort is per executable activation/correction. The standardized override field is `- Execution reasoning effort: <minimal|low|medium|high|xhigh|max>`; omission uses the runner default `max`.
 
 ## ChatGPT thread routing
 
@@ -117,7 +118,7 @@ Rules:
 
 ### Malformed or missing routing
 
-Under skill version 1.4.2, a newly received activation/correction without exactly one valid thread marker is not a valid executable work order.
+Under skill version 1.4.3, a newly received activation/correction without exactly one valid thread marker is not a valid executable work order.
 
 The implementer must not perform checkpoint/correction work from that malformed trigger. It should publish a concise GitHub blocker when possible and stop. It must not invent a routing marker.
 
@@ -143,8 +144,9 @@ After human authorization and prerequisite readiness:
 2. fetch the final GitHub body and hash it where the case requires;
 3. if the human has not already supplied the current ChatGPT thread ID for this activation, ask for it;
 4. validate the supplied UUID shape;
-5. publish a new activation comment containing the activation marker followed immediately by the supplied thread routing marker;
-6. let the configured launcher perform the handoff.
+5. if this activation needs a non-default reasoning effort, include exactly one standardized `Execution reasoning effort` field described under Runtime configuration; otherwise omit it and use `max`;
+6. publish a new activation comment containing the activation marker followed immediately by the supplied thread routing marker;
+7. let the configured launcher perform the handoff.
 
 If step 3/4 is not satisfied, **do not activate**. Keep the gate READY and tell the human that activation requires the current ChatGPT thread ID.
 
@@ -158,7 +160,7 @@ Read repository instructions, this skill/references, the exact triggering commen
 
 The launcher only transported the instruction. Codex owns semantic preflight under the case. If the case authorizes bootstrap branch/worktree creation or other repository setup, follow the case; if not, do not invent it.
 
-For a v1.4.2 activation/correction, verify that the triggering comment contains exactly one valid ChatGPT thread marker. Missing or multiple markers block execution.
+For a v1.4.3 activation/correction, verify that the triggering comment contains exactly one valid ChatGPT thread marker. Missing or multiple markers block execution.
 
 Stop and report when the trigger is edited/mismatched, superseded/cancelled/accepted, routing is malformed, scope conflicts, repository state violates the case, or a true blocker under the verification rules below is established.
 
@@ -210,15 +212,48 @@ For correction-required:
 1. prepare the complete bounded correction work order;
 2. if the human has not already supplied the current reviewer ChatGPT thread ID for this correction, ask for it;
 3. do not publish the executable correction until a valid UUID is supplied;
-4. include the supplied routing marker immediately after the correction executable marker.
+4. if this correction round needs a non-default reasoning effort, include exactly one standardized `Execution reasoning effort` field; otherwise omit it and use `max`;
+5. include the supplied routing marker immediately after the correction executable marker.
 
 Do not issue a correction marker merely to solve delivery/access/publication problems.
 
 ## Runtime configuration
 
-Automated AquaTwin Codex execution defaults to `model_reasoning_effort=max` unless the executable case explicitly supplies a supported reasoning-effort override.
+Automated AquaTwin Codex execution defaults to:
 
-Runtime configuration is separate from product authority. The runner may apply the default mechanically; it must not infer which reasoning level a case deserves.
+```text
+model_reasoning_effort=max
+```
+
+unless the executable activation/correction contains exactly one supported per-round override field.
+
+### Per-round reasoning-effort override
+
+Use this exact standardized field in the executable activation or correction comment:
+
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+Examples:
+
+```text
+- Execution reasoning effort: `xhigh`
+- Execution reasoning effort: `high`
+- Execution reasoning effort: `max`
+```
+
+Rules:
+
+- Omit the field to use the runner default `max`.
+- Exactly one field is allowed in an executable activation/correction.
+- Supported values are `minimal`, `low`, `medium`, `high`, `xhigh`, and `max`.
+- The override applies only to that single activation/correction execution.
+- A correction does not inherit an earlier activation or correction override. If a later correction needs a different effort, state the field again in that correction comment.
+- Duplicate fields or unsupported values make the delivery malformed; do not guess or silently fall back.
+- This field changes runtime reasoning effort only. It does not grant scope, architecture, repository, correction, or acceptance authority.
+
+The launcher records the resolved effort and whether it came from `runner-default` or `case-override`, then applies it to the Codex execution. Report actual/exposed runtime configuration truthfully; do not infer success from the requested effort.
 
 ## Terminal outcomes
 
