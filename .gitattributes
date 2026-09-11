@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+# Preserve the original plugin package bytes on every platform.
+/plugins/gated-development-orchestration/** -text

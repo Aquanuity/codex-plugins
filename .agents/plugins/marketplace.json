@@ -1,0 +1,20 @@
+{
+  "name": "aquanuity",
+  "interface": {
+    "displayName": "Aquanuity"
+  },
+  "plugins": [
+    {
+      "name": "gated-development-orchestration",
+      "source": {
+        "source": "local",
+        "path": "./plugins/gated-development-orchestration"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}
