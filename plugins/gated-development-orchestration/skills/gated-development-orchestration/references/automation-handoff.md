@@ -38,11 +38,11 @@ Before publishing an activation or correction:
 - if it is not provided, do not publish the executable activation/correction;
 - do not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID.
 
-There is no silent manual-return fallback for new v1.4.2 activations/corrections.
+There is no silent manual-return fallback for new v1.4.3 activations/corrections.
 
 ### Codex
 
-A v1.4.2 triggering activation/correction must contain exactly one thread marker.
+A v1.4.3 triggering activation/correction must contain exactly one thread marker.
 
 - verify exactly one marker is present before implementation;
 - copy the exact marker unchanged into evidence or blocker;
@@ -77,6 +77,7 @@ It may validate:
 - nonempty instruction
 - local launch prerequisites
 - duplicate delivery of the exact same GitHub comment
+- the optional standardized reasoning-effort field shape/value
 
 It should not enforce case-specific rules such as:
 
@@ -92,7 +93,7 @@ It should not enforce case-specific rules such as:
 - verification-failure diagnosis
 - checkpoint lifecycle validity
 
-Those belong to Codex following the case and skill. The v1.4.2 implementer preflight rejects a malformed/missing thread marker before development work begins.
+Those belong to Codex following the case and skill. The v1.4.3 implementer preflight rejects a malformed/missing thread marker before development work begins.
 
 A GitHub Actions job or launcher must not turn a failing build/test exit code into a gate-level blocker decision. The detached Codex process diagnoses verification failures and decides whether to repair in-scope or report a true blocker under the skill/case.
 
@@ -120,17 +121,31 @@ Future executions may display readable live progress while preserving raw logs. 
 
 Closing the execution console may interrupt its attached Codex process. A read-only viewer may be closed safely when it is explicitly implemented as view-only.
 
-## Runtime default
+## Runtime default and per-round override
 
-The automated AquaTwin launcher applies:
+The automated AquaTwin launcher defaults to:
 
 ```text
 model_reasoning_effort=max
 ```
 
-unless the executable case explicitly overrides reasoning effort.
+An executable activation/correction may override that single round with exactly one standardized field:
 
-This is a runtime default, not a scope or acceptance rule. The runner does not decide whether a lower/higher effort is appropriate.
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+Runner behavior:
+
+- omitted field -> `max` with source `runner-default`;
+- one supported field -> that value with source `case-override`;
+- more than one field -> malformed delivery;
+- unsupported value -> malformed delivery / no valid override;
+- the override is per executable comment and is not inherited by later corrections.
+
+The runner records the resolved value in its delivery record and inserts a run-local Codex shim that applies the resolved `model_reasoning_effort` to `codex exec`.
+
+This is runtime configuration, not scope or acceptance authority. The runner does not decide whether a lower/higher effort is appropriate.
 
 ## Review-only return workflow
 
@@ -154,7 +169,7 @@ Codex never calls the review bridge. GitHub evidence is the boundary between imp
 
 ```text
 ChatGPT asks human for activation thread ID
-  -> activation + supplied marker
+  -> activation + supplied marker (+ optional per-round reasoning override)
   -> Codex
   -> implement / verify / repair in-scope failures / re-verify
   -> evidence + same marker
@@ -163,11 +178,13 @@ ChatGPT asks human for activation thread ID
       -> PASS (ledger only)
       OR
       -> ChatGPT asks human for current reviewer thread ID
-      -> correction-required + supplied current marker
+      -> correction-required + supplied current marker (+ optional new per-round override)
           -> Codex
           -> new evidence + same marker
           -> review workflow
 ```
+
+A correction reasoning override is independent of the activation or prior correction. Omit it to use `max` for that round.
 
 This avoids generic `Target:` fields. Message type plus routing marker is sufficient.
 
@@ -175,7 +192,7 @@ This avoids generic `Target:` fields. Message type plus routing marker is suffic
 
 Evidence/blocker publication must be confirmed from the GitHub tool/API result. On ambiguous publication, check before retrying. Retry publication only; do not rerun implementation merely to repair reporting.
 
-For a valid v1.4.2 execution, evidence/blocker must contain the copied thread marker. If routing metadata is missing, automatic review delivery must fail closed rather than choose a fallback destination.
+For a valid v1.4.3 execution, evidence/blocker must contain the copied thread marker. If routing metadata is missing, automatic review delivery must fail closed rather than choose a fallback destination.
 
 ## Security and secrets
 
