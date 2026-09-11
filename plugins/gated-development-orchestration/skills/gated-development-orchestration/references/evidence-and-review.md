@@ -22,7 +22,7 @@ Do not publish a blocker merely because the first verification attempt failed. A
 
 ## Codex evidence comment
 
-A valid v1.4.2 triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line.
+A valid v1.4.3 triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line.
 
 ```markdown
 <!-- gated-development:codex-evidence:v2 -->
@@ -48,6 +48,7 @@ Status: Evidence posted. **Not PASS.**
 - Automation request ID: `<supplied ID or N/A — manual>`
 - Skill package version used: `<actual>`
 - Skill source used: `<actual>`
+- Requested reasoning effort/source: `<resolved value and runner-default|case-override when exposed>`
 - Runtime model/reasoning observed: `<actual or not exposed>`
 
 ### Repository state
@@ -90,7 +91,7 @@ Status: Evidence posted. **Not PASS.**
 Awaiting independent review. Not PASS.
 ```
 
-If a newly delivered v1.4.2 activation/correction lacks exactly one valid thread marker, Codex must not execute the work or invent routing. Publish a blocker when possible and stop.
+If a newly delivered v1.4.3 activation/correction lacks exactly one valid thread marker, Codex must not execute the work or invent routing. Publish a blocker when possible and stop.
 
 ## Blocker comment
 
@@ -180,6 +181,14 @@ A correction-required comment is executable and therefore requires a human-suppl
 
 If the human has not already supplied that ID for the correction, ask for it. Without a valid UUID, do not publish the executable correction.
 
+To override the runner default `max` for this correction round, include exactly one optional field in the executable correction:
+
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+The override applies only to this correction. Omit it for `max`; later corrections do not inherit it.
+
 ```markdown
 <!-- gated-development:review:v2 status=correction-required -->
 <!-- gated-development:chatgpt-thread:v1 id=<human-supplied current reviewer thread UUID> -->
@@ -200,6 +209,7 @@ If the human has not already supplied that ID for the correction, ask for it. Wi
 - Source-of-truth document: `<path>`
 - Source-of-truth commit: `<SHA>`
 - Push policy: `agent | none`
+- Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
 
 ### Blocking findings
 1. ...
