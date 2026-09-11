@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 1.4.3
+# Gated Development Orchestration Plugin 1.4.4
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.3** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This plugin wraps the shared **Gated Development Orchestration 1.4.4** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
 
 ## Included
 
@@ -8,7 +8,7 @@ This plugin wraps the shared **Gated Development Orchestration 1.4.3** skill for
 - `.app.json` — existing GitHub app reference; unchanged
 - `skills/gated-development-orchestration/` — shared workflow contract
 
-## 1.4.3 behavior
+## 1.4.4 behavior
 
 Implementation and independent review are routed by GitHub comment markers:
 
@@ -21,6 +21,25 @@ Implementation and independent review are routed by GitHub comment markers:
 Every new executable activation and correction requires a ChatGPT thread routing marker. During activation or correction authoring, ChatGPT must ask the human for the current ChatGPT thread ID unless it has already been explicitly supplied for that exact executable comment. If the human does not provide a valid thread ID, the activation/correction cannot be published.
 
 ChatGPT must not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID. Codex copies the supplied marker unchanged into its evidence or blocker. The external review workflow then returns the review request to that exact ChatGPT conversation.
+
+### Current installed plugin, not a frozen gate pin
+
+The workflow plugin identity is:
+
+```text
+gated-development-orchestration@aquanuity
+```
+
+Version 1.4.4 makes plugin evolution explicit:
+
+- product/source-of-truth commits, gate scope, branch/baseline, path boundaries, acceptance criteria, and executable work orders may be frozen as required;
+- the Gated Development Orchestration **plugin version/source is not frozen by the gate**;
+- each orchestration, implementation, correction, blocker, and review action uses the currently installed `gated-development-orchestration@aquanuity` plugin;
+- do not copy/pin a predecessor gate's plugin version, marketplace repo SHA, package commit, or historical `SKILL.md` URL;
+- historical plugin version/source lines in old gate records are provenance only and must not force Codex or ChatGPT to use an obsolete package;
+- evidence/review may report the actual installed plugin version/source used for traceability, but that report does not pin later actions.
+
+A plugin update changes workflow mechanics for subsequent actions without rewriting the gate's frozen product/repository authority.
 
 ### Per-round reasoning effort
 
@@ -55,9 +74,9 @@ The thread marker and reasoning-effort field are transport/runtime metadata only
 
 ## Launcher separation
 
-The AquaTwin implementation runner is intentionally transport-only: it validates the delivery origin/basic shape, resolves the optional reasoning-effort field, and starts Codex. Case rules remain in the issue, source-of-truth documents, repository instructions, and this skill.
+The AquaTwin implementation runner is intentionally transport-only: it validates the delivery origin/basic shape, resolves the optional reasoning-effort field, and starts Codex. Case rules remain in the issue, source-of-truth documents, repository instructions, and the currently installed skill.
 
-The ChatGPT return workflow is separate from the Codex launcher. Codex never directly invokes the ChatGPT bridge. The launcher also does not decide whether a failing build/test is repairable; that diagnosis belongs to Codex under the active gate.
+The ChatGPT return workflow is separate from the Codex launcher. Codex never directly invokes the ChatGPT bridge. The launcher also does not decide whether a failing build/test is repairable; that diagnosis belongs to Codex under the active gate/current plugin.
 
 ## Compatibility
 
