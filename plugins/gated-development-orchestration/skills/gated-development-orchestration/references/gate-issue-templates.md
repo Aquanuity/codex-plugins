@@ -63,8 +63,21 @@ The frozen gate body defines the case. Routing metadata stays out of the body.
 ## Required verification
 1. ...
 
+## Verification failure handling
+- A failed required build/test/check is not automatically a blocker.
+- Diagnose the failure before deciding whether to stop.
+- If the active implementation caused the failure and the repair remains inside authorized scope, paths, architecture, and repository operations, fix it and rerun the failed prerequisite plus dependent verification.
+- Do not run dependent tests against stale binaries after a failed build.
+- Stop only when resolution requires unauthorized scope/path/repository operations, a product or architecture decision, unavailable required environment/tool/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution.
+
 ## Stop conditions
-- ...
+Stop and report only when continued work is unsafe or unauthorized, for example:
+- activation/body/source pin mismatch;
+- cancellation, supersession, acceptance, or competing execution;
+- repository preflight conflict that the gate does not authorize Codex to repair;
+- resolving a verification failure requires an unauthorized path, scope, architecture/product decision, repository repair, unavailable required environment/tool/access, unsafe runtime ownership, or an unresolvable external/baseline defect.
+
+Do not write `stop on required verification failure` as a blanket rule. A self-introduced compile/test failure that is repairable within the active gate is implementation work, not a blocker.
 ```
 
 ## Activation comment
@@ -94,7 +107,7 @@ Before posting an activation, ChatGPT must have the human-supplied current ChatG
 This activation authorizes execution and triggers the configured Codex launcher. No separate dispatch is required.
 ```
 
-A new v1.4.1 activation without exactly one valid thread marker is invalid and must not be published.
+A new v1.4.2 activation without exactly one valid thread marker is invalid and must not be published.
 
 ## Correction-required comment
 
@@ -148,7 +161,7 @@ Before posting an executable correction, ChatGPT must have the human-supplied cu
 - Every new executable activation/correction carries exactly one human-supplied thread marker.
 - If the human has not supplied a valid current thread ID, ChatGPT asks for it and cannot activate/correct until it is supplied.
 - Codex copies the thread marker unchanged into evidence/blocker.
-- A newly received v1.4.1 activation/correction with no marker or multiple markers is invalid and must not execute.
+- A newly received v1.4.2 activation/correction with no marker or multiple markers is invalid and must not execute.
 - PASS/state comments do not need the thread marker.
 - Do not add a generic `Target: Codex` or `Target: ChatGPT` field. First-line marker plus thread marker is the routing contract.
 - Preserve old comments; do not edit history to retrofit routing metadata.
