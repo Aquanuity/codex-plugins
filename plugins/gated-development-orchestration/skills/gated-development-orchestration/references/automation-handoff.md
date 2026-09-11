@@ -38,11 +38,11 @@ Before publishing an activation or correction:
 - if it is not provided, do not publish the executable activation/correction;
 - do not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID.
 
-There is no silent manual-return fallback for new v1.4.1 activations/corrections.
+There is no silent manual-return fallback for new v1.4.2 activations/corrections.
 
 ### Codex
 
-A v1.4.1 triggering activation/correction must contain exactly one thread marker.
+A v1.4.2 triggering activation/correction must contain exactly one thread marker.
 
 - verify exactly one marker is present before implementation;
 - copy the exact marker unchanged into evidence or blocker;
@@ -89,9 +89,12 @@ It should not enforce case-specific rules such as:
 - work-order sequencing
 - allowed paths
 - verification sufficiency
+- verification-failure diagnosis
 - checkpoint lifecycle validity
 
-Those belong to Codex following the case and skill. The v1.4.1 implementer preflight rejects a malformed/missing thread marker before development work begins.
+Those belong to Codex following the case and skill. The v1.4.2 implementer preflight rejects a malformed/missing thread marker before development work begins.
+
+A GitHub Actions job or launcher must not turn a failing build/test exit code into a gate-level blocker decision. The detached Codex process diagnoses verification failures and decides whether to repair in-scope or report a true blocker under the skill/case.
 
 ## Detached execution
 
@@ -153,6 +156,7 @@ Codex never calls the review bridge. GitHub evidence is the boundary between imp
 ChatGPT asks human for activation thread ID
   -> activation + supplied marker
   -> Codex
+  -> implement / verify / repair in-scope failures / re-verify
   -> evidence + same marker
   -> review workflow
   -> ChatGPT independent review
@@ -171,7 +175,7 @@ This avoids generic `Target:` fields. Message type plus routing marker is suffic
 
 Evidence/blocker publication must be confirmed from the GitHub tool/API result. On ambiguous publication, check before retrying. Retry publication only; do not rerun implementation merely to repair reporting.
 
-For a valid v1.4.1 execution, evidence/blocker must contain the copied thread marker. If routing metadata is missing, automatic review delivery must fail closed rather than choose a fallback destination.
+For a valid v1.4.2 execution, evidence/blocker must contain the copied thread marker. If routing metadata is missing, automatic review delivery must fail closed rather than choose a fallback destination.
 
 ## Security and secrets
 
