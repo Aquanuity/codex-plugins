@@ -2,6 +2,12 @@
 
 This is the shared automation contract for ChatGPT orchestration/review, local Codex implementation, the transport-only implementation runner, and the review-only return workflow.
 
+## Current workflow plugin
+
+Workflow mechanics come from the currently installed **`gated-development-orchestration@aquanuity`** plugin.
+
+The gate/activation/correction must not freeze a plugin package version, marketplace repository SHA, package commit, or historical `SKILL.md` URL. Historical plugin references in GitHub records are provenance only; they do not redirect the runner, Codex, or reviewer to an old package.
+
 ## Routing by first-line marker
 
 | First-line marker | Destination | Meaning |
@@ -14,7 +20,7 @@ This is the shared automation contract for ChatGPT orchestration/review, local C
 | `<!-- gated-development:review:v2 status=verification-blocked -->` | Ledger only | Review could not complete |
 | state/amendment markers | Ledger/control only | Do not independently launch Codex or ChatGPT review |
 
-Marker versions, skill version, checkpoint identity, and work-order version are separate concepts.
+Marker versions, installed skill version, checkpoint identity, and work-order version are separate concepts.
 
 ## Thread routing marker
 
@@ -36,23 +42,26 @@ Before publishing an activation or correction:
 - if it has not been supplied, ask the human for it;
 - validate UUID shape only;
 - if it is not provided, do not publish the executable activation/correction;
-- do not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID.
+- do not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID;
+- do not freeze/inherit a plugin version/source in the executable comment.
 
-There is no silent manual-return fallback for new v1.4.3 activations/corrections.
+There is no silent manual-return fallback for new activations/corrections.
 
 ### Codex
 
-A v1.4.3 triggering activation/correction must contain exactly one thread marker.
+A triggering activation/correction must contain exactly one thread marker.
 
+- use the current installed `gated-development-orchestration@aquanuity` plugin;
 - verify exactly one marker is present before implementation;
 - copy the exact marker unchanged into evidence or blocker;
 - do not invent, infer, normalize, replace, or select a different thread ID;
 - do not invoke the ChatGPT bridge directly;
-- if the marker is absent/multiple/malformed, do not execute the gate; report a blocker when possible and stop.
+- if the marker is absent/multiple/malformed, do not execute the gate; report a blocker when possible and stop;
+- do not fetch/use an old plugin package merely because historical case text names one.
 
 ### Review transport
 
-The review workflow extracts exactly one marker from evidence/blocker and sets the local bridge's explicit ChatGPT thread target. It sends a compact review request containing repository, issue, and exact evidence URL. ChatGPT then fetches and independently verifies the case.
+The review workflow extracts exactly one marker from evidence/blocker and sets the local bridge's explicit ChatGPT thread target. It sends a compact review request containing repository, issue, and exact evidence URL. ChatGPT then fetches and independently verifies the case using the current installed plugin.
 
 The review transport must:
 
@@ -92,10 +101,11 @@ It should not enforce case-specific rules such as:
 - verification sufficiency
 - verification-failure diagnosis
 - checkpoint lifecycle validity
+- plugin-version/source matching against historical case text
 
-Those belong to Codex following the case and skill. The v1.4.3 implementer preflight rejects a malformed/missing thread marker before development work begins.
+Those belong to Codex following the case and current installed plugin. The implementer preflight rejects a malformed/missing thread marker before development work begins.
 
-A GitHub Actions job or launcher must not turn a failing build/test exit code into a gate-level blocker decision. The detached Codex process diagnoses verification failures and decides whether to repair in-scope or report a true blocker under the skill/case.
+A GitHub Actions job or launcher must not turn a failing build/test exit code into a gate-level blocker decision. The detached Codex process diagnoses verification failures and decides whether to repair in-scope or report a true blocker under the current skill/case.
 
 ## Detached execution
 
@@ -170,21 +180,23 @@ Codex never calls the review bridge. GitHub evidence is the boundary between imp
 ```text
 ChatGPT asks human for activation thread ID
   -> activation + supplied marker (+ optional per-round reasoning override)
-  -> Codex
+  -> Codex using current installed plugin
   -> implement / verify / repair in-scope failures / re-verify
   -> evidence + same marker
   -> review workflow
-  -> ChatGPT independent review
+  -> ChatGPT independent review using current installed plugin
       -> PASS (ledger only)
       OR
       -> ChatGPT asks human for current reviewer thread ID
       -> correction-required + supplied current marker (+ optional new per-round override)
-          -> Codex
+          -> Codex using current installed plugin
           -> new evidence + same marker
           -> review workflow
 ```
 
 A correction reasoning override is independent of the activation or prior correction. Omit it to use `max` for that round.
+
+Plugin package version/source is likewise resolved from the current installation for each action; it is not inherited from the activation or prior correction.
 
 This avoids generic `Target:` fields. Message type plus routing marker is sufficient.
 
@@ -192,7 +204,9 @@ This avoids generic `Target:` fields. Message type plus routing marker is suffic
 
 Evidence/blocker publication must be confirmed from the GitHub tool/API result. On ambiguous publication, check before retrying. Retry publication only; do not rerun implementation merely to repair reporting.
 
-For a valid v1.4.3 execution, evidence/blocker must contain the copied thread marker. If routing metadata is missing, automatic review delivery must fail closed rather than choose a fallback destination.
+For a valid execution, evidence/blocker must contain the copied thread marker. If routing metadata is missing, automatic review delivery must fail closed rather than choose a fallback destination.
+
+Evidence may report the actual installed plugin version/source used for traceability, but that report does not pin the next action.
 
 ## Security and secrets
 
@@ -209,4 +223,4 @@ Never publish cookies, tokens, credential files, or secrets.
 
 ## Boundaries
 
-The thread marker is not cryptographic authentication. The review workflow still validates the GitHub event/sender it trusts. A shared GitHub identity does not prove ChatGPT vs Codex authorship; role behavior comes from the workflow contract and independent verification.
+The thread marker is not cryptographic authentication. The review workflow still validates the GitHub event/sender it trusts. A shared GitHub identity does not prove ChatGPT vs Codex authorship; role behavior comes from the current installed workflow contract and independent verification.
