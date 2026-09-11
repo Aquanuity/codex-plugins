@@ -6,9 +6,23 @@ Use when Codex reports, ChatGPT independently reviews, a blocker is triaged, or 
 
 Actions success, CLI exit `0`, Codex summaries, and evidence URLs are not PASS. The reviewer independently fetches remote evidence.
 
+## Verification failure classification
+
+A failed required build/test/check during implementation is not automatically a terminal blocker.
+
+Before publishing a blocker, Codex classifies the cause:
+
+1. **Active implementation defect** — the current gate introduced the failure and the repair fits the authorized scope, path boundary, architecture, and repository operations. Repair it and rerun the failed prerequisite and dependent verification. This is normal implementation work.
+2. **Authorized baseline/environment handling** — an external/baseline condition has an already-authorized, truthful in-gate resolution. Apply only that authorized resolution and report it; do not hide the condition.
+3. **True blocker** — resolution requires unauthorized paths/scope/repository repair, a product or architecture decision, unavailable required tool/environment/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution. Preserve work, publish a blocker, and stop.
+
+When a prerequisite build fails, dependent tests stop until that prerequisite is repaired. This pauses the dependent verification sequence; it does not stop the implementation session when an in-scope repair is available.
+
+Do not publish a blocker merely because the first verification attempt failed. A repaired transient failure may be recorded in evidence as diagnostic history, but final required verification must still be rerun.
+
 ## Codex evidence comment
 
-A valid v1.4.1 triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line.
+A valid v1.4.2 triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line.
 
 ```markdown
 <!-- gated-development:codex-evidence:v2 -->
@@ -59,6 +73,9 @@ Status: Evidence posted. **Not PASS.**
 |---|---|---|
 | `...` | PASS / FAIL / NOT RUN | ... |
 
+### Material diagnostic failures repaired during execution
+- `<failure, cause, authorized repair, successful rerun; or none>`
+
 ### Unresolved evidence or blockers
 - ...
 
@@ -73,9 +90,11 @@ Status: Evidence posted. **Not PASS.**
 Awaiting independent review. Not PASS.
 ```
 
-If a newly delivered v1.4.1 activation/correction lacks exactly one valid thread marker, Codex must not execute the work or invent routing. Publish a blocker when possible and stop.
+If a newly delivered v1.4.2 activation/correction lacks exactly one valid thread marker, Codex must not execute the work or invent routing. Publish a blocker when possible and stop.
 
 ## Blocker comment
+
+Use this only after establishing a true blocker, not for a repairable active-implementation defect.
 
 ```markdown
 <!-- gated-development:blocker:v2 -->
@@ -89,8 +108,15 @@ If a newly delivered v1.4.1 activation/correction lacks exactly one valid thread
 - Automation request ID: `<request ID or N/A — manual>`
 - Skill version/source: `<actual>`
 
+### Blocker classification
+`unauthorized scope/path | architecture/product decision | repository-state repair | unavailable environment/tool/access | unsafe runtime ownership | unresolvable external/baseline defect | routing/preflight | other`
+
 ### Blocker
 - ...
+
+### Diagnosis performed
+- Why this cannot be repaired within the active gate:
+- In-scope repair attempted or considered:
 
 ### Work already performed
 - ...
@@ -118,6 +144,8 @@ A routed review request is only a pointer. Independently fetch:
 9. each immutable acceptance criterion.
 
 Do not trust the evidence report's PASS-like statements without remote confirmation.
+
+During review, distinguish a historical transient failure that was repaired and successfully reverified from an unresolved blocker. A first-attempt compile/test failure does not invalidate a gate when the final required verification passes and the repair stayed within scope.
 
 ## Review outcomes
 
@@ -204,6 +232,8 @@ This finalized correction is the execution authorization and trigger. No additio
 
 No PASS or implementation FAIL is issued while required evidence cannot be independently inspected.
 ```
+
+`VERIFICATION_BLOCKED` is for missing/unobtainable review evidence or a true unresolved verification blocker. It is not a substitute for fixing a repairable compile/test failure during implementation.
 
 ## Review routing boundary
 
