@@ -2,6 +2,12 @@
 
 Use for new work. Preserve older frozen records as history.
 
+## Workflow plugin identity
+
+Use the currently installed **`gated-development-orchestration@aquanuity`** plugin for workflow mechanics.
+
+Do not pin a Gated Development Orchestration version, marketplace repository SHA, plugin package commit, or historical `SKILL.md` URL into a gate, activation, or correction. Do not copy a predecessor gate's plugin pin. Historical plugin version/source text is provenance only and does not override the current installed plugin.
+
 ## Parent feature issue
 
 No ChatGPT thread ID is required in the parent issue body.
@@ -26,7 +32,7 @@ No ChatGPT thread ID is required in the parent issue body.
 
 ## Gate issue
 
-The frozen gate body defines the case. Routing metadata stays out of the body.
+The frozen gate body defines the product/repository case. Routing metadata stays out of the body. Plugin version/source is not part of the frozen authority.
 
 ```markdown
 <!-- gated-development:gate:v2 -->
@@ -47,6 +53,7 @@ The frozen gate body defines the case. Routing metadata stays out of the body.
 - Push policy: `agent | none`
 - Required commit message: `<message or N/A>`
 - Durable evidence destination: `<issue or authorized path>`
+- Workflow: current installed `gated-development-orchestration@aquanuity` (version/source intentionally not frozen)
 
 ## Objective
 ...
@@ -72,12 +79,14 @@ The frozen gate body defines the case. Routing metadata stays out of the body.
 
 ## Stop conditions
 Stop and report only when continued work is unsafe or unauthorized, for example:
-- activation/body/source pin mismatch;
+- activation/body/product-source pin mismatch;
 - cancellation, supersession, acceptance, or competing execution;
 - repository preflight conflict that the gate does not authorize Codex to repair;
 - resolving a verification failure requires an unauthorized path, scope, architecture/product decision, repository repair, unavailable required environment/tool/access, unsafe runtime ownership, or an unresolvable external/baseline defect.
 
 Do not write `stop on required verification failure` as a blanket rule. A self-introduced compile/test failure that is repairable within the active gate is implementation work, not a blocker.
+
+A historical Gated Development Orchestration version/source mismatch is not a stop condition. Use the current installed plugin.
 ```
 
 ## Runtime override field
@@ -112,13 +121,16 @@ Before posting an activation, ChatGPT must have the human-supplied current ChatG
 - Original gate starting SHA: `<SHA>`
 - Review diff base: `<same SHA>`
 - Push policy: `agent | none`
+- Workflow: current installed `gated-development-orchestration@aquanuity`
 - Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
 - Activated by: `<human or authorized orchestrator>`
 
 This activation authorizes execution and triggers the configured Codex launcher. No separate dispatch is required.
 ```
 
-A new v1.4.3 activation without exactly one valid thread marker is invalid and must not be published.
+Do not add a plugin version, repository SHA, package commit, or old skill URL to the activation.
+
+A new activation under the current plugin contract without exactly one valid thread marker is invalid and must not be published.
 
 ## Correction-required comment
 
@@ -132,12 +144,15 @@ Before posting an executable correction, ChatGPT must have the human-supplied cu
 ### Correction manifest
 - Gate: `<id>`
 - Correction work-order version: `<prior highest + 1>`
+- Workflow: current installed `gated-development-orchestration@aquanuity`
 - Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
 
 <complete bounded correction work order>
 ```
 
 The correction's reasoning-effort field applies only to that correction execution. If omitted, that correction runs at the runner default `max` regardless of any earlier activation/correction override.
+
+Do not freeze/inherit a plugin version/source in the correction.
 
 ## Codex evidence
 
@@ -173,13 +188,14 @@ The correction's reasoning-effort field applies only to that correction executio
 ...
 ```
 
-## Routing rules
+## Routing and workflow rules
 
 - Parent and gate issue bodies do not carry the ChatGPT routing ID.
 - Every new executable activation/correction carries exactly one human-supplied thread marker.
 - If the human has not supplied a valid current thread ID, ChatGPT asks for it and cannot activate/correct until it is supplied.
 - Codex copies the thread marker unchanged into evidence/blocker.
-- A newly received v1.4.3 activation/correction with no marker or multiple markers is invalid and must not execute.
+- A newly received activation/correction with no marker or multiple markers is invalid and must not execute.
 - PASS/state comments do not need the thread marker.
 - Do not add a generic `Target: Codex` or `Target: ChatGPT` field. First-line marker plus thread marker is the routing contract.
 - Preserve old comments; do not edit history to retrofit routing metadata.
+- Workflow plugin identity is `gated-development-orchestration@aquanuity`; version/source resolve from the current installation at execution/review time and are not frozen by the case.
