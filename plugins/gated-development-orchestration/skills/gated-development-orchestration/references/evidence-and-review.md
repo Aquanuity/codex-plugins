@@ -2,6 +2,12 @@
 
 Use when Codex reports, ChatGPT independently reviews, a blocker is triaged, or a correction is issued.
 
+## Current plugin contract
+
+Use the currently installed **`gated-development-orchestration@aquanuity`** plugin for implementation reporting and independent review mechanics.
+
+Historical gate/activation text that names an older plugin version, repository, commit, or `SKILL.md` URL is provenance only. It does not control the current implementation/review workflow and is not a blocker. Report the actual installed plugin version/source used when observable, but do not turn that report into a new gate pin.
+
 ## Evidence is not acceptance
 
 Actions success, CLI exit `0`, Codex summaries, and evidence URLs are not PASS. The reviewer independently fetches remote evidence.
@@ -22,7 +28,7 @@ Do not publish a blocker merely because the first verification attempt failed. A
 
 ## Codex evidence comment
 
-A valid v1.4.3 triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line.
+A valid triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line.
 
 ```markdown
 <!-- gated-development:codex-evidence:v2 -->
@@ -46,8 +52,9 @@ Status: Evidence posted. **Not PASS.**
 - Triggering comment: `<exact URL>`
 - Actions run: `<actual run URL or N/A — manual>`
 - Automation request ID: `<supplied ID or N/A — manual>`
-- Skill package version used: `<actual>`
-- Skill source used: `<actual>`
+- Workflow plugin identity: `gated-development-orchestration@aquanuity`
+- Installed skill package version used: `<actual when observable>`
+- Installed skill source used: `<actual when observable>`
 - Requested reasoning effort/source: `<resolved value and runner-default|case-override when exposed>`
 - Runtime model/reasoning observed: `<actual or not exposed>`
 
@@ -91,11 +98,11 @@ Status: Evidence posted. **Not PASS.**
 Awaiting independent review. Not PASS.
 ```
 
-If a newly delivered v1.4.3 activation/correction lacks exactly one valid thread marker, Codex must not execute the work or invent routing. Publish a blocker when possible and stop.
+If a newly delivered activation/correction lacks exactly one valid thread marker, Codex must not execute the work or invent routing. Publish a blocker when possible and stop.
 
 ## Blocker comment
 
-Use this only after establishing a true blocker, not for a repairable active-implementation defect.
+Use this only after establishing a true blocker, not for a repairable active-implementation defect or a historical plugin-version mismatch.
 
 ```markdown
 <!-- gated-development:blocker:v2 -->
@@ -107,7 +114,8 @@ Use this only after establishing a true blocker, not for a repairable active-imp
 - Triggering comment: `<actual URL>`
 - Actions run: `<actual run URL or N/A — manual>`
 - Automation request ID: `<request ID or N/A — manual>`
-- Skill version/source: `<actual>`
+- Workflow plugin identity: `gated-development-orchestration@aquanuity`
+- Installed skill version/source used: `<actual when observable>`
 
 ### Blocker classification
 `unauthorized scope/path | architecture/product decision | repository-state repair | unavailable environment/tool/access | unsafe runtime ownership | unresolvable external/baseline defect | routing/preflight | other`
@@ -128,16 +136,18 @@ Use this only after establishing a true blocker, not for a repairable active-imp
 Execution is blocked. The gate remains Not PASS.
 ```
 
+Do not classify an old case line naming `Gated Development Orchestration 1.x` or an old plugin repository as a blocker. Use the current installed plugin instead.
+
 For a malformed trigger with no valid routing marker, the blocker cannot invent one; post without a fabricated routing line if GitHub reporting is still possible.
 
 ## Independent review
 
-A routed review request is only a pointer. Independently fetch:
+A routed review request is only a pointer. Use the currently installed plugin and independently fetch:
 
 1. exact evidence comment;
 2. gate issue/body;
 3. activation or correction;
-4. pinned source-of-truth;
+4. pinned product source-of-truth;
 5. ending commit and expected remote branch;
 6. original-base-to-ending range;
 7. correction delta where applicable;
@@ -145,6 +155,8 @@ A routed review request is only a pointer. Independently fetch:
 9. each immutable acceptance criterion.
 
 Do not trust the evidence report's PASS-like statements without remote confirmation.
+
+Do not switch to a historical plugin package because the gate/evidence text names one. Historical plugin metadata is provenance only; current installed plugin mechanics govern review.
 
 During review, distinguish a historical transient failure that was repaired and successfully reverified from an unresolved blocker. A first-attempt compile/test failure does not invalidate a gate when the final required verification passes and the repair stayed within scope.
 
@@ -163,7 +175,8 @@ During review, distinguish a historical transient failure that was repaired and 
 - Original review diff base: `<B>`
 - Accepted ending commit: `<E or N/A for analysis-only>`
 - Remote branch inspected: `<R or N/A>`
-- Reviewer skill version/source: `<actual>`
+- Workflow plugin identity: `gated-development-orchestration@aquanuity`
+- Reviewer installed skill version/source: `<actual when observable>`
 
 ### Acceptance criteria
 | Criterion | Result | Evidence |
@@ -209,6 +222,7 @@ The override applies only to this correction. Omit it for `max`; later correctio
 - Source-of-truth document: `<path>`
 - Source-of-truth commit: `<SHA>`
 - Push policy: `agent | none`
+- Workflow: current installed `gated-development-orchestration@aquanuity`
 - Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
 
 ### Blocking findings
@@ -222,6 +236,8 @@ The override applies only to this correction. Omit it for `max`; later correctio
 
 This finalized correction is the execution authorization and trigger. No additional dispatch is required.
 ```
+
+Do not pin/inherit a plugin version/source in the correction.
 
 ### Verification blocked
 
@@ -247,4 +263,4 @@ No PASS or implementation FAIL is issued while required evidence cannot be indep
 
 ## Review routing boundary
 
-The review workflow transports the request to the exact ChatGPT thread declared by the copied human-supplied marker. It does not perform the review or choose a fallback destination. The reviewer must use fresh GitHub/remote evidence and may issue PASS, correction-required, or verification-blocked according to the case.
+The review workflow transports the request to the exact ChatGPT thread declared by the copied human-supplied marker. It does not perform the review or choose a fallback destination. The reviewer must use fresh GitHub/remote evidence and the current installed plugin, and may issue PASS, correction-required, or verification-blocked according to the case.
