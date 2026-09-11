@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 1.4.2
+# Gated Development Orchestration Plugin 1.4.3
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.2** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This plugin wraps the shared **Gated Development Orchestration 1.4.3** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
 
 ## Included
 
@@ -8,7 +8,7 @@ This plugin wraps the shared **Gated Development Orchestration 1.4.2** skill for
 - `.app.json` — existing GitHub app reference; unchanged
 - `skills/gated-development-orchestration/` — shared workflow contract
 
-## 1.4.2 behavior
+## 1.4.3 behavior
 
 Implementation and independent review are routed by GitHub comment markers:
 
@@ -22,6 +22,25 @@ Every new executable activation and correction requires a ChatGPT thread routing
 
 ChatGPT must not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID. Codex copies the supplied marker unchanged into its evidence or blocker. The external review workflow then returns the review request to that exact ChatGPT conversation.
 
+### Per-round reasoning effort
+
+AquaTwin's Codex runner defaults each executable activation/correction to `max` reasoning effort.
+
+To override one specific round, put exactly one of these fields in that activation or correction comment:
+
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+Examples:
+
+```text
+- Execution reasoning effort: `xhigh`
+- Execution reasoning effort: `high`
+```
+
+If the field is omitted, the runner uses `max`. The override applies only to that executable comment; later corrections do not inherit it. Duplicate or unsupported values are malformed delivery.
+
 ### Verification failures are repair feedback, not automatic blockers
 
 A failed required build, test, or verification check must be diagnosed before Codex decides to stop.
@@ -32,11 +51,11 @@ A failed required build, test, or verification check must be diagnosed before Co
 
 Gate authors must not use blanket stop language such as `stop on required verification failure`. Stop conditions describe why further work is unsafe or unauthorized, not the fact that a verification command returned nonzero.
 
-The thread marker is transport metadata only. It never grants product scope, implementation permission, correction authority, or acceptance.
+The thread marker and reasoning-effort field are transport/runtime metadata only. Neither grants product scope, implementation permission, correction authority, or acceptance.
 
 ## Launcher separation
 
-The AquaTwin implementation runner is intentionally transport-only: it validates the delivery origin/basic shape and starts Codex. Case rules remain in the issue, source-of-truth documents, repository instructions, and this skill.
+The AquaTwin implementation runner is intentionally transport-only: it validates the delivery origin/basic shape, resolves the optional reasoning-effort field, and starts Codex. Case rules remain in the issue, source-of-truth documents, repository instructions, and this skill.
 
 The ChatGPT return workflow is separate from the Codex launcher. Codex never directly invokes the ChatGPT bridge. The launcher also does not decide whether a failing build/test is repairable; that diagnosis belongs to Codex under the active gate.
 
