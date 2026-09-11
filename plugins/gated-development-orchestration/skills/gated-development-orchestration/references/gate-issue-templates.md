@@ -80,6 +80,16 @@ Stop and report only when continued work is unsafe or unauthorized, for example:
 Do not write `stop on required verification failure` as a blanket rule. A self-introduced compile/test failure that is repairable within the active gate is implementation work, not a blocker.
 ```
 
+## Runtime override field
+
+AquaTwin's runner defaults every executable activation/correction to `max` reasoning effort. To override one execution round, include exactly one optional field:
+
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+Omit the field for the default `max`. The override applies only to that activation/correction; later corrections do not inherit it. Duplicate or unsupported values are malformed delivery.
+
 ## Activation comment
 
 Before posting an activation, ChatGPT must have the human-supplied current ChatGPT thread ID for this activation. If it has not already been supplied in the current conversation, ask for it. If no valid UUID is provided, keep the gate READY and do not post the executable activation.
@@ -102,12 +112,13 @@ Before posting an activation, ChatGPT must have the human-supplied current ChatG
 - Original gate starting SHA: `<SHA>`
 - Review diff base: `<same SHA>`
 - Push policy: `agent | none`
+- Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
 - Activated by: `<human or authorized orchestrator>`
 
 This activation authorizes execution and triggers the configured Codex launcher. No separate dispatch is required.
 ```
 
-A new v1.4.2 activation without exactly one valid thread marker is invalid and must not be published.
+A new v1.4.3 activation without exactly one valid thread marker is invalid and must not be published.
 
 ## Correction-required comment
 
@@ -118,8 +129,15 @@ Before posting an executable correction, ChatGPT must have the human-supplied cu
 <!-- gated-development:chatgpt-thread:v1 id=<human-supplied current reviewer ChatGPT thread UUID> -->
 ## Independent gate review — NOT PASS / correction required
 
+### Correction manifest
+- Gate: `<id>`
+- Correction work-order version: `<prior highest + 1>`
+- Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
+
 <complete bounded correction work order>
 ```
+
+The correction's reasoning-effort field applies only to that correction execution. If omitted, that correction runs at the runner default `max` regardless of any earlier activation/correction override.
 
 ## Codex evidence
 
@@ -161,7 +179,7 @@ Before posting an executable correction, ChatGPT must have the human-supplied cu
 - Every new executable activation/correction carries exactly one human-supplied thread marker.
 - If the human has not supplied a valid current thread ID, ChatGPT asks for it and cannot activate/correct until it is supplied.
 - Codex copies the thread marker unchanged into evidence/blocker.
-- A newly received v1.4.2 activation/correction with no marker or multiple markers is invalid and must not execute.
+- A newly received v1.4.3 activation/correction with no marker or multiple markers is invalid and must not execute.
 - PASS/state comments do not need the thread marker.
 - Do not add a generic `Target: Codex` or `Target: ChatGPT` field. First-line marker plus thread marker is the routing contract.
 - Preserve old comments; do not edit history to retrofit routing metadata.
