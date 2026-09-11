@@ -14,7 +14,33 @@ unless the executable activation/correction explicitly supplies a supported reas
 
 The launcher default is mechanical runtime configuration. It does not decide scope, architecture, verification, repository operations, or acceptance.
 
-When a case explicitly overrides reasoning effort, the case value takes precedence for that execution.
+## Executable per-round override contract
+
+Use this exact standardized field in an activation or correction comment when a non-default reasoning effort is wanted for that execution:
+
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+Examples:
+
+```text
+- Execution reasoning effort: `xhigh`
+- Execution reasoning effort: `high`
+- Execution reasoning effort: `max`
+```
+
+Rules:
+
+- If the field is omitted, the runner uses `max`.
+- Exactly one field is allowed per executable activation/correction.
+- Supported values are `minimal`, `low`, `medium`, `high`, `xhigh`, and `max`.
+- The override applies only to that single execution round.
+- A later correction does not inherit a previous activation/correction override. State the field again when that later round should use a non-default effort.
+- Duplicate fields or unsupported values are malformed delivery; do not infer or silently fall back.
+- Runtime effort never changes product authority, scope, architecture, verification, repository permissions, or acceptance criteria.
+
+The runner records the resolved effort as `reasoning_effort` and records whether it came from `runner-default` or `case-override`.
 
 ## Reporting runtime
 
