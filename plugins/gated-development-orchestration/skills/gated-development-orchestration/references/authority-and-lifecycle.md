@@ -1,6 +1,6 @@
 # Authority and Lifecycle Reference
 
-Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, or acceptance.
+Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, verification failures, or acceptance.
 
 ## Artifact authority
 
@@ -20,7 +20,7 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 
 ## Version meanings
 
-- Skill package version: `1.4.1`
+- Skill package version: `1.4.2`
 - Marker version: e.g. `activation:v1`, `review:v2`
 - Work-order version: gate execution/correction sequence
 - Checkpoint identity: CP1, CP2, etc.
@@ -48,7 +48,7 @@ identifies where independent review should return. It does not:
 
 Executable authority still comes from activation/correction plus the controlling case.
 
-For every new v1.4.1 executable activation/correction, the human must supply the current ChatGPT thread UUID. ChatGPT asks for it if it has not already been supplied for that executable comment. Without a valid UUID, the activation/correction is not published and no execution authority is created.
+For every new v1.4.2 executable activation/correction, the human must supply the current ChatGPT thread UUID. ChatGPT asks for it if it has not already been supplied for that executable comment. Without a valid UUID, the activation/correction is not published and no execution authority is created.
 
 Do not infer the thread ID from Codex metadata, reuse another conversation's ID, or substitute a fixed/default destination.
 
@@ -62,11 +62,26 @@ Do not rewrite history merely to add a missing thread marker. Historical pre-1.4
 
 ### Implementation/documentation
 
-Require remotely reviewable ending evidence according to the case. Codex verifies, commits, normally pushes as authorized, posts evidence, and stops.
+Require remotely reviewable ending evidence according to the case. Codex implements, verifies, repairs authorized self-introduced defects, re-verifies, commits, normally pushes as authorized, posts evidence, and stops.
 
 ### Analysis-only
 
 No repository writes, commits, or pushes. Review baseline/evidence/no-write compliance.
+
+## Verification failures and blocker authority
+
+Verification exists to find defects in the active work. Therefore a required build/test/check failure is not itself a state transition to BLOCKED.
+
+Codex owns first-line diagnosis while implementing:
+
+- **In-scope implementation defect:** caused by the active gate's changes and repairable within the frozen scope/path/architecture/repository-operation boundary. Codex fixes it and reruns verification. No new authorization or correction comment is needed.
+- **True blocker:** cannot be resolved without unauthorized paths/scope/repository repair, a product or architecture decision, unavailable required environment/tool/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution. Codex preserves work, posts a blocker, and stops.
+
+A failed prerequisite build may stop dependent tests from running against stale output. That does not stop the implementation session when the prerequisite can be repaired in-scope.
+
+A gate body must not convert every required verification failure into a blocker with blanket wording such as `stop on required verification failure`. Stop conditions describe the unresolved reason further work is unsafe or unauthorized.
+
+The frozen gate may narrow repair authority further, but it should not contradict this distinction by treating an ordinary self-introduced implementation defect as an external blocker. If an older frozen gate does contain such contradictory blanket wording, Codex follows that historical work order; the orchestrator should correct future gate drafting rather than silently rewrite frozen history.
 
 ## State model
 
@@ -83,6 +98,8 @@ DRAFT -> READY -> ACTIVATED -> IN_PROGRESS -> EVIDENCE_POSTED -> UNDER_REVIEW
 SUPERSEDED and CANCELLED may occur through authorized state records.
 
 A READY gate remains READY when the human has not supplied the current ChatGPT thread ID. Missing routing information is not grounds to publish a partial activation.
+
+A repairable verification failure remains `IN_PROGRESS`; it does not become `VERIFICATION_BLOCKED` merely because a build or test initially failed.
 
 ## Correction invariants
 
