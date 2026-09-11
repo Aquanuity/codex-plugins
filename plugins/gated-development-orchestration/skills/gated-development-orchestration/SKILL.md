@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate checkpoint development through pinned source documents, frozen GitHub work orders, local Codex execution, GitHub-routed return review, and independent ChatGPT review. Use for gate creation, activation, implementation, evidence review, bounded corrections, and review routing. Choose the current role before acting; reading or reviewing this skill does not authorize a checkpoint or a GitHub write.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration does not require access to the user's local filesystem.
 metadata:
-  version: "1.4.1"
+  version: "1.4.2"
   workflow: "github-codex-gated-development"
 ---
 
@@ -27,8 +27,8 @@ A checkpoint implementation run must never promote itself to its own independent
 |---|---|---|
 | Human / product owner | Intent, scope, architecture decisions, activation authority, cancellation and overrides; supplies the current ChatGPT thread ID for executable activation/correction routing | Nothing in this skill delegates final product authority away from the human |
 | Orchestrator / reviewer | Source tracing, source-of-truth documents, issue topology, activation, fresh remote review, correction orders, acceptance records, review routing | Treat Codex summaries or Actions success as proof; silently replace ChatGPT review with Codex/Work/API review; invent or infer a thread ID |
-| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, authorized commit/push, evidence or blocker publication | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
-| Implementation launcher | Validate basic delivery and start Codex | Decide scope, branch policy, architecture, gate validity, acceptance, or repository repair |
+| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope repair of its own implementation, authorized commit/push, evidence or blocker publication | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
+| Implementation launcher | Validate basic delivery and start Codex | Decide scope, branch policy, architecture, gate validity, acceptance, verification diagnosis, or repository repair |
 | Review transport | Recognize review-target comments and route them to the declared ChatGPT thread | Judge evidence, issue PASS/correction, or reinterpret the case |
 
 GitHub is the durable coordination record. Comment markers define message type and routing intent; the thread marker identifies a ChatGPT destination only.
@@ -51,7 +51,7 @@ Read the references required for the current phase. Record the skill version and
 4. PASS accepts the current checkpoint; it does not itself authorize an unactivated successor.
 5. Codex implements and reports; ChatGPT independently inspects remote evidence. Codex never issues its own independent PASS.
 6. Preserve the original gate starting SHA/review base through corrections. Only correction execution start changes.
-7. Implementation/documentation: verify -> commit -> normal authorized push -> confirm remote containment -> evidence -> stop.
+7. Implementation/documentation: implement -> verify -> repair in-scope failures -> re-verify -> commit -> normal authorized push -> confirm remote containment -> evidence -> stop.
 8. Analysis-only: no repository writes/commit/push.
 9. Do not merge, rebase, pull, reset, clean, force-push, switch worktrees, create branches, or repair repository state unless the case explicitly authorizes that operation.
 10. Discovered cleanup/defects/future work are not automatically authorized.
@@ -64,6 +64,10 @@ Read the references required for the current phase. Record the skill version and
 17. If the human has not supplied that thread ID for the executable activation/correction, ChatGPT must ask for it and must not publish the executable comment until it is provided.
 18. Missing routing metadata is fail-closed for new work. Do not silently downgrade a new activation/correction to manual return review.
 19. Never use a Codex session/thread ID as a ChatGPT conversation destination.
+20. A required build/test/verification failure is not automatically a blocker. Diagnose its cause first.
+21. If the active implementation introduced the failure and the repair fits the authorized scope, paths, architecture, and repository operations, Codex must repair it and rerun the failed verification.
+22. A dependent verification step may pause after its prerequisite build/check fails, but the implementation session continues while an in-scope repair remains available.
+23. Stop and report a blocker only when resolving the failure requires unauthorized scope/path/repository operations, a product or architecture decision, unsafe runtime ownership, unavailable required tool/environment/access, or an external/baseline defect that cannot be resolved within the active gate.
 
 ## ChatGPT thread routing
 
@@ -113,7 +117,7 @@ Rules:
 
 ### Malformed or missing routing
 
-Under skill version 1.4.1, a newly received activation/correction without exactly one valid thread marker is not a valid executable work order.
+Under skill version 1.4.2, a newly received activation/correction without exactly one valid thread marker is not a valid executable work order.
 
 The implementer must not perform checkpoint/correction work from that malformed trigger. It should publish a concise GitHub blocker when possible and stop. It must not invent a routing marker.
 
@@ -128,6 +132,8 @@ Inspect repository behavior and architecture. Separate current behavior from des
 For strict bridge/refactor work, existing behavior is the acceptance oracle unless the gate explicitly authorizes behavior change.
 
 Prepare the gate using the exact templates. Keep scope, source pin, branch/baseline, verification and stop conditions explicit.
+
+When drafting stop conditions, do **not** use a blanket rule such as `stop on required verification failure`. Required verification failures caused by the active implementation are expected development feedback and remain repairable inside the gate when the repair is authorized. Stop conditions should describe the unresolved condition that makes further in-scope work impossible or unauthorized.
 
 ### Activate
 
@@ -152,19 +158,29 @@ Read repository instructions, this skill/references, the exact triggering commen
 
 The launcher only transported the instruction. Codex owns semantic preflight under the case. If the case authorizes bootstrap branch/worktree creation or other repository setup, follow the case; if not, do not invent it.
 
-For a v1.4.1 activation/correction, verify that the triggering comment contains exactly one valid ChatGPT thread marker. Missing or multiple markers block execution.
+For a v1.4.2 activation/correction, verify that the triggering comment contains exactly one valid ChatGPT thread marker. Missing or multiple markers block execution.
 
-Stop and report when the trigger is edited/mismatched, superseded/cancelled/accepted, routing is malformed, scope conflicts, repository state violates the case, or required evidence cannot be established.
+Stop and report when the trigger is edited/mismatched, superseded/cancelled/accepted, routing is malformed, scope conflicts, repository state violates the case, or a true blocker under the verification rules below is established.
 
 ### Execute
 
-Perform only the authorized checkpoint/correction. Run exact required verification. Preserve native behavior for bridge/refactor work. Review the complete gate range and correction delta as applicable.
+Perform only the authorized checkpoint/correction. Preserve native behavior for bridge/refactor work. Review the complete gate range and correction delta as applicable.
+
+Run the required verification and classify failures before deciding whether to stop:
+
+1. **Active implementation defect** — the current gate's code/documentation caused the failure and the repair is within authorized scope/path/architecture. Fix it, then rerun the failed prerequisite and its dependent checks. Do not publish a blocker merely because the first verification attempt failed.
+2. **Baseline/external defect, but locally resolvable without unauthorized change** — use an already-authorized valid workaround only when the case permits it and report it truthfully. Do not hide baseline defects.
+3. **True blocker** — resolution requires an unauthorized path or behavior, architecture/product decision, repository repair outside the case, unavailable required tool/environment/access, unsafe runtime takeover, or an external/baseline defect with no authorized resolution. Preserve work, report the blocker, and stop.
+
+When a build fails, do not run dependent tests against stale binaries. Repair and rebuild first when the failure is in-scope. Stopping the dependent sequence is not the same as stopping the implementation session.
 
 ### Publish
 
 Post one terminal evidence or blocker using the standard markers.
 
 Copy the exact triggering ChatGPT thread marker unchanged as the second line of the evidence/blocker comment.
+
+Evidence should report final required verification plus any material failed attempts that affected diagnosis. A transient self-introduced compile/test failure that was repaired and reverified is development history, not a blocker.
 
 After publication, return the report URL and stop. **Do not call the ChatGPT return bridge yourself.**
 
