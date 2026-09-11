@@ -1,6 +1,6 @@
 # Authority and Lifecycle Reference
 
-Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, verification failures, runtime overrides, or acceptance.
+Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, verification failures, runtime overrides, plugin authority, or acceptance.
 
 ## Artifact authority
 
@@ -8,9 +8,10 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 |---|---|
 | Source-of-truth document | Feature meaning, behavior, architecture, ownership, non-goals, gate sequence |
 | Parent issue | Overall tracking and accepted checkpoints |
-| Frozen gate body | Initial work order |
+| Frozen gate body | Initial product/repository work order |
 | Activation comment | Execution authorization/trigger for current gate; optional per-round runtime override |
 | Correction-required comment | Independent failed-review decision and narrow correction authorization/trigger; optional per-round runtime override |
+| Current installed `gated-development-orchestration@aquanuity` plugin | Current workflow mechanics for orchestration, implementation, evidence, correction, blocker handling, and review |
 | Commits and full gate diff | Actual implementation truth |
 | Codex evidence/blocker | Implementer report; never acceptance |
 | Independent review | PASS, correction-required, verification-blocked |
@@ -20,13 +21,29 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 
 ## Version meanings
 
-- Skill package version: `1.4.3`
+- Skill package version: the version currently installed when a role acts; **not frozen by the gate**
+- Plugin identity: `gated-development-orchestration@aquanuity`
 - Marker version: e.g. `activation:v1`, `review:v2`
 - Work-order version: gate execution/correction sequence
 - Checkpoint identity: CP1, CP2, etc.
 - Thread-routing marker version: `chatgpt-thread:v1`
 
 These are independent.
+
+## Plugin authority and non-freezing rule
+
+The workflow plugin evolves independently of a feature gate.
+
+Freeze the feature/product/repository case, not the Gated Development Orchestration package version or source location.
+
+Rules:
+
+- Do not make a plugin version, marketplace repo SHA, package commit, or historical `SKILL.md` URL controlling authority in a gate/activation/correction.
+- A historical line such as `Gated Development Orchestration 1.4.0, nivlekwat/myPlugins@...` is provenance only under the current contract. It does not require using that historical package.
+- Do not block because historical case text names a different plugin version/source from the current installation.
+- Use the current installed `gated-development-orchestration@aquanuity` plugin for workflow mechanics each time orchestration, implementation, correction, or review occurs.
+- A later plugin version may change workflow mechanics for subsequent actions on an open gate, but it does not rewrite the gate's product source pin, scope/path limits, branch/baseline, acceptance criteria, or historical records.
+- Report the actual installed plugin version/source used when observable, but treat that as execution/review provenance only.
 
 ## Routing authority
 
@@ -48,7 +65,7 @@ identifies where independent review should return. It does not:
 
 Executable authority still comes from activation/correction plus the controlling case.
 
-For every new v1.4.3 executable activation/correction, the human must supply the current ChatGPT thread UUID. ChatGPT asks for it if it has not already been supplied for that executable comment. Without a valid UUID, the activation/correction is not published and no execution authority is created.
+For every new executable activation/correction, the human must supply the current ChatGPT thread UUID. ChatGPT asks for it if it has not already been supplied for that executable comment. Without a valid UUID, the activation/correction is not published and no execution authority is created.
 
 Do not infer the thread ID from Codex metadata, reuse another conversation's ID, or substitute a fixed/default destination.
 
@@ -73,9 +90,13 @@ Rules:
 
 ## Freezing and history
 
-The gate body may be edited while draft/ready. On activation, treat the controlling body/activation as frozen according to the case. Preserve old comments. Use new comments for evidence, review, correction, amendment, supersession, and cancellation.
+The gate body may be edited while draft/ready. On activation, treat the controlling product/repository body and activation as frozen according to the case. Preserve old comments. Use new comments for evidence, review, correction, amendment, supersession, and cancellation.
 
-Do not rewrite history merely to add a missing thread marker. Historical pre-1.4.1 executions that lack routing metadata remain historical and may require manual review. That historical exception does not authorize creating new markerless activations/corrections.
+The plugin version/source is explicitly outside that freeze. A gate body hash may physically include a historical workflow-version line, but that line is non-authoritative workflow provenance under the current plugin contract.
+
+Do not rewrite history merely to update plugin metadata or add a missing thread marker. Historical records remain historical. New actions use the current installed plugin.
+
+Historical pre-1.4.1 executions that lack routing metadata may require manual review. That historical exception does not authorize creating new markerless activations/corrections.
 
 ## Gate types
 
@@ -100,7 +121,7 @@ A failed prerequisite build may stop dependent tests from running against stale 
 
 A gate body must not convert every required verification failure into a blocker with blanket wording such as `stop on required verification failure`. Stop conditions describe the unresolved reason further work is unsafe or unauthorized.
 
-The frozen gate may narrow repair authority further, but it should not contradict this distinction by treating an ordinary self-introduced implementation defect as an external blocker. If an older frozen gate does contain such contradictory blanket wording, Codex follows that historical work order; the orchestrator should correct future gate drafting rather than silently rewrite frozen history.
+If historical gate wording conflicts with a newer workflow mechanic, use the current installed plugin for generic workflow behavior while preserving the gate's product-specific authority. Do not use an obsolete plugin pin to revive superseded workflow mechanics.
 
 ## State model
 
@@ -127,6 +148,8 @@ Keep the original gate review base fixed. A correction starts from the reviewed 
 Every new executable correction requires a human-supplied current reviewer thread marker. Codex copies it into the next evidence/blocker. Without that marker, do not publish the correction trigger.
 
 A correction may also carry its own `Execution reasoning effort` override. It applies only to that correction round and must be restated on any later correction that needs a non-default effort.
+
+Do not freeze/inherit a plugin version/source in a correction. Use the current installed plugin.
 
 ## Independence
 
