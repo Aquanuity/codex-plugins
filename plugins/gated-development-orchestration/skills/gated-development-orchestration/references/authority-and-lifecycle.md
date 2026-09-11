@@ -1,6 +1,6 @@
 # Authority and Lifecycle Reference
 
-Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, verification failures, or acceptance.
+Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, verification failures, runtime overrides, or acceptance.
 
 ## Artifact authority
 
@@ -9,8 +9,8 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 | Source-of-truth document | Feature meaning, behavior, architecture, ownership, non-goals, gate sequence |
 | Parent issue | Overall tracking and accepted checkpoints |
 | Frozen gate body | Initial work order |
-| Activation comment | Execution authorization/trigger for current gate |
-| Correction-required comment | Independent failed-review decision and narrow correction authorization/trigger |
+| Activation comment | Execution authorization/trigger for current gate; optional per-round runtime override |
+| Correction-required comment | Independent failed-review decision and narrow correction authorization/trigger; optional per-round runtime override |
 | Commits and full gate diff | Actual implementation truth |
 | Codex evidence/blocker | Implementer report; never acceptance |
 | Independent review | PASS, correction-required, verification-blocked |
@@ -20,7 +20,7 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 
 ## Version meanings
 
-- Skill package version: `1.4.2`
+- Skill package version: `1.4.3`
 - Marker version: e.g. `activation:v1`, `review:v2`
 - Work-order version: gate execution/correction sequence
 - Checkpoint identity: CP1, CP2, etc.
@@ -48,9 +48,28 @@ identifies where independent review should return. It does not:
 
 Executable authority still comes from activation/correction plus the controlling case.
 
-For every new v1.4.2 executable activation/correction, the human must supply the current ChatGPT thread UUID. ChatGPT asks for it if it has not already been supplied for that executable comment. Without a valid UUID, the activation/correction is not published and no execution authority is created.
+For every new v1.4.3 executable activation/correction, the human must supply the current ChatGPT thread UUID. ChatGPT asks for it if it has not already been supplied for that executable comment. Without a valid UUID, the activation/correction is not published and no execution authority is created.
 
 Do not infer the thread ID from Codex metadata, reuse another conversation's ID, or substitute a fixed/default destination.
+
+## Runtime override authority
+
+Runtime reasoning effort is execution metadata, not product authority.
+
+The canonical optional executable field is:
+
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+Rules:
+
+- omission means the runner default `max`;
+- exactly one override field is allowed per executable activation/correction;
+- the override applies only to that execution round;
+- later corrections do not inherit an earlier override;
+- duplicate or unsupported values are malformed delivery;
+- changing reasoning effort does not broaden scope, paths, architecture, repository operations, verification, or acceptance authority.
 
 ## Freezing and history
 
@@ -106,6 +125,8 @@ A repairable verification failure remains `IN_PROGRESS`; it does not become `VER
 Keep the original gate review base fixed. A correction starts from the reviewed prior ending SHA/baseline and authorizes only the narrow repair.
 
 Every new executable correction requires a human-supplied current reviewer thread marker. Codex copies it into the next evidence/blocker. Without that marker, do not publish the correction trigger.
+
+A correction may also carry its own `Execution reasoning effort` override. It applies only to that correction round and must be restated on any later correction that needs a non-default effort.
 
 ## Independence
 
