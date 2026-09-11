@@ -6,7 +6,7 @@ Aquanuity's Codex plugin marketplace. The catalog lives at [`.agents/plugins/mar
 
 | Plugin | Version | Purpose |
 | --- | --- | --- |
-| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.2 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
+| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.3 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
 
 The marketplace identifier is `aquanuity`. Gated Development Orchestration is the first catalog entry.
 
@@ -59,16 +59,24 @@ plugins/gated-development-orchestration/
 
 The catalog's `source.path` resolves from the repository root. Plugin version, display information, skills, and app references remain in the plugin manifest.
 
-## Version 1.4.2 behavior
+## Version 1.4.3 behavior
 
 Every new executable activation or correction requires the current ChatGPT thread ID, explicitly supplied for that comment. If it has not been supplied, the orchestrator must ask the human. Without a valid ID, it cannot publish the activation or correction.
 
 Codex preserves the supplied routing marker in its evidence or blocker. The plugin includes the workflow contract and GitHub app reference; the implementation launcher and ChatGPT return transport require separate setup. See the [automation handoff](plugins/gated-development-orchestration/skills/gated-development-orchestration/references/automation-handoff.md).
 
-Version 1.4.2 also fixes verification-failure handling: a failed required build/test/check is not automatically a blocker. Codex diagnoses the failure, repairs self-introduced defects when the fix remains inside the authorized gate, and reruns verification. Only failures that cannot be resolved within the authorized scope/environment become blockers. Dependent tests wait for their prerequisite build to pass rather than running against stale binaries.
+Version 1.4.3 defines the runner's per-round reasoning override field explicitly:
+
+```text
+- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+```
+
+Omit it to use the runner default `max`. An override applies only to the activation/correction comment that contains it and is not inherited by later correction rounds.
+
+The verification-failure rules from 1.4.2 remain: a failed required build/test/check is not automatically a blocker. Codex diagnoses the failure, repairs self-introduced defects when the fix remains inside the authorized gate, and reruns verification. Only failures that cannot be resolved within the authorized scope/environment become blockers. Dependent tests wait for their prerequisite build to pass rather than running against stale binaries.
 
 ## Package provenance
 
-Version 1.4.2 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata are the authoritative package-version declarations. `.gitattributes` disables line-ending conversion for the plugin package.
+Version 1.4.3 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata are the authoritative package-version declarations. `.gitattributes` disables line-ending conversion for the plugin package.
 
 To add another plugin, place its complete package under `plugins/<plugin-name>/` and append an entry to the marketplace catalog. Match the entry name to the plugin manifest and use `./plugins/<plugin-name>` as its local source path.
