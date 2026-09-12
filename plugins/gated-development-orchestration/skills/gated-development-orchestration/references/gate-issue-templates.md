@@ -4,9 +4,9 @@ Use for new work. Preserve older frozen records as history.
 
 ## Workflow plugin identity
 
-Use the currently installed **`gated-development-orchestration@aquanuity`** plugin for workflow mechanics.
+Use the shared **`gated-development-orchestration@aquanuity`** workflow contract from the source selected in [Workflow source by execution surface](../SKILL.md#workflow-source-by-execution-surface): Codex uses its currently installed plugin; ordinary ChatGPT Chat / Pro uses the current repository package. Load all required references from that same selected source.
 
-Do not pin a Gated Development Orchestration version, marketplace repository SHA, plugin package commit, or historical `SKILL.md` URL into a gate, activation, or correction. Do not copy a predecessor gate's plugin pin. Historical plugin version/source text is provenance only and does not override the current installed plugin.
+Do not pin a Gated Development Orchestration version, marketplace repository SHA, plugin package commit, or historical `SKILL.md` URL into a gate, activation, or correction. Do not copy a predecessor gate's plugin pin. Historical plugin version/source text is provenance only and does not override the current workflow source selected for the execution surface.
 
 ## Parent feature issue
 
@@ -54,7 +54,7 @@ The frozen gate body defines the product/repository case. Routing metadata stays
 - Required commit message: `<message or N/A>`
 - Durable evidence destination: `<issue or authorized path>`
 - Execution artifacts: outside git; for automated AquaTwin runs use `codex-artifact-publish.yml` with the launcher request ID, per the current plugin publication contract
-- Workflow: current installed `gated-development-orchestration@aquanuity` (version/source intentionally not frozen)
+- Workflow: current `gated-development-orchestration@aquanuity` contract; source selected by execution surface (version/source intentionally not frozen)
 
 ## Objective
 ...

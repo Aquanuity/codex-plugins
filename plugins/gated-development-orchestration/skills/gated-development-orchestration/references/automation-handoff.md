@@ -4,7 +4,7 @@ This is the shared automation contract for ChatGPT orchestration/review, local C
 
 ## Current workflow plugin
 
-Workflow mechanics come from the currently installed **`gated-development-orchestration@aquanuity`** plugin.
+Use the shared **`gated-development-orchestration@aquanuity`** workflow contract from the source selected in [Workflow source by execution surface](../SKILL.md#workflow-source-by-execution-surface): Codex uses its currently installed plugin; ordinary ChatGPT Chat / Pro uses the current repository package. Load all required references from that same selected source.
 
 The gate/activation/correction must not freeze a plugin package version, marketplace repository SHA, package commit, or historical `SKILL.md` URL. Historical plugin references in GitHub records are provenance only; they do not redirect the runner, Codex, or reviewer to an old package.
 
@@ -20,7 +20,7 @@ The gate/activation/correction must not freeze a plugin package version, marketp
 | `<!-- gated-development:review:v2 status=verification-blocked -->` | Ledger only | Review could not complete |
 | state/amendment markers | Ledger/control only | Do not independently launch Codex or ChatGPT review |
 
-Marker versions, installed skill version, checkpoint identity, and work-order version are separate concepts.
+Marker versions, loaded workflow version, checkpoint identity, and work-order version are separate concepts.
 
 ## Thread routing marker
 
@@ -62,7 +62,7 @@ A triggering activation/correction must contain exactly one thread marker.
 
 ### Review transport
 
-The review workflow extracts exactly one marker from evidence/blocker and sets the local bridge's explicit ChatGPT thread target. It sends a compact review request containing repository, issue, and exact evidence URL. ChatGPT then fetches and independently verifies the case using the current installed plugin.
+The review workflow extracts exactly one marker from evidence/blocker and sets the local bridge's explicit ChatGPT thread target. It sends a compact review request containing repository, issue, and exact evidence URL. The prompt instructs ordinary ChatGPT to resolve Aquanuity/codex-plugins main and load the current package manifest, SKILL.md, and required review references from that same commit, as defined in [Workflow source by execution surface](../SKILL.md#workflow-source-by-execution-surface). ChatGPT reports the loaded source/version and independently verifies the case; it does not require installed-plugin access. This changes reviewer instruction loading only; Codex workers keep their installed-plugin source.
 
 The review transport must:
 
@@ -202,7 +202,7 @@ Human supplies routing thread A at activation
   -> prepare redacted report/bundle + readiness; dispatch artifact publisher and stop
   -> publisher uploads artifact, then posts evidence + marker A copied unchanged
   -> review workflow -> ChatGPT thread A
-  -> independent review using current installed plugin
+  -> independent ChatGPT review using current repository workflow source
       -> PASS (ledger only)
       OR
       -> correction-required + reused marker A (no fresh UUID request)
@@ -250,4 +250,4 @@ Never publish cookies, tokens, credential files, or secrets.
 
 ## Boundaries
 
-The thread marker is not cryptographic authentication. The review workflow still validates the GitHub event/sender it trusts. A shared GitHub identity does not prove ChatGPT vs Codex authorship; role behavior comes from the current installed workflow contract and independent verification.
+The thread marker is not cryptographic authentication. The review workflow still validates the GitHub event/sender it trusts. A shared GitHub identity does not prove ChatGPT vs Codex authorship; role behavior comes from the current workflow contract loaded for the execution surface and independent verification.

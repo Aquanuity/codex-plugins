@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 1.4.7
+# Gated Development Orchestration Plugin 1.4.8
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.7** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This plugin wraps the shared **Gated Development Orchestration 1.4.8** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
 
 ## Included
 
@@ -8,7 +8,9 @@ This plugin wraps the shared **Gated Development Orchestration 1.4.7** skill for
 - `.app.json` — existing GitHub app reference; unchanged
 - `skills/gated-development-orchestration/` — shared workflow contract
 
-## 1.4.7 behavior
+## 1.4.8 behavior
+
+Ordinary ChatGPT Chat / Pro loads the shared workflow directly from this repository's current `main` package. Codex workers continue loading their currently installed plugin. For each ChatGPT action, resolve `main`, then read the manifest, `SKILL.md`, and required references from the same commit. Report the actual version, repository commit, and loaded paths; do not claim installed-plugin access. See [Workflow source by execution surface](skills/gated-development-orchestration/SKILL.md#workflow-source-by-execution-surface) for exact paths and required review references.
 
 Implementation and independent review are routed by GitHub comment markers:
 
@@ -59,7 +61,7 @@ Explicit read-only/protected/no-touch restrictions and human denials still win. 
 
 See [the full incidental repair rule](skills/gated-development-orchestration/SKILL.md#bounded-incidental-repair).
 
-### Current installed plugin, not a frozen gate pin
+### Current workflow source, not a frozen gate pin
 
 The workflow plugin identity is:
 
@@ -71,10 +73,10 @@ Version 1.4.4 makes plugin evolution explicit:
 
 - product/source-of-truth commits, gate scope, branch/baseline, path boundaries, acceptance criteria, and executable work orders may be frozen as required;
 - the Gated Development Orchestration **plugin version/source is not frozen by the gate**;
-- each orchestration, implementation, correction, blocker, and review action uses the currently installed `gated-development-orchestration@aquanuity` plugin;
+- each action uses the current `gated-development-orchestration@aquanuity` contract: installed plugin in Codex, current repository package in ordinary ChatGPT;
 - do not copy/pin a predecessor gate's plugin version, marketplace repo SHA, package commit, or historical `SKILL.md` URL;
 - historical plugin version/source lines in old gate records are provenance only and must not force Codex or ChatGPT to use an obsolete package;
-- evidence/review may report the actual installed plugin version/source used for traceability, but that report does not pin later actions.
+- evidence/review may report the actual loaded workflow version/source used for traceability, but that report does not pin later actions.
 
 A plugin update changes workflow mechanics for subsequent actions without rewriting the gate's frozen product/repository authority.
 

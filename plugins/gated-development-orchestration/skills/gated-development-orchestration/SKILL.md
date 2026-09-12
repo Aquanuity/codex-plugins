@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate checkpoint development through pinned product source documents, frozen GitHub work orders, local Codex execution, GitHub-routed return review, and independent ChatGPT review. Use for gate creation, activation, implementation, evidence review, bounded corrections, and review routing. Choose the current role before acting; reading or reviewing this skill does not authorize a checkpoint or a GitHub write.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration does not require access to the user's local filesystem.
 metadata:
-  version: "1.4.7"
+  version: "1.4.8"
   workflow: "github-codex-gated-development"
 ---
 
@@ -34,21 +34,34 @@ A checkpoint implementation run must never promote itself to its own independent
 
 GitHub is the durable coordination record. Comment markers define message type and routing intent; the thread marker identifies a ChatGPT destination only.
 
-## Current installed plugin authority
+## Workflow source by execution surface
 
 The workflow plugin identity is **`gated-development-orchestration@aquanuity`**. Its version/source is intentionally **not frozen into a gate**.
 
-For orchestration, implementation, correction, blocker handling, and independent review, use the currently installed Gated Development Orchestration plugin and its current references at the time that role acts.
+Select the source by execution surface, while keeping one shared workflow contract:
+
+- **Codex:** load the currently installed `gated-development-orchestration@aquanuity` plugin's `SKILL.md` and required references. This includes implementation and corrections. Do not replace the installed plugin with a repository copy.
+- **Ordinary ChatGPT Chat / Pro:** load the current package from [Aquanuity/codex-plugins on main](https://github.com/Aquanuity/codex-plugins/tree/main/plugins/gated-development-orchestration), using available GitHub access. An installed plugin is not required for ChatGPT orchestration or independent review.
+
+For each ChatGPT action, resolve `main` to its current commit, then fetch these files from that same commit under `plugins/gated-development-orchestration/`:
+
+1. `.codex-plugin/plugin.json` for package identity/version;
+2. `skills/gated-development-orchestration/SKILL.md`;
+3. the references required for the current phase, resolving their paths relative to that skill directory.
+
+For independent review, load `authority-and-lifecycle.md`, `evidence-and-review.md`, `automation-handoff.md`, and `execution-artifacts.md` from the skill's `references/` directory; also load `gate-issue-templates.md` when preparing a review/correction record. Follow further references needed for a material decision. Do not substitute the README, a directory listing, remembered instructions, or search snippets for the actual files.
+
+Keep one source snapshot within an action. Resolve the current source again for later actions; the recorded commit is provenance, not a gate-wide version pin. Report the loaded version and source truthfully: installed package path/version for Codex when observable; repository, resolved commit, and loaded file paths for ChatGPT. Repository loading does not install a plugin or grant GitHub access.
 
 Rules:
 
 - Freeze product intent, product source-of-truth commits, branch/baseline, scope/path boundaries, acceptance criteria, and executable work orders as required by the case.
 - Do **not** freeze a Gated Development Orchestration version, marketplace repository SHA, plugin package commit, or historical `SKILL.md` URL into the controlling case.
 - Do **not** copy a predecessor gate's plugin version/source into a new gate or activation.
-- If historical gate/activation/evidence text names an older Gated Development Orchestration version or repository pin, treat that text as provenance only. It does not override the currently installed plugin and is not a reason to fetch/use the historical skill.
+- If historical gate/activation/evidence text names an older Gated Development Orchestration version or repository pin, treat that text as provenance only. It does not override the current workflow source selected above and is not a reason to fetch/use the historical skill.
 - A plugin update may change workflow mechanics for later actions on an already-open gate. It does not rewrite or broaden the gate's frozen product scope, product source pin, repository authority, acceptance criteria, or prior history.
-- Report the actual installed plugin version/source used for implementation or review when it is observable, for traceability only. That report is not a work-order pin.
-- If the current installed plugin is unavailable in an execution surface that requires it, do not silently substitute an old repository copy; report the missing workflow capability.
+- Report the actual workflow version/source loaded for implementation or review, for traceability only. That report is not a work-order pin.
+- If Codex cannot load the installed plugin, or ChatGPT cannot fetch the current repository package or a required reference, report the exact missing workflow capability. Missing installed-plugin access alone is not a ChatGPT review blocker.
 
 This separates **product/work-order freezing** from **workflow-plugin evolution**.
 
@@ -61,12 +74,12 @@ This separates **product/work-order freezing** from **workflow-plugin evolution*
 - [Model selection](references/model-selection.md)
 - [Execution artifacts and publication](references/execution-artifacts.md) — required when preparing, publishing, retrieving, or retrying run evidence
 
-Read the references required for the current phase from the currently installed plugin. Record the actual installed skill version/source used when reporting an automated run or review when observable.
+Read the references required for the current phase from the source selected above. Record the actual loaded workflow version/source when reporting an automated run or review.
 
 ## Core invariants
 
 1. The pinned **product** source-of-truth defines feature meaning and architecture. The frozen gate body plus matching activation authorize only the current slice.
-2. The Gated Development Orchestration plugin version/source is not gate authority and is not frozen; use the currently installed `gated-development-orchestration@aquanuity` workflow contract.
+2. The Gated Development Orchestration plugin version/source is not gate authority and is not frozen; use the current `gated-development-orchestration@aquanuity` contract from the source selected for the execution surface.
 3. Keep checkpoints as checkpoints. Corrections stay in the same gate only while objective, architecture, primary paths plus qualifying incidental repairs, and explicit hard exclusions remain valid.
 4. A valid activation is also the execution trigger. A valid correction work order is also the correction trigger. No extra dispatch comment is required.
 5. PASS accepts the current checkpoint; it does not itself authorize an unactivated successor.
@@ -183,7 +196,7 @@ Inspect repository behavior and architecture. Separate current behavior from des
 
 For strict bridge/refactor work, existing behavior is the acceptance oracle unless the gate explicitly authorizes behavior change.
 
-Prepare the gate using the exact templates. Keep scope, product source pin, branch/baseline, verification and stop conditions explicit. Refer to the workflow as the current installed `gated-development-orchestration@aquanuity`; do not write a plugin version/repository SHA pin into the case.
+Prepare the gate using the exact templates. Keep scope, product source pin, branch/baseline, verification and stop conditions explicit. Refer to the workflow as the current `gated-development-orchestration@aquanuity` contract with source selected by execution surface; do not write a plugin version/repository SHA pin into the case.
 
 Draft a **Primary authorized path boundary**, include the bounded incidental repair allowance, and separately name any explicit read-only/protected exclusions. Do not make every unlisted file a blocker by boilerplate. Keep machine-generated run logs out of the planned repository deliverables; use the execution-artifact contract for review bundles and name any genuinely required durable exception explicitly.
 
@@ -250,7 +263,7 @@ After publisher dispatch acknowledgment, return **publication queued, not yet co
 
 ## Reviewer path
 
-Use the currently installed Gated Development Orchestration plugin. A routed review request identifies an issue/evidence comment but does not prove the evidence.
+Load the workflow using [Workflow source by execution surface](#workflow-source-by-execution-surface). Ordinary ChatGPT reviewers fetch the current repository package and required review references; Codex continues to use its installed plugin. A routed review request identifies an issue/evidence comment but does not prove the evidence.
 
 Independently fetch:
 
@@ -263,7 +276,7 @@ Independently fetch:
 - required verification evidence
 - acceptance criteria
 
-Historical skill-version/source references in gate or evidence text are provenance, not review authority. Review under the current installed plugin while preserving the gate's frozen product/work-order authority.
+Historical skill-version/source references in gate or evidence text are provenance, not review authority. Review under the current workflow source selected for the execution surface while preserving the gate's frozen product/work-order authority.
 
 Independently inspect every off-list change against the bounded incidental repair conditions, including cumulative scope, protected paths, and final verification. Do not reject solely for absence from the primary path list, and do not accept solely because Codex labels it incidental.
 
