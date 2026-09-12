@@ -6,7 +6,7 @@ Aquanuity's Codex plugin marketplace. The catalog lives at [`.agents/plugins/mar
 
 | Plugin | Version | Purpose |
 | --- | --- | --- |
-| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.6 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
+| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.7 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
 
 The marketplace identifier is `aquanuity`. Gated Development Orchestration is the first catalog entry.
 
@@ -55,11 +55,16 @@ plugins/gated-development-orchestration/
       evidence-and-review.md
       gate-issue-templates.md
       model-selection.md
+      execution-artifacts.md
 ```
 
 The catalog's `source.path` resolves from the repository root. Plugin version, display information, skills, and app references remain in the plugin manifest.
 
-## Version 1.4.6 behavior
+## Version 1.4.7 behavior
+
+Version 1.4.7 keeps generated run logs/reports out of git and adds artifact-backed publication. For automated AquaTwin runs, Codex stages one redacted review bundle plus an authored evidence report under its existing request directory, then dispatches the dedicated artifact publisher. That short upload job appends actual artifact references and posts the single terminal comment; neither the original dispatcher nor Codex waits for independent review.
+
+Artifacts request 30-day retention. Reviewers fetch raw files only when needed for material proof; required acceptance checks remain binding. Publication has duplicate suppression and publication-only retry. Personal GitHub credentials preserve the downstream issue-comment trigger; local Windows cleanup is separate from artifact expiration. See the [complete execution-artifact contract](plugins/gated-development-orchestration/skills/gated-development-orchestration/references/execution-artifacts.md). The publisher workflow/helper live in AquaTwin, not in this plugin package.
 
 Version 1.4.6 establishes **gate-level routing reuse**. The human supplies the ChatGPT thread ID at activation. Ask if it is absent and do not activate without a valid ID. Subsequent corrections reuse the established gate routing marker without asking the human to resubmit or reconfirm it each round.
 
@@ -85,7 +90,7 @@ The verification-failure rules from 1.4.2 remain: a failed required build/test/c
 
 ## Package provenance
 
-Version 1.4.6 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata identify the currently published package version. Gate work orders intentionally do not freeze that version; execution/review resolves the current installed plugin.
+Version 1.4.7 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata identify the currently published package version. Gate work orders intentionally do not freeze that version; execution/review resolves the current installed plugin.
 
 `.gitattributes` disables line-ending conversion for the plugin package.
 

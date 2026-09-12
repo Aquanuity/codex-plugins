@@ -16,6 +16,7 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 | Codex evidence/blocker | Implementer report; never acceptance |
 | Independent review | PASS, correction-required, verification-blocked |
 | Launcher records | Delivery/runtime facts only |
+| Artifact bundle and publisher receipt | Supporting execution bytes and publication identity; never independent acceptance or a new work order |
 | ChatGPT thread routing marker | Human-supplied at activation and reused through the gate; review transport destination only, no product authority |
 | Chat | Discussion/human decisions until written to durable GitHub/source records |
 
@@ -138,6 +139,14 @@ A failed prerequisite build may stop dependent tests from running against stale 
 A gate body must not convert every required verification failure into a blocker with blanket wording such as `stop on required verification failure`. Stop conditions describe the unresolved reason further work is unsafe or unauthorized.
 
 If historical gate wording conflicts with a newer workflow mechanic, use the current installed plugin for generic workflow behavior while preserving the gate's product-specific authority. Do not use an obsolete plugin pin to revive superseded workflow mechanics.
+
+## Evidence publication and storage authority
+
+Generated logs/reports are temporary execution artifacts, not default repository deliverables. Follow [Execution artifacts and publication](execution-artifacts.md): Codex owns the authored report and selected/redacted bundle; the configured publisher uploads and posts it without taking product or review authority. A valid launcher request authorizes that publication handoff, not new implementation.
+
+Publisher dispatch/queue or upload alone does not mean `EVIDENCE_POSTED`. Only a confirmed terminal GitHub comment does. Publication transport failure does not authorize another implementation/correction cycle; inspect existing receipts and retry publication only. The original gate identity, review base, routing chain, and acceptance criteria remain unchanged.
+
+Keep concise issue evidence and acceptance durable. Raw artifact retention is 30 days as configured and subject to repository limits; do not delete on PASS or commit logs to defeat expiry. Review raw material only when needed for material verification, without weakening required proof. Local Windows logs have separate cleanup authority; never infer permission to delete source/project/active-run data from artifact expiry.
 
 ## State model
 

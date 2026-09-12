@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 1.4.6
+# Gated Development Orchestration Plugin 1.4.7
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.6** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This plugin wraps the shared **Gated Development Orchestration 1.4.7** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
 
 ## Included
 
@@ -8,7 +8,7 @@ This plugin wraps the shared **Gated Development Orchestration 1.4.6** skill for
 - `.app.json` — existing GitHub app reference; unchanged
 - `skills/gated-development-orchestration/` — shared workflow contract
 
-## 1.4.6 behavior
+## 1.4.7 behavior
 
 Implementation and independent review are routed by GitHub comment markers:
 
@@ -17,6 +17,14 @@ Implementation and independent review are routed by GitHub comment markers:
 - `gated-development:codex-evidence:v2` -> independent ChatGPT review transport
 - `gated-development:blocker:v2` -> blocker record; may be routed to ChatGPT when blocker triage is configured
 - PASS / verification-blocked / state comments -> durable ledger only
+
+### Keep generated logs out of git
+
+Version 1.4.7 adds artifact-backed evidence publication. Codex prepares one redacted review bundle and concise report outside the repository, then dispatches `codex-artifact-publish.yml` in AquaTwin with its existing automation request ID. The separate publisher uploads the bundle, appends actual run/artifact ID/URL/digests/expiration, and posts the terminal report before exiting. The original implementation dispatcher still exits immediately, and Codex does not wait for ChatGPT or duplicate the terminal comment.
+
+The publisher requests 30-day artifact retention, suppresses duplicate report publication, and uses trusted personal GitHub credentials so the evidence comment triggers the existing review workflow. Generated logs/reports are not committed by default. Reviewers inspect raw artifacts only for a material claim or required acceptance check; essential proof is never waived. Publication failures are retried without rerunning implementation. GitHub artifact expiry does not clean up Windows logs or authorize project-file deletion.
+
+See [Execution artifacts and publication](skills/gated-development-orchestration/references/execution-artifacts.md) for fixed filenames, readiness schema, dispatch command, credential requirements, retrieval, and cleanup. Blocker reports remain blockers; automatic return triage depends on the separately configured review filter. This update does not repair the local ChatGPT adapter.
 
 ### Supply the routing ID at activation; reuse it thereafter
 
@@ -39,7 +47,7 @@ Explicit human change to B:
   -> later corrections continue with B
 ```
 
-The routing ID is metadata, not repeated approval. Correction scope, execution authority, and independent review remain governed by the existing workflow. No new marker format, workflow, or dispatch is introduced.
+The routing ID is metadata, not repeated approval. Correction scope, execution authority, and independent review remain governed by the existing workflow. Routing reuse itself introduces no new executable marker or development dispatch; the artifact publisher is a separate publication transport.
 
 ### Bounded incidental repair authority
 

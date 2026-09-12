@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate checkpoint development through pinned product source documents, frozen GitHub work orders, local Codex execution, GitHub-routed return review, and independent ChatGPT review. Use for gate creation, activation, implementation, evidence review, bounded corrections, and review routing. Choose the current role before acting; reading or reviewing this skill does not authorize a checkpoint or a GitHub write.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration does not require access to the user's local filesystem.
 metadata:
-  version: "1.4.6"
+  version: "1.4.7"
   workflow: "github-codex-gated-development"
 ---
 
@@ -27,8 +27,9 @@ A checkpoint implementation run must never promote itself to its own independent
 |---|---|---|
 | Human / product owner | Intent, scope, architecture decisions, activation authority, cancellation and overrides; supplies the ChatGPT thread ID at activation and explicitly authorizes any later destination change | Nothing in this skill delegates final product authority away from the human |
 | Orchestrator / reviewer | Source tracing, source-of-truth documents, issue topology, activation, fresh remote review, correction orders, acceptance records, review routing | Treat Codex summaries or Actions success as proof; silently replace ChatGPT review with Codex/Work/API review; invent or infer a thread ID |
-| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope and qualifying incidental repair, authorized commit/push, evidence or blocker publication | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
+| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope and qualifying incidental repair, authorized commit/push, evidence/blocker authoring and publication handoff | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
 | Implementation launcher | Validate basic delivery and start Codex | Decide scope, branch policy, architecture, gate validity, acceptance, verification diagnosis, or repository repair |
+| Artifact publisher | Upload the prepared review bundle and post the authored report with actual artifact references | Implement, rerun verification, change routing, decide acceptance, or wait for ChatGPT |
 | Review transport | Recognize review-target comments and route them to the declared ChatGPT thread | Judge evidence, issue PASS/correction, or reinterpret the case |
 
 GitHub is the durable coordination record. Comment markers define message type and routing intent; the thread marker identifies a ChatGPT destination only.
@@ -58,6 +59,7 @@ This separates **product/work-order freezing** from **workflow-plugin evolution*
 - [Evidence and review](references/evidence-and-review.md)
 - [Automation handoff](references/automation-handoff.md)
 - [Model selection](references/model-selection.md)
+- [Execution artifacts and publication](references/execution-artifacts.md) — required when preparing, publishing, retrieving, or retrying run evidence
 
 Read the references required for the current phase from the currently installed plugin. Record the actual installed skill version/source used when reporting an automated run or review when observable.
 
@@ -78,7 +80,7 @@ Read the references required for the current phase from the currently installed 
 13. Preserve history; never fabricate SHAs, hashes, issue numbers, tool outcomes, credentials, runtime settings, verification, or ChatGPT thread IDs.
 14. The implementation runner is transport-only. It must not add case rules that are absent from the case/current plugin.
 15. The ChatGPT thread marker is routing metadata only. It does not grant scope, activation, correction, or acceptance authority.
-16. Codex never invokes the ChatGPT return bridge. It posts GitHub evidence/blocker and stops.
+16. Codex never invokes the ChatGPT return bridge. It authors the evidence/blocker and uses the configured publication transport; the terminal GitHub comment remains the review handoff.
 17. Every executable activation and correction requires exactly one valid ChatGPT thread marker. The human supplies the routing ID at activation; subsequent correction rounds reuse the established gate routing ID unchanged.
 18. Ask for the thread ID before activation when it has not been supplied. Do not ask again for routine corrections; change the established destination only on an explicit human request supplying a replacement ID.
 19. Missing or ambiguous routing is fail-closed. Recover it from the applicable gate activation/correction chain or ask the human if it cannot be established; never invent a destination or silently downgrade to manual return review.
@@ -89,6 +91,8 @@ Read the references required for the current phase from the currently installed 
 24. Stop and report a blocker only when resolving the failure requires unauthorized scope/path/repository operations, a product or architecture decision, unsafe runtime ownership, unavailable required tool/environment/access, or an external/baseline defect that cannot be resolved within the active gate.
 25. Runtime reasoning effort is per executable activation/correction. The standardized override field is `- Execution reasoning effort: <minimal|low|medium|high|xhigh|max>`; omission uses the runner default `max`.
 26. Bounded incidental repairs outside primary listed paths are authorized only under the conditions below; explicitly protected paths, product scope, and independent review remain binding.
+27. Generated run logs/reports are execution artifacts, not repository source. Keep them out of git unless a particular durable artifact is explicitly required; publish a redacted review bundle outside the repository.
+28. Artifact upload precedes the single terminal evidence comment. Queued publication, artifact upload, and publisher success are not checkpoint PASS. Retry publication without rerunning implementation.
 
 ## ChatGPT thread routing
 
@@ -181,7 +185,7 @@ For strict bridge/refactor work, existing behavior is the acceptance oracle unle
 
 Prepare the gate using the exact templates. Keep scope, product source pin, branch/baseline, verification and stop conditions explicit. Refer to the workflow as the current installed `gated-development-orchestration@aquanuity`; do not write a plugin version/repository SHA pin into the case.
 
-Draft a **Primary authorized path boundary**, include the bounded incidental repair allowance, and separately name any explicit read-only/protected exclusions. Do not make every unlisted file a blocker by boilerplate.
+Draft a **Primary authorized path boundary**, include the bounded incidental repair allowance, and separately name any explicit read-only/protected exclusions. Do not make every unlisted file a blocker by boilerplate. Keep machine-generated run logs out of the planned repository deliverables; use the execution-artifact contract for review bundles and name any genuinely required durable exception explicitly.
 
 When drafting stop conditions, do **not** use a blanket rule such as `stop on required verification failure`. Required verification failures caused by the active implementation are expected development feedback and remain repairable inside the gate when the repair is authorized. Stop conditions should describe the unresolved condition that makes further in-scope work impossible or unauthorized.
 
@@ -232,7 +236,7 @@ When a build fails, do not run dependent tests against stale binaries. Repair an
 
 ### Publish
 
-Post one terminal evidence or blocker using the standard markers.
+Author one terminal evidence or blocker using the standard markers. For AquaTwin runs with a valid launcher request, follow [Execution artifacts and publication](references/execution-artifacts.md): prepare `publication/evidence.md`, one redaction-reviewed `review-bundle.zip`, and a checksum `ready.json`; dispatch `codex-artifact-publish.yml` on `dev` with only the existing request ID. The publisher uploads the bundle and posts the authored report with actual artifact run/ID/URL/digests/expiration. Do not also post the terminal comment yourself.
 
 Copy the exact triggering ChatGPT thread marker unchanged as the second line of the evidence/blocker comment.
 
@@ -242,7 +246,7 @@ Evidence should report final required verification plus any material failed atte
 
 Report the actual current installed plugin version/source used when observable. Do not restate a historical case pin as the controlling skill.
 
-After publication, return the report URL and stop. **Do not call the ChatGPT return bridge yourself.**
+After publisher dispatch acknowledgment, return **publication queued, not yet confirmed posted**, the request ID, actual publisher run URL if available, and local evidence path; then stop. Do not wait for the publisher or ChatGPT, invent its future artifact/comment IDs, or require `completed.json`/`final.txt` that will exist only after your own process exits. Once publication is independently confirmed, the actual comment URL is the report reference. Legacy/manual/malformed-trigger publication limitations must be reported explicitly; do not fabricate a request or silently commit logs as a fallback. **Do not call the ChatGPT return bridge yourself.**
 
 ## Reviewer path
 
@@ -262,6 +266,8 @@ Independently fetch:
 Historical skill-version/source references in gate or evidence text are provenance, not review authority. Review under the current installed plugin while preserving the gate's frozen product/work-order authority.
 
 Independently inspect every off-list change against the bounded incidental repair conditions, including cumulative scope, protected paths, and final verification. Do not reject solely for absence from the primary path list, and do not accept solely because Codex labels it incidental.
+
+Start with the concise issue evidence and fresh remote source/diff. Do not demand all raw logs by default or ask that they be committed. Fetch the exact referenced publisher-run artifact only when needed for a material claim or an explicitly required acceptance check. Verify the appropriate outer-archive/inner-bundle digest and read only relevant material. Artifacts remain implementer-supplied evidence, not acceptance. Missing essential proof still requires verification-blocked; optional log expiry alone does not. See [Execution artifacts and publication](references/execution-artifacts.md).
 
 Issue one of:
 
@@ -321,7 +327,16 @@ The launcher records the resolved effort and whether it came from `runner-defaul
 
 ## Terminal outcomes
 
-Codex evidence:
+Asynchronous artifact publication:
+
+```text
+Evidence publication queued. Not yet confirmed posted. Not PASS.
+Automation request ID: <actual request_id>
+Publisher run: <actual URL if returned; otherwise not yet resolved>
+Local evidence: <actual path>
+```
+
+Codex evidence (only after confirmed publication):
 
 ```text
 Evidence posted. Awaiting independent review. Not PASS.
@@ -338,7 +353,8 @@ Report: <actual blocker URL>
 Publication failure:
 
 ```text
-Report publication blocked. No GitHub comment was posted. Not PASS.
+Report publication blocked or unconfirmed. Not PASS.
+State whether no comment was attempted, a comment is confirmed posted, or the outcome is ambiguous. Check before retrying publication only.
 Local report: <actual saved path or unavailable>
 ```
 

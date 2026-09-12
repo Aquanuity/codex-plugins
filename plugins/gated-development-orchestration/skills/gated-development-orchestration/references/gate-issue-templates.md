@@ -53,6 +53,7 @@ The frozen gate body defines the product/repository case. Routing metadata stays
 - Push policy: `agent | none`
 - Required commit message: `<message or N/A>`
 - Durable evidence destination: `<issue or authorized path>`
+- Execution artifacts: outside git; for automated AquaTwin runs use `codex-artifact-publish.yml` with the launcher request ID, per the current plugin publication contract
 - Workflow: current installed `gated-development-orchestration@aquanuity` (version/source intentionally not frozen)
 
 ## Objective
@@ -100,6 +101,14 @@ A historical Gated Development Orchestration version/source mismatch is not a st
 
 A qualifying incidental repair continues in the same execution/work-order version. Record the diagnosis before editing and list all off-list repairs and verification results in evidence; do not rewrite the frozen case to include them.
 ```
+
+## Evidence storage and publication
+
+Do not list generated logs, test output, or machine run reports as repository deliverables by default. Keep the issue summary substantive; package relevant redacted evidence in one external review bundle. Name a particular durable repository artifact only when explicitly required by the case/human.
+
+For automated AquaTwin runs, use [Execution artifacts and publication](execution-artifacts.md): Codex prepares `publication/evidence.md`, `review-bundle.zip`, and `ready.json` under the launcher's existing request directory, dispatches the fixed artifact publisher with only `request_id`, and stops with a queued/unconfirmed status. The publisher uploads and posts the single terminal report with actual artifact references. It does not add another development activation or correction, and it does not decide acceptance.
+
+Do not pre-post terminal evidence or fabricate artifact fields. The evidence/blocker templates below describe the authored report; its original first two routing lines remain unchanged when the publisher appends upload metadata. If publication is unavailable or ambiguous, report that accurately and recover publication only; do not commit logs as a fallback or issue an implementation correction to retrieve them. Raw logs are fetched by reviewers only when material proof requires them.
 
 ## Runtime override field
 

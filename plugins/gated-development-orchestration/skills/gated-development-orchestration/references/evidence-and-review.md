@@ -8,6 +8,12 @@ Use the currently installed **`gated-development-orchestration@aquanuity`** plug
 
 Historical gate/activation text that names an older plugin version, repository, commit, or `SKILL.md` URL is provenance only. It does not control the current implementation/review workflow and is not a blocker. Report the actual installed plugin version/source used when observable, but do not turn that report into a new gate pin.
 
+## Artifact-backed publication
+
+Read [Execution artifacts and publication](execution-artifacts.md). Generated logs and machine reports stay out of git unless explicitly required as durable deliverables. For a valid AquaTwin launcher run, author the report below as `publication/evidence.md`, prepare a redacted snapshot bundle and checksum readiness record, and dispatch the fixed artifact publisher with that request ID. It uploads first and posts this report with actual artifact references. Do not pre-post a second terminal report or invent future artifact IDs/URLs.
+
+Codex's dispatch acknowledgment means **publication queued**, not evidence posted. The confirmed issue comment is the durable report; the artifact is associated with the publisher run, not the already-finished launcher job. A transport-only publisher posting Codex's authored report does not become an independent reviewer.
+
 ## Evidence is not acceptance
 
 Actions success, CLI exit `0`, Codex summaries, and evidence URLs are not PASS. The reviewer independently fetches remote evidence.
@@ -92,6 +98,10 @@ Status: Evidence posted. **Not PASS.**
 |---|---|---|---|
 | `<path and smallest change>` | `<cause introduced/exposed by active work>` | `<qualification evidence, including cumulative scope>` | `<command/inspection and result>` |
 
+### Supporting evidence index
+- `<relevant bundle file names and material claims they support; snapshot cutoff and omissions>`
+- `<do not insert guessed artifact URLs; the publisher appends actual references after upload>`
+
 ### Unresolved evidence or blockers
 - ...
 
@@ -149,6 +159,14 @@ Execution is blocked. The gate remains Not PASS.
 Do not classify an old case line naming `Gated Development Orchestration 1.x` or an old plugin repository as a blocker. Use the current installed plugin instead.
 
 For a malformed trigger with no valid routing marker, the blocker cannot invent one; post without a fabricated routing line if GitHub reporting is still possible.
+
+## Artifact references and on-demand inspection
+
+The publisher appends an `Execution artifacts` section containing request ID, launcher and publisher runs, artifact name/ID/download URL, outer artifact archive SHA-256, inner `review-bundle.zip` SHA-256, evidence SHA-256, and actual expiration. Do not compare the inner and outer digests as if they were the same archive. An integrity digest does not establish that a reported test passed.
+
+Begin with the concise issue evidence and fresh remote diff. Do not require full raw logs or committed log files by default. Identify a material claim/explicit acceptance check that needs further proof, then retrieve that exact run's artifact by ID/name and read its relevant indexed files. Required verification is unchanged. If essential evidence is missing, expired, inaccessible, or contradictory, identify the gap rather than waiving it; optional missing logs alone do not invalidate acceptance.
+
+Publication failures are not implementation correction orders. Check for an existing terminal receipt before retrying publication of the same frozen inputs, and do not rerun implementation to recover an upload. Keep issue summaries durable, retain artifacts for the requested 30 days rather than deleting on PASS, and treat Windows cleanup separately.
 
 ## Independent review
 

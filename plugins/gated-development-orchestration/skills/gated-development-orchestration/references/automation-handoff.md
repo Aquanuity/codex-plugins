@@ -1,6 +1,6 @@
 # Automation Handoff Reference
 
-This is the shared automation contract for ChatGPT orchestration/review, local Codex implementation, the transport-only implementation runner, and the review-only return workflow.
+This is the shared automation contract for ChatGPT orchestration/review, local Codex implementation, the transport-only implementation runner, the artifact publisher, and the review-only return workflow.
 
 ## Current workflow plugin
 
@@ -126,7 +126,7 @@ Durable local run records may include:
 - `completed.json`
 - `error.json`
 
-A launch acknowledgment is not implementation completion or PASS.
+A launch acknowledgment is not implementation completion or PASS. These are local run records, not a list of files to commit or blindly upload. Use a redacted, explicitly selected snapshot; final process records may not exist before publication dispatch.
 
 ## Visible console
 
@@ -160,6 +160,20 @@ The runner records the resolved value in its delivery record and inserts a run-l
 
 This is runtime configuration, not scope or acceptance authority. The runner does not decide whether a lower/higher effort is appropriate.
 
+## Artifact publication transport
+
+For AquaTwin automated runs, load [Execution artifacts and publication](execution-artifacts.md). Codex prepares the authored report and closed review ZIP under the existing run's `publication` directory, writes the checksum/redaction readiness record last, then calls:
+
+```powershell
+gh workflow run codex-artifact-publish.yml --repo Aquanuity/AquaTwin --ref dev -f "request_id=$requestId"
+```
+
+The fixed workflow uses the original launcher `request_id`, not its finished job's artifact context. It derives fixed filenames and issue/routing correlation from the saved `request.json` on the same machine. It validates transport identity/readiness, snapshots inputs, suppresses duplicate publication, uploads one immutable bundle with 30-day requested retention, appends actual publisher run/artifact ID/URL/digests/expiration, and posts the terminal report. No branch/scope/acceptance policy moves into the publisher.
+
+The comment must be posted with the trusted user's stored local `gh` login or optional `AT_EVIDENCE_TOKEN`, not the job's `GITHUB_TOKEN`, so the existing evidence-comment review trigger can fire. The publisher preserves the report's first two marker lines, never invokes ChatGPT, and exits after publication. A blocker remains a blocker; the current review workflow's evidence-only filter does not automatically triage it.
+
+Codex stops after publication dispatch acknowledgment and reports queued/unconfirmed, not a fabricated evidence URL. Do not also post the terminal comment, wait for review, or keep the original launcher job open. The publisher's run owns the artifact; its run ID differs from the original launcher run. Its receipt is publication proof, not gate acceptance.
+
 ## Review-only return workflow
 
 The review workflow should have an allowlist, not interpret arbitrary comments.
@@ -185,18 +199,19 @@ Human supplies routing thread A at activation
   -> activation + marker A (+ optional per-round reasoning override)
   -> Codex using current installed plugin
   -> implement / verify / repair primary-path or qualifying incidental failures / re-verify
-  -> evidence + marker A copied unchanged
+  -> prepare redacted report/bundle + readiness; dispatch artifact publisher and stop
+  -> publisher uploads artifact, then posts evidence + marker A copied unchanged
   -> review workflow -> ChatGPT thread A
   -> independent review using current installed plugin
       -> PASS (ledger only)
       OR
       -> correction-required + reused marker A (no fresh UUID request)
-          -> Codex -> new evidence + marker A -> review workflow -> thread A
+          -> Codex -> bundle/publication handoff -> published evidence + marker A -> review workflow -> thread A
           -> repeat bounded correction/review under existing gate authority
 
 Only on explicit human request to change destination to B:
   -> next applicable correction records the request + one marker B
-  -> Codex -> evidence + marker B -> review workflow -> thread B
+  -> Codex -> bundle/publication handoff -> published evidence + marker B -> review workflow -> thread B
   -> later corrections reuse B without asking again
 ```
 
@@ -210,11 +225,15 @@ This avoids generic `Target:` fields. Message type plus routing marker is suffic
 
 ## Publication and retry
 
-Evidence/blocker publication must be confirmed from the GitHub tool/API result. On ambiguous publication, check before retrying. Retry publication only; do not rerun implementation merely to repair reporting.
+Evidence/blocker publication must be confirmed from GitHub, not inferred from successful publisher dispatch. The artifact publisher owns the final comment when that route is used; Codex must not duplicate it. On ambiguous publication, read the issue before retrying. The publisher receipt marker suppresses duplicate publication for the same immutable request/evidence/bundle. Retry publication only; do not rerun implementation, reactivate, or issue a correction merely to repair reporting. Unreferenced artifacts from interrupted attempts expire normally. See the execution-artifact contract for identity conflicts and retry recovery.
 
 For a valid execution, evidence/blocker must contain the copied thread marker. If routing metadata is missing, automatic review delivery must fail closed rather than choose a fallback destination.
 
 Evidence may report the actual installed plugin version/source used for traceability, but that report does not pin the next action.
+
+## Artifact retention and review
+
+Keep the issue summary/acceptance as durable history. Raw bundles request 30 days and are fetched on demand for material verification, not demanded by default. Essential missing proof still blocks review; an upload or digest is not PASS. The publisher removes only its temporary snapshot, not the original Windows logs. Local cleanup needs separate authorization and must not touch active runs or project data.
 
 ## Security and secrets
 
