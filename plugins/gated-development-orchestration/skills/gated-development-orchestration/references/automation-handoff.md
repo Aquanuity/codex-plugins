@@ -97,7 +97,7 @@ It should not enforce case-specific rules such as:
 - worktree cleanliness
 - gate/body hashes
 - work-order sequencing
-- allowed paths
+- primary-path and incidental-repair qualification
 - verification sufficiency
 - verification-failure diagnosis
 - checkpoint lifecycle validity
@@ -105,7 +105,9 @@ It should not enforce case-specific rules such as:
 
 Those belong to Codex following the case and current installed plugin. The implementer preflight rejects a malformed/missing thread marker before development work begins.
 
-A GitHub Actions job or launcher must not turn a failing build/test exit code into a gate-level blocker decision. The detached Codex process diagnoses verification failures and decides whether to repair in-scope or report a true blocker under the current skill/case.
+A GitHub Actions job or launcher must not turn a failing build/test exit code into a gate-level blocker decision. The detached Codex process diagnoses verification failures and decides whether to repair within primary paths, perform a qualifying incidental repair, or report a true blocker under the current skill/case.
+
+Incidental repair is an implementer decision under [the current plugin rule](../SKILL.md#bounded-incidental-repair), not a new runner permission flag or dispatch. It needs no extra Actions job, activation, or correction round. Codex records its diagnosis, makes only a qualifying minimal repair, reruns checks, and discloses off-list changes in evidence. ChatGPT independently reviews that qualification. Explicit protected paths, no-write gates, and repository/runtime restrictions still apply.
 
 ## Detached execution
 
@@ -181,7 +183,7 @@ Codex never calls the review bridge. GitHub evidence is the boundary between imp
 ChatGPT asks human for activation thread ID
   -> activation + supplied marker (+ optional per-round reasoning override)
   -> Codex using current installed plugin
-  -> implement / verify / repair in-scope failures / re-verify
+  -> implement / verify / repair primary-path or qualifying incidental failures / re-verify
   -> evidence + same marker
   -> review workflow
   -> ChatGPT independent review using current installed plugin

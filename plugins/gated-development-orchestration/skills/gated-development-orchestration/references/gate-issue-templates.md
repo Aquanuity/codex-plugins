@@ -61,6 +61,16 @@ The frozen gate body defines the product/repository case. Routing metadata stays
 ## Authorized work
 ...
 
+## Primary authorized path boundary
+- `<planned implementation/test/documentation paths>`
+
+This is the primary file list, not an absolute fence. For implementation/documentation work, a minimal adjacent off-list repair is authorized without another activation only when it is required to compile/test/verify the active work, introduced or exposed by that work, mechanical/low-risk, and the smallest coherent fix. It must not expand product behavior, architecture, ownership, public contracts, persistence/authorization semantics, dependencies, frameworks, or repository/build policy. Reverify and explicitly disclose it in evidence under the current plugin's bounded incidental repair rule.
+
+## Explicit hard exclusions
+- `<case-specific read-only/protected/no-touch paths or operations; none if no additional exclusions>`
+
+These exclusions override incidental repair authority. Analysis-only/no-write gates still permit no repository writes. Do not weaken verification or acceptance criteria to avoid a blocker.
+
 ## Prohibited work
 ...
 
@@ -73,7 +83,7 @@ The frozen gate body defines the product/repository case. Routing metadata stays
 ## Verification failure handling
 - A failed required build/test/check is not automatically a blocker.
 - Diagnose the failure before deciding whether to stop.
-- If the active implementation caused the failure and the repair remains inside authorized scope, paths, architecture, and repository operations, fix it and rerun the failed prerequisite plus dependent verification.
+- Fix failures repairable within primary paths or through qualifying bounded incidental repair; rerun the failed prerequisite plus dependent verification. Do not stop solely because a necessary mechanical repair was omitted from the primary file list.
 - Do not run dependent tests against stale binaries after a failed build.
 - Stop only when resolution requires unauthorized scope/path/repository operations, a product or architecture decision, unavailable required environment/tool/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution.
 
@@ -82,11 +92,13 @@ Stop and report only when continued work is unsafe or unauthorized, for example:
 - activation/body/product-source pin mismatch;
 - cancellation, supersession, acceptance, or competing execution;
 - repository preflight conflict that the gate does not authorize Codex to repair;
-- resolving a verification failure requires an unauthorized path, scope, architecture/product decision, repository repair, unavailable required environment/tool/access, unsafe runtime ownership, or an unresolvable external/baseline defect.
+- resolving a verification failure fails the bounded incidental repair conditions, violates an explicit hard exclusion, or needs unauthorized scope, a material design decision, repository repair, unavailable required environment/tool/access, unsafe runtime ownership, or an unresolvable external/baseline defect.
 
 Do not write `stop on required verification failure` as a blanket rule. A self-introduced compile/test failure that is repairable within the active gate is implementation work, not a blocker.
 
 A historical Gated Development Orchestration version/source mismatch is not a stop condition. Use the current installed plugin.
+
+A qualifying incidental repair continues in the same execution/work-order version. Record the diagnosis before editing and list all off-list repairs and verification results in evidence; do not rewrite the frozen case to include them.
 ```
 
 ## Runtime override field
@@ -125,7 +137,7 @@ Before posting an activation, ChatGPT must have the human-supplied current ChatG
 - Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
 - Activated by: `<human or authorized orchestrator>`
 
-This activation authorizes execution and triggers the configured Codex launcher. No separate dispatch is required.
+This activation authorizes execution and triggers the configured Codex launcher. Apply the current plugin's bounded incidental repair rule within this gate, subject to its explicit hard exclusions. No separate dispatch is required.
 ```
 
 Do not add a plugin version, repository SHA, package commit, or old skill URL to the activation.
@@ -147,7 +159,9 @@ Before posting an executable correction, ChatGPT must have the human-supplied cu
 - Workflow: current installed `gated-development-orchestration@aquanuity`
 - Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
 
-<complete bounded correction work order>
+<complete bounded correction work order, including primary correction paths and explicit hard exclusions>
+
+Qualifying incidental repairs may support this correction only; they do not reopen unrelated gate work or override explicit hard exclusions.
 ```
 
 The correction's reasoning-effort field applies only to that correction execution. If omitted, that correction runs at the runner default `max` regardless of any earlier activation/correction override.

@@ -1,6 +1,6 @@
 {
   "name": "gated-development-orchestration",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Coordinate checkpoint development with GitHub-routed Codex implementation and independent ChatGPT review.",
   "author": {
     "name": "Aquanuity"

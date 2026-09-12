@@ -18,9 +18,10 @@ A failed required build/test/check during implementation is not automatically a 
 
 Before publishing a blocker, Codex classifies the cause:
 
-1. **Active implementation defect** — the current gate introduced the failure and the repair fits the authorized scope, path boundary, architecture, and repository operations. Repair it and rerun the failed prerequisite and dependent verification. This is normal implementation work.
-2. **Authorized baseline/environment handling** — an external/baseline condition has an already-authorized, truthful in-gate resolution. Apply only that authorized resolution and report it; do not hide the condition.
-3. **True blocker** — resolution requires unauthorized paths/scope/repository repair, a product or architecture decision, unavailable required tool/environment/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution. Preserve work, publish a blocker, and stop.
+1. **Active implementation defect within primary paths** — repair it within the authorized scope, architecture, and repository operations, then rerun the failed prerequisite and dependent verification.
+2. **Bounded incidental repair outside primary paths** — the active work introduced or exposed a directly necessary compile/test/verification repair and every [incidental repair condition](../SKILL.md#bounded-incidental-repair) holds. Record the diagnosis, make the smallest mechanical fix, reverify, disclose it, and continue the same execution without another dispatch.
+3. **Other authorized baseline/environment handling** — apply only an already-authorized, truthful resolution. Do not hide the condition or expand into unrelated maintenance.
+4. **True blocker** — a repair fails the incidental conditions, violates explicit hard exclusions, or requires unauthorized scope/repository repair, a material design decision, unavailable required tool/environment/access, unsafe runtime ownership, or an external/baseline defect with no authorized resolution. Preserve work, state the specific unmet condition, publish a blocker, and stop.
 
 When a prerequisite build fails, dependent tests stop until that prerequisite is repaired. This pauses the dependent verification sequence; it does not stop the implementation session when an in-scope repair is available.
 
@@ -66,7 +67,7 @@ Status: Evidence posted. **Not PASS.**
 - Remote availability:
 
 ### Changed files
-- ...
+- `<path — primary authorized work | qualifying incidental repair | separately human-authorized change>`
 
 ### Implemented or analyzed scope
 - ...
@@ -84,11 +85,19 @@ Status: Evidence posted. **Not PASS.**
 ### Material diagnostic failures repaired during execution
 - `<failure, cause, authorized repair, successful rerun; or none>`
 
+### Incidental repairs outside primary paths
+`NONE` or one row per off-list repair. Include the pre-edit diagnosis; do not hide these under generic scope confirmations.
+
+| Path / repair | Gate-related failure and why repair was necessary | Why mechanical, minimal, and behavior-preserving; hard exclusions checked | Verification rerun and actual outcome |
+|---|---|---|---|
+| `<path and smallest change>` | `<cause introduced/exposed by active work>` | `<qualification evidence, including cumulative scope>` | `<command/inspection and result>` |
+
 ### Unresolved evidence or blockers
 - ...
 
 ### Explicit confirmations
-- No out-of-scope implementation: `YES | NO`
+- No unauthorized product/scope changes: `YES | NO`
+- All off-list incidental repairs disclosed and qualified: `YES | NO | N/A`
 - No next-gate work: `YES | NO`
 - Required verification complete: `YES | NO`
 
@@ -102,7 +111,7 @@ If a newly delivered activation/correction lacks exactly one valid thread marker
 
 ## Blocker comment
 
-Use this only after establishing a true blocker, not for a repairable active-implementation defect or a historical plugin-version mismatch.
+Use this only after establishing a true blocker, not for a repairable active-implementation defect, a qualifying incidental repair, or a historical plugin-version mismatch. File-list omission alone is not a blocker.
 
 ```markdown
 <!-- gated-development:blocker:v2 -->
@@ -125,7 +134,8 @@ Use this only after establishing a true blocker, not for a repairable active-imp
 
 ### Diagnosis performed
 - Why this cannot be repaired within the active gate:
-- In-scope repair attempted or considered:
+- Primary-path or incidental repair attempted/considered:
+- Specific incidental-repair condition not satisfied or explicit hard exclusion preventing repair:
 
 ### Work already performed
 - ...
@@ -158,7 +168,9 @@ Do not trust the evidence report's PASS-like statements without remote confirmat
 
 Do not switch to a historical plugin package because the gate/evidence text names one. Historical plugin metadata is provenance only; current installed plugin mechanics govern review.
 
-During review, distinguish a historical transient failure that was repaired and successfully reverified from an unresolved blocker. A first-attempt compile/test failure does not invalidate a gate when the final required verification passes and the repair stayed within scope.
+During review, distinguish a historical transient failure that was repaired and successfully reverified from an unresolved blocker. A first-attempt compile/test failure does not invalidate a gate when final required verification passes and the repair was authorized, including qualifying incidental repair.
+
+Independently inspect every off-list change and its cumulative effect against all incidental-repair conditions, hard exclusions, and final checks. Neither absence from the primary file list nor Codex's `incidental` label decides acceptance. Reject semantic/design expansion and weakened tests; a qualifying mechanical repair is not a scope violation. Missing qualification/verification evidence is not proof of qualification.
 
 ## Review outcomes
 
@@ -230,6 +242,8 @@ The override applies only to this correction. Omit it for `max`; later correctio
 
 ### Authorized correction
 - ...
+- Primary correction paths and explicit hard exclusions: `<bounded list>`
+- The current plugin's incidental repair allowance applies only to work necessary for this correction; no unrelated gate work is reopened.
 
 ### Required verification
 1. ...

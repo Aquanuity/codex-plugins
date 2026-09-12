@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate checkpoint development through pinned product source documents, frozen GitHub work orders, local Codex execution, GitHub-routed return review, and independent ChatGPT review. Use for gate creation, activation, implementation, evidence review, bounded corrections, and review routing. Choose the current role before acting; reading or reviewing this skill does not authorize a checkpoint or a GitHub write.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration does not require access to the user's local filesystem.
 metadata:
-  version: "1.4.4"
+  version: "1.4.5"
   workflow: "github-codex-gated-development"
 ---
 
@@ -27,7 +27,7 @@ A checkpoint implementation run must never promote itself to its own independent
 |---|---|---|
 | Human / product owner | Intent, scope, architecture decisions, activation authority, cancellation and overrides; supplies the current ChatGPT thread ID for executable activation/correction routing | Nothing in this skill delegates final product authority away from the human |
 | Orchestrator / reviewer | Source tracing, source-of-truth documents, issue topology, activation, fresh remote review, correction orders, acceptance records, review routing | Treat Codex summaries or Actions success as proof; silently replace ChatGPT review with Codex/Work/API review; invent or infer a thread ID |
-| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope repair of its own implementation, authorized commit/push, evidence or blocker publication | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
+| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope and qualifying incidental repair, authorized commit/push, evidence or blocker publication | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
 | Implementation launcher | Validate basic delivery and start Codex | Decide scope, branch policy, architecture, gate validity, acceptance, verification diagnosis, or repository repair |
 | Review transport | Recognize review-target comments and route them to the declared ChatGPT thread | Judge evidence, issue PASS/correction, or reinterpret the case |
 
@@ -65,7 +65,7 @@ Read the references required for the current phase from the currently installed 
 
 1. The pinned **product** source-of-truth defines feature meaning and architecture. The frozen gate body plus matching activation authorize only the current slice.
 2. The Gated Development Orchestration plugin version/source is not gate authority and is not frozen; use the currently installed `gated-development-orchestration@aquanuity` workflow contract.
-3. Keep checkpoints as checkpoints. Corrections stay in the same gate only while objective, architecture and maximum path boundary remain valid.
+3. Keep checkpoints as checkpoints. Corrections stay in the same gate only while objective, architecture, primary paths plus qualifying incidental repairs, and explicit hard exclusions remain valid.
 4. A valid activation is also the execution trigger. A valid correction work order is also the correction trigger. No extra dispatch comment is required.
 5. PASS accepts the current checkpoint; it does not itself authorize an unactivated successor.
 6. Codex implements and reports; ChatGPT independently inspects remote evidence. Codex never issues its own independent PASS.
@@ -73,7 +73,7 @@ Read the references required for the current phase from the currently installed 
 8. Implementation/documentation: implement -> verify -> repair in-scope failures -> re-verify -> commit -> normal authorized push -> confirm remote containment -> evidence -> stop.
 9. Analysis-only: no repository writes/commit/push.
 10. Do not merge, rebase, pull, reset, clean, force-push, switch worktrees, create branches, or repair repository state unless the case explicitly authorizes that operation.
-11. Discovered cleanup/defects/future work are not automatically authorized.
+11. Unrelated cleanup/defects/future work are not authorized. Necessary adjacent repairs must satisfy the bounded incidental repair rule below.
 12. Launch success, CLI exit, a posted URL, or evidence is not acceptance.
 13. Preserve history; never fabricate SHAs, hashes, issue numbers, tool outcomes, credentials, runtime settings, verification, or ChatGPT thread IDs.
 14. The implementation runner is transport-only. It must not add case rules that are absent from the case/current plugin.
@@ -84,10 +84,11 @@ Read the references required for the current phase from the currently installed 
 19. Missing routing metadata is fail-closed for new work. Do not silently downgrade a new activation/correction to manual return review.
 20. Never use a Codex session/thread ID as a ChatGPT conversation destination.
 21. A required build/test/verification failure is not automatically a blocker. Diagnose its cause first.
-22. If the active implementation introduced the failure and the repair fits the authorized scope, paths, architecture, and repository operations, Codex must repair it and rerun the failed verification.
+22. If a failure is repairable within primary authorized paths or qualifies for bounded incidental repair below, Codex must fix it and rerun verification rather than stop merely because a check failed or a file was not listed.
 23. A dependent verification step may pause after its prerequisite build/check fails, but the implementation session continues while an in-scope repair remains available.
 24. Stop and report a blocker only when resolving the failure requires unauthorized scope/path/repository operations, a product or architecture decision, unsafe runtime ownership, unavailable required tool/environment/access, or an external/baseline defect that cannot be resolved within the active gate.
 25. Runtime reasoning effort is per executable activation/correction. The standardized override field is `- Execution reasoning effort: <minimal|low|medium|high|xhigh|max>`; omission uses the runner default `max`.
+26. Bounded incidental repairs outside primary listed paths are authorized only under the conditions below; explicitly protected paths, product scope, and independent review remain binding.
 
 ## ChatGPT thread routing
 
@@ -143,6 +144,25 @@ The implementer must not perform checkpoint/correction work from that malformed 
 
 Historical pre-1.4.1 records remain historical and are not edited merely to retrofit routing metadata.
 
+## Bounded incidental repair
+
+The listed files are the **primary authorized path boundary**, not by themselves an absolute fence. In an activated implementation/documentation gate or correction, Codex may make a minimal adjacent repair outside that list without new authorization **only when all of the following are established before editing**:
+
+1. **Necessary and directly related:** the active work introduced or exposed the problem, and the repair is required to compile, test, or verify that already-authorized work. An unrelated defect noticed along the way is not enough.
+2. **Mechanical and low-risk:** the repair has no material product or architecture decision and no competing design choice that needs human judgment. A small diff alone does not establish this.
+3. **Smallest coherent change:** change only the directly necessary lines/files. Do not bundle cleanup, refactoring, or future work, or split a material redesign into nominally incidental edits.
+4. **No semantic expansion:** the repair does not change product behavior beyond the already-authorized gate, architecture, ownership, public contracts, persistence/authorization semantics, dependencies, packages, frameworks, or repository/build policy.
+5. **Existing prohibitions remain binding:** do not touch explicitly read-only/protected/no-touch files, override a human prohibition on incidental repairs, perform unauthorized repository-state repair, or mutate an unsafe runtime/test project. Analysis-only/no-write gates remain no-write.
+6. **Verifiable without weakening the check:** rerun the failed prerequisite and dependent verification. Do not delete/skip tests, weaken assertions, suppress errors, change acceptance criteria, or claim success merely to obtain a green result.
+
+A missing import, an explicit generic type argument, a test call updated to an already-authorized signature, a focused fixture wiring fix, or an existing test-project compile/link item may qualify. These are examples, not automatic exemptions: each must satisfy every condition above. New save semantics, a public API redesign, a new package/framework, unrelated subsystem work, or an explicit read-only-file change requires human authorization even if only one line changes.
+
+Before the repair, record a brief diagnosis and why it qualifies in the run notes; this is not a new GitHub dispatch/approval step. Apply the minimal fix, rerun verification, and disclose every off-list repair in terminal evidence: paths, failure/cause, necessity, why it is mechanical and behavior-preserving, and actual verification results. Evaluate the cumulative repair scope, not just each edit in isolation.
+
+If any condition fails or cannot be established, preserve work and report the precise blocker/decision needed. **Do not stop solely because a necessary repair's file was omitted from the primary list.** A qualifying repair stays in the same execution and work-order version; it is not an independent review correction round and never constitutes self-approval.
+
+For existing gates, a generic legacy label such as `maximum path boundary` is not by itself a prohibition on this bounded repair rule. Explicit case-specific read-only/no-touch restrictions and human denials still take precedence. Do not edit the frozen issue body or source pin to disguise an off-list change. Frozen product scope, branch/baseline, allowed repository operations, acceptance criteria, and prior history remain unchanged.
+
 ## Orchestrator path
 
 ### Define and prepare
@@ -152,6 +172,8 @@ Inspect repository behavior and architecture. Separate current behavior from des
 For strict bridge/refactor work, existing behavior is the acceptance oracle unless the gate explicitly authorizes behavior change.
 
 Prepare the gate using the exact templates. Keep scope, product source pin, branch/baseline, verification and stop conditions explicit. Refer to the workflow as the current installed `gated-development-orchestration@aquanuity`; do not write a plugin version/repository SHA pin into the case.
+
+Draft a **Primary authorized path boundary**, include the bounded incidental repair allowance, and separately name any explicit read-only/protected exclusions. Do not make every unlisted file a blocker by boilerplate.
 
 When drafting stop conditions, do **not** use a blanket rule such as `stop on required verification failure`. Required verification failures caused by the active implementation are expected development feedback and remain repairable inside the gate when the repair is authorized. Stop conditions should describe the unresolved condition that makes further in-scope work impossible or unauthorized.
 
@@ -193,9 +215,10 @@ Perform only the authorized checkpoint/correction. Preserve native behavior for 
 
 Run the required verification and classify failures before deciding whether to stop:
 
-1. **Active implementation defect** — the current gate's code/documentation caused the failure and the repair is within authorized scope/path/architecture. Fix it, then rerun the failed prerequisite and its dependent checks. Do not publish a blocker merely because the first verification attempt failed.
-2. **Baseline/external defect, but locally resolvable without unauthorized change** — use an already-authorized valid workaround only when the case permits it and report it truthfully. Do not hide baseline defects.
-3. **True blocker** — resolution requires an unauthorized path or behavior, architecture/product decision, repository repair outside the case, unavailable required tool/environment/access, unsafe runtime takeover, or an external/baseline defect with no authorized resolution. Preserve work, report the blocker, and stop.
+1. **Active implementation defect within primary paths** — fix it within the authorized scope/architecture, then rerun the failed prerequisite and dependent checks. Do not publish a blocker merely because the first verification attempt failed.
+2. **Qualifying incidental repair outside primary paths** — diagnose the gate-related failure against every bounded incidental repair condition above. If all hold, make the smallest repair, reverify, disclose it, and continue the same execution without a new activation/correction.
+3. **Other baseline/external condition with an authorized resolution** — use only an already-authorized, truthful resolution. Do not hide baseline defects or treat incidental repair as permission for unrelated cleanup.
+4. **True blocker** — resolution fails the incidental-repair conditions and requires unauthorized behavior/protected-path changes, a product or architecture decision, repository repair outside the case, unavailable required tool/environment/access, unsafe runtime takeover, or an external/baseline defect with no authorized resolution. Preserve work, report the exact unmet condition, and stop.
 
 When a build fails, do not run dependent tests against stale binaries. Repair and rebuild first when the failure is in-scope. Stopping the dependent sequence is not the same as stopping the implementation session.
 
@@ -204,6 +227,8 @@ When a build fails, do not run dependent tests against stale binaries. Repair an
 Post one terminal evidence or blocker using the standard markers.
 
 Copy the exact triggering ChatGPT thread marker unchanged as the second line of the evidence/blocker comment.
+
+Evidence must separately disclose every qualifying incidental repair outside primary paths, including its necessity, minimality, preserved behavior, and verification results. An omitted file is not automatically unauthorized, but calling a change incidental does not prove that it qualifies.
 
 Evidence should report final required verification plus any material failed attempts that affected diagnosis. A transient self-introduced compile/test failure that was repaired and reverified is development history, not a blocker.
 
@@ -227,6 +252,8 @@ Independently fetch:
 - acceptance criteria
 
 Historical skill-version/source references in gate or evidence text are provenance, not review authority. Review under the current installed plugin while preserving the gate's frozen product/work-order authority.
+
+Independently inspect every off-list change against the bounded incidental repair conditions, including cumulative scope, protected paths, and final verification. Do not reject solely for absence from the primary path list, and do not accept solely because Codex labels it incidental.
 
 Issue one of:
 

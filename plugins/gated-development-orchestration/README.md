@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 1.4.4
+# Gated Development Orchestration Plugin 1.4.5
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.4** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This plugin wraps the shared **Gated Development Orchestration 1.4.5** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
 
 ## Included
 
@@ -8,7 +8,7 @@ This plugin wraps the shared **Gated Development Orchestration 1.4.4** skill for
 - `.app.json` — existing GitHub app reference; unchanged
 - `skills/gated-development-orchestration/` — shared workflow contract
 
-## 1.4.4 behavior
+## 1.4.5 behavior
 
 Implementation and independent review are routed by GitHub comment markers:
 
@@ -21,6 +21,16 @@ Implementation and independent review are routed by GitHub comment markers:
 Every new executable activation and correction requires a ChatGPT thread routing marker. During activation or correction authoring, ChatGPT must ask the human for the current ChatGPT thread ID unless it has already been explicitly supplied for that exact executable comment. If the human does not provide a valid thread ID, the activation/correction cannot be published.
 
 ChatGPT must not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID. Codex copies the supplied marker unchanged into its evidence or blocker. The external review workflow then returns the review request to that exact ChatGPT conversation.
+
+### Bounded incidental repair authority
+
+Version 1.4.5 treats listed paths as the **primary authorized path boundary**, not an automatic stop for every omitted file. Codex may make a minimal adjacent off-list repair without another approval round when the active work introduced or exposed it, it is required to compile/test/verify the authorized gate, it is mechanical/low-risk, and it introduces no product-behavior, architecture, ownership, public-contract, persistence/authorization, dependency/framework, or repository/build-policy expansion.
+
+Codex records why the repair qualifies before editing, makes the smallest coherent change, reruns prerequisite/dependent checks without weakening them, and explicitly lists the off-list repair and results in evidence. The reviewer independently checks qualification and cumulative scope. A missing import, explicit generic argument, fixture wiring, or test compile/link item can qualify; a small diff alone is not permission.
+
+Explicit read-only/protected/no-touch restrictions and human denials still win. Analysis-only gates stay no-write. Repository-state repair, unsafe runtime changes, unrelated cleanup, or material design decisions still require authorization. If qualification cannot be established, report the specific blocker rather than only `file not pre-approved`. No new runner flag, workflow, or dispatch is added.
+
+See [the full incidental repair rule](skills/gated-development-orchestration/SKILL.md#bounded-incidental-repair).
 
 ### Current installed plugin, not a frozen gate pin
 
@@ -64,7 +74,7 @@ If the field is omitted, the runner uses `max`. The override applies only to tha
 
 A failed required build, test, or verification check must be diagnosed before Codex decides to stop.
 
-- If the active implementation caused the failure and the fix stays inside the authorized scope, path boundary, architecture, and repository operations, Codex fixes it and reruns the failed prerequisite and dependent verification.
+- If the repair fits primary authorized paths or qualifies for bounded incidental repair without changing the authorized product scope, architecture, or repository operations, Codex fixes it and reruns the failed prerequisite and dependent verification.
 - Dependent tests do not run against stale binaries after a failed build, but the implementation session continues while an authorized repair exists.
 - Codex reports a blocker only when resolution requires unauthorized scope/path/repository repair, a product or architecture decision, unavailable required environment/tool/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution.
 

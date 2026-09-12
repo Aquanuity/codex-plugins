@@ -1,6 +1,6 @@
 # Authority and Lifecycle Reference
 
-Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, verification failures, runtime overrides, plugin authority, or acceptance.
+Use when defining gate authority, freezing/hashing work orders, interpreting state, corrections, routing metadata, verification failures, runtime overrides, plugin authority, bounded incidental repair, or acceptance.
 
 ## Artifact authority
 
@@ -108,14 +108,24 @@ Require remotely reviewable ending evidence according to the case. Codex impleme
 
 No repository writes, commits, or pushes. Review baseline/evidence/no-write compliance.
 
+## Primary paths and incidental repair authority
+
+For implementation/documentation gates and their corrections, the planned file list is the **primary authorized path boundary**. The current plugin authorizes the minimal adjacent repair outside it only when every condition in [Bounded incidental repair](../SKILL.md#bounded-incidental-repair) holds: directly necessary for active-gate verification, introduced or exposed by that work, mechanical/low-risk, smallest coherent change, no semantic/architecture/contract/dependency/policy expansion, no protected-path violation, and meaningful re-verification.
+
+A qualifying repair remains `IN_PROGRESS` in the same execution and work-order version. It needs neither a new activation nor a correction dispatch. Record the pre-edit diagnosis, disclose every off-list path and its verification in evidence, and retain independent review. Qualification is a bounded implementation decision, not permission to change acceptance criteria or self-approve.
+
+Omission from the primary list, or a generic legacy `maximum path boundary` heading, is not alone a blocker. Explicit case-specific read-only/protected/no-touch restrictions, human prohibitions on incidental repairs, analysis-only/no-write status, and repository-operation restrictions remain binding. These require explicit human authorization to change. Evaluate cumulative scope; do not chain small repairs into a redesign or unrelated cleanup.
+
+The allowance does not change frozen product intent, product source commits, branch/baseline, acceptance criteria, or history. Do not edit a frozen body/hash to conceal incidental changes. If a proposed repair fails any qualification or its safety cannot be established, stop and report the specific boundary or decision needed rather than merely saying the file was not pre-approved.
+
 ## Verification failures and blocker authority
 
 Verification exists to find defects in the active work. Therefore a required build/test/check failure is not itself a state transition to BLOCKED.
 
 Codex owns first-line diagnosis while implementing:
 
-- **In-scope implementation defect:** caused by the active gate's changes and repairable within the frozen scope/path/architecture/repository-operation boundary. Codex fixes it and reruns verification. No new authorization or correction comment is needed.
-- **True blocker:** cannot be resolved without unauthorized paths/scope/repository repair, a product or architecture decision, unavailable required environment/tool/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution. Codex preserves work, posts a blocker, and stops.
+- **Authorized repair:** an active implementation defect within primary paths, or an off-list repair satisfying every bounded incidental repair condition above. Codex fixes it and reruns verification in the same execution; no new authorization or correction comment is needed. Off-list repairs must be disclosed.
+- **True blocker:** fails the incidental-repair qualification and cannot be resolved without protected-path changes, unauthorized scope/repository repair, a product or architecture decision, unavailable required environment/tool/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution. Codex preserves work, posts a blocker, and stops.
 
 A failed prerequisite build may stop dependent tests from running against stale output. That does not stop the implementation session when the prerequisite can be repaired in-scope.
 

@@ -6,7 +6,7 @@ Aquanuity's Codex plugin marketplace. The catalog lives at [`.agents/plugins/mar
 
 | Plugin | Version | Purpose |
 | --- | --- | --- |
-| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.4 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
+| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.5 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
 
 The marketplace identifier is `aquanuity`. Gated Development Orchestration is the first catalog entry.
 
@@ -59,13 +59,17 @@ plugins/gated-development-orchestration/
 
 The catalog's `source.path` resolves from the repository root. Plugin version, display information, skills, and app references remain in the plugin manifest.
 
-## Version 1.4.4 behavior
+## Version 1.4.5 behavior
 
 Every new executable activation or correction requires the current ChatGPT thread ID, explicitly supplied for that comment. If it has not been supplied, the orchestrator must ask the human. Without a valid ID, it cannot publish the activation or correction.
 
 Codex preserves the supplied routing marker in its evidence or blocker. The plugin includes the workflow contract and GitHub app reference; the implementation launcher and ChatGPT return transport require separate setup. See the [automation handoff](plugins/gated-development-orchestration/skills/gated-development-orchestration/references/automation-handoff.md).
 
-Version 1.4.4 changes workflow-version authority: gates no longer pin a Gated Development Orchestration package version/source. The stable workflow identity is `gated-development-orchestration@aquanuity`, and each orchestration/implementation/review action uses the currently installed plugin. Historical plugin pins in older gate records are provenance only and must not force use of obsolete packages or become blockers. Product source commits, gate scope, branch/baseline, path boundaries, acceptance criteria, and work-order history remain frozen according to the case.
+Version 1.4.5 adds **bounded incidental repair authority**: the planned file list is a primary boundary, not an automatic stop for a necessary adjacent compile/test fix. Codex may repair a problem introduced or exposed by the active gate outside that list only when it is directly necessary, mechanical/low-risk, minimal, and does not expand product behavior, architecture, ownership, public contracts, persistence/authorization semantics, dependencies/frameworks, or repository/build policy. Explicit protected/read-only paths, no-write gates, and human prohibitions still apply.
+
+Codex must record the diagnosis before editing, reverify without weakening tests, and disclose every off-list repair and actual outcome in evidence. ChatGPT independently reviews the qualification and cumulative scope. No new runner flag, workflow, or dispatch is needed. See the [complete repair rule](plugins/gated-development-orchestration/skills/gated-development-orchestration/SKILL.md#bounded-incidental-repair).
+
+The workflow-version rules introduced in 1.4.4 remain: gates no longer pin a Gated Development Orchestration package version/source. The stable workflow identity is `gated-development-orchestration@aquanuity`, and each orchestration/implementation/review action uses the currently installed plugin. Historical plugin pins in older gate records are provenance only and must not force use of obsolete packages or become blockers. Product source commits, gate scope, branch/baseline, path boundaries, acceptance criteria, and work-order history remain frozen according to the case.
 
 The runner's per-round reasoning override field remains:
 
@@ -79,7 +83,7 @@ The verification-failure rules from 1.4.2 remain: a failed required build/test/c
 
 ## Package provenance
 
-Version 1.4.4 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata identify the currently published package version. Gate work orders intentionally do not freeze that version; execution/review resolves the current installed plugin.
+Version 1.4.5 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata identify the currently published package version. Gate work orders intentionally do not freeze that version; execution/review resolves the current installed plugin.
 
 `.gitattributes` disables line-ending conversion for the plugin package.
 
