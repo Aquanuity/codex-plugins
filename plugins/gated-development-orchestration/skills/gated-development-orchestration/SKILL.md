@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate checkpoint development through pinned product source documents, frozen GitHub work orders, local Codex execution, GitHub-routed return review, and independent ChatGPT review. Use for gate creation, activation, implementation, evidence review, bounded corrections, and review routing. Choose the current role before acting; reading or reviewing this skill does not authorize a checkpoint or a GitHub write.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration does not require access to the user's local filesystem.
 metadata:
-  version: "1.4.5"
+  version: "1.4.6"
   workflow: "github-codex-gated-development"
 ---
 
@@ -25,7 +25,7 @@ A checkpoint implementation run must never promote itself to its own independent
 
 | Role | Owns | Must not do |
 |---|---|---|
-| Human / product owner | Intent, scope, architecture decisions, activation authority, cancellation and overrides; supplies the current ChatGPT thread ID for executable activation/correction routing | Nothing in this skill delegates final product authority away from the human |
+| Human / product owner | Intent, scope, architecture decisions, activation authority, cancellation and overrides; supplies the ChatGPT thread ID at activation and explicitly authorizes any later destination change | Nothing in this skill delegates final product authority away from the human |
 | Orchestrator / reviewer | Source tracing, source-of-truth documents, issue topology, activation, fresh remote review, correction orders, acceptance records, review routing | Treat Codex summaries or Actions success as proof; silently replace ChatGPT review with Codex/Work/API review; invent or infer a thread ID |
 | Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope and qualifying incidental repair, authorized commit/push, evidence or blocker publication | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
 | Implementation launcher | Validate basic delivery and start Codex | Decide scope, branch policy, architecture, gate validity, acceptance, verification diagnosis, or repository repair |
@@ -79,9 +79,9 @@ Read the references required for the current phase from the currently installed 
 14. The implementation runner is transport-only. It must not add case rules that are absent from the case/current plugin.
 15. The ChatGPT thread marker is routing metadata only. It does not grant scope, activation, correction, or acceptance authority.
 16. Codex never invokes the ChatGPT return bridge. It posts GitHub evidence/blocker and stops.
-17. Every new executable activation and correction requires exactly one human-supplied current ChatGPT thread ID.
-18. If the human has not supplied that thread ID for the executable activation/correction, ChatGPT must ask for it and must not publish the executable comment until it is provided.
-19. Missing routing metadata is fail-closed for new work. Do not silently downgrade a new activation/correction to manual return review.
+17. Every executable activation and correction requires exactly one valid ChatGPT thread marker. The human supplies the routing ID at activation; subsequent correction rounds reuse the established gate routing ID unchanged.
+18. Ask for the thread ID before activation when it has not been supplied. Do not ask again for routine corrections; change the established destination only on an explicit human request supplying a replacement ID.
+19. Missing or ambiguous routing is fail-closed. Recover it from the applicable gate activation/correction chain or ask the human if it cannot be established; never invent a destination or silently downgrade to manual return review.
 20. Never use a Codex session/thread ID as a ChatGPT conversation destination.
 21. A required build/test/verification failure is not automatically a blocker. Diagnose its cause first.
 22. If a failure is repairable within primary authorized paths or qualifies for bounded incidental repair below, Codex must fix it and rerun verification rather than stop merely because a check failed or a file was not listed.
@@ -92,57 +92,65 @@ Read the references required for the current phase from the currently installed 
 
 ## ChatGPT thread routing
 
-Every new executable activation or correction requires exactly one:
+Every executable activation or correction requires exactly one:
 
 ```text
 <!-- gated-development:chatgpt-thread:v1 id=<UUID> -->
 ```
 
-### Human-supplied routing requirement
+### Establish the gate routing thread at activation
 
-The thread ID comes from the human.
+The human supplies the current ChatGPT thread ID when activating the gate. If it has already been explicitly supplied for this activation, use it; otherwise ask for it. Validate the UUID shape and include it in the activation. Without a valid supplied ID, keep the gate READY and do not publish the executable activation.
 
-Before publishing an executable activation or correction:
+That activation marker establishes the gate's review-routing thread. The ID is routing metadata, not a per-round approval token. Supplying it once is sufficient for subsequent evidence, blocker, review, and correction cycles for that gate.
 
-1. If the human already supplied a valid current ChatGPT thread UUID for this exact executable comment in the current conversation, use it.
-2. Otherwise ask the human to provide the current ChatGPT thread ID.
-3. Validate only the UUID shape; do not reinterpret, normalize to another ID, or replace it.
-4. If the human does not provide a valid thread ID, stop. The gate may remain READY, but it cannot be activated and a correction cannot be dispatched.
+Do not invent the activation destination, infer it from Codex/project metadata, or select an ID from another gate, conversation, or a fixed test default.
 
-Do not attempt to discover the thread ID from Codex metadata, project identifiers, prior GitHub comments, another ChatGPT conversation, a fixed default, or a previously successful test.
+### Reuse through correction rounds
 
-### Placement
+Before issuing a correction, read the applicable activation/correction and the exact evidence being reviewed. Resolve the established routing marker from that gate's current work-order chain and confirm the evidence copied its triggering marker. Reuse that marker unchanged in the correction. **Do not ask the human to resupply or reconfirm the same ID for each correction.**
+
+The authoritative route is the activation's human-supplied ID, as changed only by an explicit human-authorized replacement recorded in a subsequent applicable work order. Use the latest applicable route in that chain, not an arbitrary older comment. Evidence and blocker comments propagate the route; they cannot independently change it. A stale/superseded report must not restore an earlier destination.
+
+A reviewer working in a different conversation still reuses the established gate route unless the human explicitly requests a destination change. Merely opening another chat, changing plugin version, or beginning another correction round does not select a new destination.
+
+### Explicit destination change
+
+The human may explicitly supply a replacement ChatGPT thread ID for subsequent review. The orchestrator validates it, records the human-requested routing change in the next applicable activation/correction comment, and places exactly one thread marker containing the new ID there. Do not add a second old-ID marker.
+
+From that work order onward, evidence/blocker and later corrections use the replacement ID. Preserve earlier comments as history. No frozen product scope, source pin, baseline, verification, or acceptance authority changes with routing.
+
+### Placement and propagation
 
 Activation:
 
 ```text
 <!-- gated-development:activation:v1 -->
-<!-- gated-development:chatgpt-thread:v1 id=<human-supplied current ChatGPT thread UUID> -->
+<!-- gated-development:chatgpt-thread:v1 id=<human-supplied activation thread UUID> -->
 ```
 
 Correction:
 
 ```text
 <!-- gated-development:review:v2 status=correction-required -->
-<!-- gated-development:chatgpt-thread:v1 id=<human-supplied current reviewer ChatGPT thread UUID> -->
+<!-- gated-development:chatgpt-thread:v1 id=<established gate routing UUID; reuse unless human explicitly replaces it> -->
 ```
 
 Rules:
 
-- Put the marker immediately after the executable activation/correction marker.
-- Do not require it in the frozen issue body.
-- Codex copies the exact marker unchanged into terminal evidence or blocker.
-- Codex must not invent, infer, normalize, substitute, or select a thread ID.
-- PASS and verification-blocked review comments do not need a thread marker because they do not launch implementation.
-- A correction-required comment requires a new human-supplied current reviewer thread ID; do not automatically reuse the original activation ID unless the human explicitly supplies that same ID.
+- Put the marker immediately after the executable activation/correction marker; do not require it in the parent or frozen gate issue body.
+- Codex copies the exact triggering marker unchanged into terminal evidence or blocker. It never selects a replacement or calls the return bridge.
+- The reviewer reuses the applicable gate routing marker in every executable correction unless recording an explicit human replacement.
+- PASS and verification-blocked comments do not need a marker because they do not launch implementation; they do not clear or change the gate route.
+- Thread routing is inherited across correction rounds. Reasoning-effort overrides are not: omission of `Execution reasoning effort` still selects `max` for that round.
 
-### Malformed or missing routing
+### Malformed, missing, or conflicting routing
 
-Under the current plugin contract, a newly received activation/correction without exactly one valid thread marker is not a valid executable work order.
+A newly received executable activation/correction without exactly one valid marker is malformed. The implementer must not execute it or invent a marker; publish a concise GitHub blocker when possible and stop.
 
-The implementer must not perform checkpoint/correction work from that malformed trigger. It should publish a concise GitHub blocker when possible and stop. It must not invent a routing marker.
+For correction authoring, first recover the established route from the applicable gate chain. If no valid route can be established, or conflicting markers cannot be resolved, do not publish the executable correction; report the specific routing problem and ask the human to supply or clarify the destination. This is recovery from missing/ambiguous routing, not a routine per-round input requirement.
 
-Historical pre-1.4.1 records remain historical and are not edited merely to retrofit routing metadata.
+A destination reported busy or unavailable is a transport problem, not permission to choose another chat. Historical records remain unchanged. An open gate with a valid established route may reuse it under this contract even if older skill prose required a fresh ID for every correction. Historical markerless records do not authorize invented routing.
 
 ## Bounded incidental repair
 
@@ -186,7 +194,7 @@ After human authorization and prerequisite readiness:
 3. if the human has not already supplied the current ChatGPT thread ID for this activation, ask for it;
 4. validate the supplied UUID shape;
 5. if this activation needs a non-default reasoning effort, include exactly one standardized `Execution reasoning effort` field described under Runtime configuration; otherwise omit it and use `max`;
-6. publish a new activation comment containing the activation marker followed immediately by the supplied thread routing marker;
+6. publish a new activation comment containing the activation marker followed immediately by the supplied thread routing marker; this establishes the gate route to reuse in subsequent correction rounds;
 7. let the configured launcher perform the handoff.
 
 Do not add or inherit a frozen plugin version/source line in the activation. If useful, identify the workflow only as the current installed `gated-development-orchestration@aquanuity`.
@@ -205,7 +213,7 @@ If historical case text names an older Gated Development Orchestration version/r
 
 The launcher only transported the instruction. Codex owns semantic preflight under the case/current plugin. If the case authorizes bootstrap branch/worktree creation or other repository setup, follow the case; if not, do not invent it.
 
-Verify that the triggering comment contains exactly one valid ChatGPT thread marker. Missing or multiple markers block execution.
+Verify that the triggering comment contains exactly one valid ChatGPT thread marker. Missing or multiple markers block execution. An inherited correction marker is valid; no fresh human UUID submission is required for that round.
 
 Stop and report when the trigger is edited/mismatched, superseded/cancelled/accepted, routing is malformed, scope conflicts, repository state violates the case, or a true blocker under the verification rules below is established. **Do not block because a historical gate workflow version/source differs from the current installed plugin.**
 
@@ -264,14 +272,14 @@ Issue one of:
 For correction-required:
 
 1. prepare the complete bounded correction work order;
-2. if the human has not already supplied the current reviewer ChatGPT thread ID for this correction, ask for it;
-3. do not publish the executable correction until a valid UUID is supplied;
+2. resolve the established gate routing marker from the applicable activation/correction chain and checked evidence; reuse it unchanged without asking for the ID again;
+3. only if the human explicitly requested a different destination, validate and record that supplied replacement; if the established route is missing or ambiguous and cannot be recovered, ask for clarification and withhold the executable correction;
 4. if this correction round needs a non-default reasoning effort, include exactly one standardized `Execution reasoning effort` field; otherwise omit it and use `max`;
-5. include the supplied routing marker immediately after the correction executable marker.
+5. publish the complete correction with exactly one routing marker immediately after the correction executable marker.
 
 Do not freeze or inherit a plugin version/source in the correction comment.
 
-Do not issue a correction marker merely to solve delivery/access/publication problems.
+Do not issue a correction marker merely to solve delivery/access/publication problems. Reusing a route does not authorize unbounded correction scope, a successor gate, or self-approval; the existing authority and independent-review rules still apply.
 
 ## Runtime configuration
 
@@ -334,11 +342,18 @@ Report publication blocked. No GitHub comment was posted. Not PASS.
 Local report: <actual saved path or unavailable>
 ```
 
-Activation/correction routing missing:
+Activation routing missing:
 
 ```text
-BLOCKED — current ChatGPT thread ID is required.
-Executable activation/correction was not published.
+BLOCKED — human-supplied ChatGPT thread ID is required for activation.
+Executable activation was not published.
+```
+
+Correction routing unresolved:
+
+```text
+BLOCKED — the established gate routing thread is missing or ambiguous and could not be recovered.
+Executable correction was not published. Human routing clarification is required.
 ```
 
 Reviewer outcomes:

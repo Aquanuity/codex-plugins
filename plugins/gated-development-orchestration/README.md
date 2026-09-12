@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 1.4.5
+# Gated Development Orchestration Plugin 1.4.6
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.5** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This plugin wraps the shared **Gated Development Orchestration 1.4.6** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
 
 ## Included
 
@@ -8,7 +8,7 @@ This plugin wraps the shared **Gated Development Orchestration 1.4.5** skill for
 - `.app.json` — existing GitHub app reference; unchanged
 - `skills/gated-development-orchestration/` — shared workflow contract
 
-## 1.4.5 behavior
+## 1.4.6 behavior
 
 Implementation and independent review are routed by GitHub comment markers:
 
@@ -18,9 +18,28 @@ Implementation and independent review are routed by GitHub comment markers:
 - `gated-development:blocker:v2` -> blocker record; may be routed to ChatGPT when blocker triage is configured
 - PASS / verification-blocked / state comments -> durable ledger only
 
-Every new executable activation and correction requires a ChatGPT thread routing marker. During activation or correction authoring, ChatGPT must ask the human for the current ChatGPT thread ID unless it has already been explicitly supplied for that exact executable comment. If the human does not provide a valid thread ID, the activation/correction cannot be published.
+### Supply the routing ID at activation; reuse it thereafter
 
-ChatGPT must not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID. Codex copies the supplied marker unchanged into its evidence or blocker. The external review workflow then returns the review request to that exact ChatGPT conversation.
+Every executable activation and correction still requires exactly one ChatGPT thread routing marker. **The human supplies the ID at activation, not again for every correction.** Ask for it when activating if it has not been supplied; without a valid supplied ID, do not activate.
+
+The activation establishes the gate's review-routing thread. Codex copies its triggering marker unchanged into evidence/blocker. The reviewer resolves the applicable activation/correction chain, verifies evidence propagation, and reuses the established marker in subsequent corrections without asking for fresh UUID input.
+
+Only an explicit human request supplying a replacement destination changes the route. Record it in the next applicable activation/correction with exactly one new marker; from that work order onward, evidence/blocker and later corrections use the replacement. Do not change destination merely because review occurs in another chat, and do not let stale evidence reset a newer route.
+
+If a correction's route is genuinely missing or ambiguous, recover it from the applicable chain or ask for clarification before publishing. Never invent a route, substitute a Codex thread ID or a fixed default, or silently fall back to manual delivery. Existing gate history remains unchanged; open gates with a valid established route can reuse it under this contract.
+
+```text
+Activation: human supplies A
+  -> Codex evidence A -> review A
+  -> correction A -> Codex evidence A -> review A
+  -> later corrections continue with A
+
+Explicit human change to B:
+  -> next applicable correction B -> evidence B -> review B
+  -> later corrections continue with B
+```
+
+The routing ID is metadata, not repeated approval. Correction scope, execution authority, and independent review remain governed by the existing workflow. No new marker format, workflow, or dispatch is introduced.
 
 ### Bounded incidental repair authority
 
@@ -69,6 +88,8 @@ Examples:
 ```
 
 If the field is omitted, the runner uses `max`. The override applies only to that executable comment; later corrections do not inherit it. Duplicate or unsupported values are malformed delivery.
+
+Routing is inherited; reasoning-effort overrides are not. A correction reusing thread A still uses `max` when its effort field is omitted.
 
 ### Verification failures are repair feedback, not automatic blockers
 

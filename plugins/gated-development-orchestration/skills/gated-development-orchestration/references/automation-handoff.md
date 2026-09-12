@@ -24,36 +24,37 @@ Marker versions, installed skill version, checkpoint identity, and work-order ve
 
 ## Thread routing marker
 
-Every new executable activation/correction requires exactly one:
+Every executable activation/correction requires exactly one:
 
 ```text
 <!-- gated-development:chatgpt-thread:v1 id=<UUID> -->
 ```
 
-This marker is transport metadata only.
+This marker is transport metadata only. The human supplies its ID at activation; subsequent correction rounds reuse it. It is not a per-round authorization token.
 
-### Orchestrator
+### Orchestrator and reviewer
 
-The human supplies the current ChatGPT thread ID.
+At activation, ask for the human-supplied current ChatGPT thread ID if it has not already been supplied for that activation. Validate UUID shape. Without a valid supplied ID, do not activate. The activation establishes the gate's review-routing thread.
 
-Before publishing an activation or correction:
+For subsequent corrections:
 
-- use the thread ID only when the human explicitly supplied it for the current executable comment;
-- if it has not been supplied, ask the human for it;
-- validate UUID shape only;
-- if it is not provided, do not publish the executable activation/correction;
-- do not infer, invent, reuse from another conversation, or substitute a Codex session/thread ID;
+- read the applicable activation/correction chain and check that the exact evidence copied its triggering marker;
+- reuse the established gate routing marker unchanged; do not ask the human to resupply or reconfirm it for each correction;
+- change the destination only when the human explicitly requests a replacement and supplies its ID; record that request and exactly one replacement marker in the next applicable work order;
+- propagate the replacement from that work order onward, without rewriting earlier comments;
+- recover missing/conflicting routing from the applicable chain or ask for clarification if it cannot be established; do not publish an executable correction with unresolved routing;
+- never invent a route, borrow another gate's ID, infer a destination from Codex/project metadata, or restore a stale route from superseded evidence;
 - do not freeze/inherit a plugin version/source in the executable comment.
 
-There is no silent manual-return fallback for new activations/corrections.
+A change in reviewer conversation or plugin version is not a human routing override. There is no silent manual-return fallback, and a busy/unavailable destination does not authorize selecting another chat.
 
 ### Codex
 
 A triggering activation/correction must contain exactly one thread marker.
 
 - use the current installed `gated-development-orchestration@aquanuity` plugin;
-- verify exactly one marker is present before implementation;
-- copy the exact marker unchanged into evidence or blocker;
+- verify exactly one marker is present before implementation; an inherited correction marker is valid without fresh human UUID input;
+- copy the exact triggering marker unchanged into evidence or blocker, including any replacement explicitly recorded by the orchestrator;
 - do not invent, infer, normalize, replace, or select a different thread ID;
 - do not invoke the ChatGPT bridge directly;
 - if the marker is absent/multiple/malformed, do not execute the gate; report a blocker when possible and stop;
@@ -70,7 +71,7 @@ The review transport must:
 - never substitute a fixed/default target;
 - never reinterpret a Codex session/thread ID as the ChatGPT destination.
 
-The review transport must not decide PASS/correction/verification-blocked itself.
+The review transport must not decide PASS/correction/verification-blocked itself. Routing reuse changes comment authoring, not the transport marker format, send-once behavior, or runner policy. No new workflow or dispatch is needed.
 
 ## Implementation transport
 
@@ -180,27 +181,32 @@ Codex never calls the review bridge. GitHub evidence is the boundary between imp
 ## Correction loop
 
 ```text
-ChatGPT asks human for activation thread ID
-  -> activation + supplied marker (+ optional per-round reasoning override)
+Human supplies routing thread A at activation
+  -> activation + marker A (+ optional per-round reasoning override)
   -> Codex using current installed plugin
   -> implement / verify / repair primary-path or qualifying incidental failures / re-verify
-  -> evidence + same marker
-  -> review workflow
-  -> ChatGPT independent review using current installed plugin
+  -> evidence + marker A copied unchanged
+  -> review workflow -> ChatGPT thread A
+  -> independent review using current installed plugin
       -> PASS (ledger only)
       OR
-      -> ChatGPT asks human for current reviewer thread ID
-      -> correction-required + supplied current marker (+ optional new per-round override)
-          -> Codex using current installed plugin
-          -> new evidence + same marker
-          -> review workflow
+      -> correction-required + reused marker A (no fresh UUID request)
+          -> Codex -> new evidence + marker A -> review workflow -> thread A
+          -> repeat bounded correction/review under existing gate authority
+
+Only on explicit human request to change destination to B:
+  -> next applicable correction records the request + one marker B
+  -> Codex -> evidence + marker B -> review workflow -> thread B
+  -> later corrections reuse B without asking again
 ```
 
-A correction reasoning override is independent of the activation or prior correction. Omit it to use `max` for that round.
+Routing is inherited through the gate's current activation/correction chain; evidence alone cannot change it. Missing or ambiguous routing requires recovery/clarification, not an invented fallback.
+
+A correction reasoning override is independent of the activation or prior correction. Omit it to use `max` for that round. Reusing a routing ID does not reuse the previous reasoning-effort override.
 
 Plugin package version/source is likewise resolved from the current installation for each action; it is not inherited from the activation or prior correction.
 
-This avoids generic `Target:` fields. Message type plus routing marker is sufficient.
+This avoids generic `Target:` fields. Message type plus routing marker is sufficient. Removing repeated UUID prompts does not relax correction scope, cancellation, or independent-review requirements.
 
 ## Publication and retry
 

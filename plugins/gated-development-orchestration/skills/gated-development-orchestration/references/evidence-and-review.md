@@ -29,7 +29,7 @@ Do not publish a blocker merely because the first verification attempt failed. A
 
 ## Codex evidence comment
 
-A valid triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line.
+A valid triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line. The human supplies the route at activation; a correction normally reuses it. Codex copies its own trigger's marker, including an explicitly human-authorized replacement, without asking for a fresh ID or selecting another destination.
 
 ```markdown
 <!-- gated-development:codex-evidence:v2 -->
@@ -111,7 +111,7 @@ If a newly delivered activation/correction lacks exactly one valid thread marker
 
 ## Blocker comment
 
-Use this only after establishing a true blocker, not for a repairable active-implementation defect, a qualifying incidental repair, or a historical plugin-version mismatch. File-list omission alone is not a blocker.
+Use this only after establishing a true blocker, not for a repairable active-implementation defect, a qualifying incidental repair, or a historical plugin-version mismatch. File-list omission alone is not a blocker. A correction's reuse of an established routing ID is also not a blocker.
 
 ```markdown
 <!-- gated-development:blocker:v2 -->
@@ -172,6 +172,8 @@ During review, distinguish a historical transient failure that was repaired and 
 
 Independently inspect every off-list change and its cumulative effect against all incidental-repair conditions, hard exclusions, and final checks. Neither absence from the primary file list nor Codex's `incidental` label decides acceptance. Reject semantic/design expansion and weakened tests; a qualifying mechanical repair is not a scope violation. Missing qualification/verification evidence is not proof of qualification.
 
+Resolve routing from the applicable activation/correction chain and confirm that the exact evidence copied its triggering marker. This is reuse of known gate metadata, not inference of the reviewer's current conversation ID. Evidence cannot authorize an unsolicited routing change; stale/superseded evidence must not reset a newer human-authorized destination.
+
 ## Review outcomes
 
 ### PASS
@@ -202,9 +204,11 @@ PASS does not need a thread marker because it does not route implementation or r
 
 ### Correction required
 
-A correction-required comment is executable and therefore requires a human-supplied current reviewer thread ID.
+A correction-required comment is executable and must contain exactly one valid routing marker. **Reuse the established gate routing ID from the applicable activation/correction chain without asking the human to submit it again.** A valid activation has already established the destination for the gate's correction cycles.
 
-If the human has not already supplied that ID for the correction, ask for it. Without a valid UUID, do not publish the executable correction.
+Only an explicit human request supplying a replacement destination changes the route. Record that request in the correction prose, put only the new ID in the single marker, and use it for subsequent evidence/blocker and corrections. A reviewer being in another conversation does not itself change the route.
+
+If the route is absent or conflicting and cannot be recovered from the applicable chain, report the routing problem and ask for clarification before publishing an executable correction. Do not turn this exceptional recovery into a fresh-ID requirement on every round. All existing correction-scope and authority rules still apply.
 
 To override the runner default `max` for this correction round, include exactly one optional field in the executable correction:
 
@@ -212,11 +216,11 @@ To override the runner default `max` for this correction round, include exactly 
 - Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
 ```
 
-The override applies only to this correction. Omit it for `max`; later corrections do not inherit it.
+The override applies only to this correction. Omit it for `max`; later corrections do not inherit it. Unlike reasoning effort, the routing ID is inherited.
 
 ```markdown
 <!-- gated-development:review:v2 status=correction-required -->
-<!-- gated-development:chatgpt-thread:v1 id=<human-supplied current reviewer thread UUID> -->
+<!-- gated-development:chatgpt-thread:v1 id=<established gate routing UUID; reuse unless human explicitly replaces it> -->
 ## Independent gate review — NOT PASS / correction required
 
 ### Correction manifest
@@ -273,8 +277,8 @@ Do not pin/inherit a plugin version/source in the correction.
 No PASS or implementation FAIL is issued while required evidence cannot be independently inspected.
 ```
 
-`VERIFICATION_BLOCKED` is for missing/unobtainable review evidence or a true unresolved verification blocker. It is not a substitute for fixing a repairable compile/test failure during implementation.
+`VERIFICATION_BLOCKED` is for missing/unobtainable review evidence or a true unresolved verification blocker. It is not a substitute for fixing a repairable compile/test failure during implementation. PASS and verification-blocked comments do not clear or change the gate's established route.
 
 ## Review routing boundary
 
-The review workflow transports the request to the exact ChatGPT thread declared by the copied human-supplied marker. It does not perform the review or choose a fallback destination. The reviewer must use fresh GitHub/remote evidence and the current installed plugin, and may issue PASS, correction-required, or verification-blocked according to the case.
+The review workflow transports the request to the exact ChatGPT thread declared by the marker copied from the triggering work order. It does not perform the review or choose a fallback destination. The reviewer must use fresh GitHub/remote evidence and the current installed plugin, and may issue PASS, correction-required, or verification-blocked according to the case. Routine corrections reuse the gate's established route; they do not pause for repeated human UUID input.

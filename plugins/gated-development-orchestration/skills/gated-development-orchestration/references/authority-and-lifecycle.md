@@ -9,14 +9,14 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 | Source-of-truth document | Feature meaning, behavior, architecture, ownership, non-goals, gate sequence |
 | Parent issue | Overall tracking and accepted checkpoints |
 | Frozen gate body | Initial product/repository work order |
-| Activation comment | Execution authorization/trigger for current gate; optional per-round runtime override |
-| Correction-required comment | Independent failed-review decision and narrow correction authorization/trigger; optional per-round runtime override |
+| Activation comment | Execution authorization/trigger for current gate; establishes the human-supplied routing thread; optional per-round runtime override |
+| Correction-required comment | Independent failed-review decision and narrow correction authorization/trigger; reuses the gate route unless the human explicitly replaces it; optional per-round runtime override |
 | Current installed `gated-development-orchestration@aquanuity` plugin | Current workflow mechanics for orchestration, implementation, evidence, correction, blocker handling, and review |
 | Commits and full gate diff | Actual implementation truth |
 | Codex evidence/blocker | Implementer report; never acceptance |
 | Independent review | PASS, correction-required, verification-blocked |
 | Launcher records | Delivery/runtime facts only |
-| ChatGPT thread routing marker | Human-supplied review transport destination only; no product authority |
+| ChatGPT thread routing marker | Human-supplied at activation and reused through the gate; review transport destination only, no product authority |
 | Chat | Discussion/human decisions until written to durable GitHub/source records |
 
 ## Version meanings
@@ -63,11 +63,15 @@ identifies where independent review should return. It does not:
 - issue PASS;
 - prove who authored a comment.
 
-Executable authority still comes from activation/correction plus the controlling case.
+Executable authority still comes from activation/correction plus the controlling case. A routing UUID is not a per-round approval token.
 
-For every new executable activation/correction, the human must supply the current ChatGPT thread UUID. ChatGPT asks for it if it has not already been supplied for that executable comment. Without a valid UUID, the activation/correction is not published and no execution authority is created.
+The human supplies the current ChatGPT thread UUID at activation. Ask when it has not been supplied; without a valid UUID, do not publish the activation. The activation establishes the gate's routing thread for subsequent evidence, blocker, review, and correction cycles.
 
-Do not infer the thread ID from Codex metadata, reuse another conversation's ID, or substitute a fixed/default destination.
+Every executable correction must include exactly one marker, but normally **reuses the established gate routing ID without asking the human again**. Resolve it from the applicable activation/correction chain and verify that the reviewed evidence copied its trigger. Do not take an arbitrary comment or another gate's route as authority.
+
+Only an explicit human request supplying a replacement destination changes the route. Record that request and the replacement marker in the next applicable activation/correction, without editing prior comments or adding a second marker. From that work order onward, later evidence/blocker and corrections use the replacement. Merely reviewing in another chat is not a routing change. Evidence or a stale report cannot independently select or restore a destination.
+
+If the gate route is missing or conflicting, recover it from the applicable chain before asking for clarification. If it cannot be established, withhold the executable correction and ask the human; never fabricate a route or silently fall back. Do not infer the thread ID from Codex metadata or substitute a fixed/default destination.
 
 ## Runtime override authority
 
@@ -88,6 +92,8 @@ Rules:
 - duplicate or unsupported values are malformed delivery;
 - changing reasoning effort does not broaden scope, paths, architecture, repository operations, verification, or acceptance authority.
 
+Thread routing persists across correction rounds; reasoning-effort overrides do not. Do not confuse these two contracts.
+
 ## Freezing and history
 
 The gate body may be edited while draft/ready. On activation, treat the controlling product/repository body and activation as frozen according to the case. Preserve old comments. Use new comments for evidence, review, correction, amendment, supersession, and cancellation.
@@ -96,7 +102,7 @@ The plugin version/source is explicitly outside that freeze. A gate body hash ma
 
 Do not rewrite history merely to update plugin metadata or add a missing thread marker. Historical records remain historical. New actions use the current installed plugin.
 
-Historical pre-1.4.1 executions that lack routing metadata may require manual review. That historical exception does not authorize creating new markerless activations/corrections.
+Historical pre-1.4.1 executions that lack routing metadata may require manual review. That historical exception does not authorize creating new markerless activations/corrections. An open gate with a valid established route may reuse it under the current contract; the obsolete requirement to resubmit an ID for each correction is not a blocker. Record an explicit human routing change prospectively, not by editing frozen history.
 
 ## Gate types
 
@@ -155,7 +161,7 @@ A repairable verification failure remains `IN_PROGRESS`; it does not become `VER
 
 Keep the original gate review base fixed. A correction starts from the reviewed prior ending SHA/baseline and authorizes only the narrow repair.
 
-Every new executable correction requires a human-supplied current reviewer thread marker. Codex copies it into the next evidence/blocker. Without that marker, do not publish the correction trigger.
+Every executable correction carries the established gate routing marker, reused unchanged without fresh human input unless the human explicitly replaces the destination. Codex copies that correction's exact marker into the next evidence/blocker, and subsequent corrections continue using it. Withhold a correction only when its routing cannot be established, not merely because the human has not repeated the UUID for that round.
 
 A correction may also carry its own `Execution reasoning effort` override. It applies only to that correction round and must be restated on any later correction that needs a non-default effort.
 

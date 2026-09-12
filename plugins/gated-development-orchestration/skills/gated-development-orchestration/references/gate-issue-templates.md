@@ -115,9 +115,11 @@ Omit the field for the default `max`. The override applies only to that activati
 
 Before posting an activation, ChatGPT must have the human-supplied current ChatGPT thread ID for this activation. If it has not already been supplied in the current conversation, ask for it. If no valid UUID is provided, keep the gate READY and do not post the executable activation.
 
+The activation establishes the gate's routing thread. Subsequent correction rounds reuse this ID without asking the human again, unless the human explicitly supplies a replacement destination.
+
 ```markdown
 <!-- gated-development:activation:v1 -->
-<!-- gated-development:chatgpt-thread:v1 id=<human-supplied current ChatGPT thread UUID> -->
+<!-- gated-development:chatgpt-thread:v1 id=<human-supplied activation thread UUID> -->
 ## Gate activated
 
 - Gate: `<id>`
@@ -146,11 +148,13 @@ A new activation under the current plugin contract without exactly one valid thr
 
 ## Correction-required comment
 
-Before posting an executable correction, ChatGPT must have the human-supplied current reviewer ChatGPT thread ID for that correction. Ask if it has not already been supplied. Without it, do not publish the correction trigger.
+Resolve the established gate routing marker from the applicable activation/correction chain and verify that the reviewed evidence copied its trigger. **Reuse that marker unchanged; do not ask the human to resupply the thread ID for this correction.** Only an explicit human request supplying a replacement destination changes the ID.
+
+If the applicable route cannot be established because it is missing or conflicting, first inspect the gate chain, then ask the human for clarification if still unresolved. Withhold the executable correction only for that actual routing problem, not lack of fresh per-round UUID input.
 
 ```markdown
 <!-- gated-development:review:v2 status=correction-required -->
-<!-- gated-development:chatgpt-thread:v1 id=<human-supplied current reviewer ChatGPT thread UUID> -->
+<!-- gated-development:chatgpt-thread:v1 id=<established gate routing UUID; reuse unless human explicitly replaces it> -->
 ## Independent gate review — NOT PASS / correction required
 
 ### Correction manifest
@@ -164,7 +168,9 @@ Before posting an executable correction, ChatGPT must have the human-supplied cu
 Qualifying incidental repairs may support this correction only; they do not reopen unrelated gate work or override explicit hard exclusions.
 ```
 
-The correction's reasoning-effort field applies only to that correction execution. If omitted, that correction runs at the runner default `max` regardless of any earlier activation/correction override.
+For a human-requested destination change, use only the new UUID in the single marker and record the request in the comment prose. From that correction onward, Codex evidence/blocker and later corrections inherit the replacement. Do not insert both old and new routing markers or edit the earlier activation.
+
+The correction's reasoning-effort field applies only to that correction execution. If omitted, that correction runs at the runner default `max` regardless of any earlier activation/correction override. Routing is inherited; reasoning effort is not.
 
 Do not freeze/inherit a plugin version/source in the correction.
 
@@ -205,11 +211,13 @@ Do not freeze/inherit a plugin version/source in the correction.
 ## Routing and workflow rules
 
 - Parent and gate issue bodies do not carry the ChatGPT routing ID.
-- Every new executable activation/correction carries exactly one human-supplied thread marker.
-- If the human has not supplied a valid current thread ID, ChatGPT asks for it and cannot activate/correct until it is supplied.
-- Codex copies the thread marker unchanged into evidence/blocker.
+- Every executable activation/correction carries exactly one valid thread marker.
+- Activation requires the human-supplied current thread ID; ask when absent and do not activate without it.
+- Corrections reuse the established gate routing ID without fresh human input. Only an explicit human-supplied replacement changes the route for subsequent cycles.
+- Codex copies the exact triggering thread marker unchanged into evidence/blocker. Evidence does not independently authorize rerouting.
 - A newly received activation/correction with no marker or multiple markers is invalid and must not execute.
-- PASS/state comments do not need the thread marker.
+- Recover missing/ambiguous correction routing from the applicable gate chain or ask for clarification; never guess a destination, restore a stale route, or silently fall back.
+- PASS/state comments do not need the thread marker and do not change the established route.
 - Do not add a generic `Target: Codex` or `Target: ChatGPT` field. First-line marker plus thread marker is the routing contract.
 - Preserve old comments; do not edit history to retrofit routing metadata.
 - Workflow plugin identity is `gated-development-orchestration@aquanuity`; version/source resolve from the current installation at execution/review time and are not frozen by the case.
