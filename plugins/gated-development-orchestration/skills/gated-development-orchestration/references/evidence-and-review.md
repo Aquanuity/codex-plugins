@@ -4,9 +4,9 @@ Use when Codex reports, ChatGPT independently reviews, a blocker is triaged, or 
 
 ## Current plugin contract
 
-Use the currently installed **`gated-development-orchestration@aquanuity`** plugin for implementation reporting and independent review mechanics.
+Use the shared **`gated-development-orchestration@aquanuity`** workflow contract from the source selected in [Workflow source by execution surface](../SKILL.md#workflow-source-by-execution-surface): Codex uses its currently installed plugin; ordinary ChatGPT Chat / Pro uses the current repository package. Load all required references from that same selected source.
 
-Historical gate/activation text that names an older plugin version, repository, commit, or `SKILL.md` URL is provenance only. It does not control the current implementation/review workflow and is not a blocker. Report the actual installed plugin version/source used when observable, but do not turn that report into a new gate pin.
+Historical gate/activation text that names an older plugin version, repository, commit, or `SKILL.md` URL is provenance only. It does not control the current implementation/review workflow and is not a blocker. Report the actual loaded workflow version/source, but do not turn that report into a new gate pin.
 
 ## Artifact-backed publication
 
@@ -170,7 +170,7 @@ Publication failures are not implementation correction orders. Check for an exis
 
 ## Independent review
 
-A routed review request is only a pointer. Use the currently installed plugin and independently fetch:
+A routed review request is only a pointer. Load the current workflow source for the execution surface, then independently fetch:
 
 1. exact evidence comment;
 2. gate issue/body;
@@ -184,7 +184,7 @@ A routed review request is only a pointer. Use the currently installed plugin an
 
 Do not trust the evidence report's PASS-like statements without remote confirmation.
 
-Do not switch to a historical plugin package because the gate/evidence text names one. Historical plugin metadata is provenance only; current installed plugin mechanics govern review.
+Do not switch to a historical plugin package because the gate/evidence text names one. Historical plugin metadata is provenance only; the current workflow source selected for the execution surface governs review.
 
 During review, distinguish a historical transient failure that was repaired and successfully reverified from an unresolved blocker. A first-attempt compile/test failure does not invalidate a gate when final required verification passes and the repair was authorized, including qualifying incidental repair.
 
@@ -208,7 +208,7 @@ Resolve routing from the applicable activation/correction chain and confirm that
 - Accepted ending commit: `<E or N/A for analysis-only>`
 - Remote branch inspected: `<R or N/A>`
 - Workflow plugin identity: `gated-development-orchestration@aquanuity`
-- Reviewer installed skill version/source: `<actual when observable>`
+- Reviewer loaded workflow version/source: `<actual version; repository and resolved commit plus loaded paths for ChatGPT, or installed package source for Codex>`
 
 ### Acceptance criteria
 | Criterion | Result | Evidence |
@@ -299,4 +299,4 @@ No PASS or implementation FAIL is issued while required evidence cannot be indep
 
 ## Review routing boundary
 
-The review workflow transports the request to the exact ChatGPT thread declared by the marker copied from the triggering work order. It does not perform the review or choose a fallback destination. The reviewer must use fresh GitHub/remote evidence and the current installed plugin, and may issue PASS, correction-required, or verification-blocked according to the case. Routine corrections reuse the gate's established route; they do not pause for repeated human UUID input.
+The review workflow transports the request to the exact ChatGPT thread declared by the marker copied from the triggering work order. It does not perform the review or choose a fallback destination. The reviewer must use fresh GitHub/remote evidence and the current workflow source selected for its execution surface, and may issue PASS, correction-required, or verification-blocked according to the case. Routine corrections reuse the gate's established route; they do not pause for repeated human UUID input.

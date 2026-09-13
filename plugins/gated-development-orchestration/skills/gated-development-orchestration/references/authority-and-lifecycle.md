@@ -11,7 +11,7 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 | Frozen gate body | Initial product/repository work order |
 | Activation comment | Execution authorization/trigger for current gate; establishes the human-supplied routing thread; optional per-round runtime override |
 | Correction-required comment | Independent failed-review decision and narrow correction authorization/trigger; reuses the gate route unless the human explicitly replaces it; optional per-round runtime override |
-| Current installed `gated-development-orchestration@aquanuity` plugin | Current workflow mechanics for orchestration, implementation, evidence, correction, blocker handling, and review |
+| Current `gated-development-orchestration@aquanuity` contract, loaded by execution surface | Current workflow mechanics for orchestration, implementation, evidence, correction, blocker handling, and review |
 | Commits and full gate diff | Actual implementation truth |
 | Codex evidence/blocker | Implementer report; never acceptance |
 | Independent review | PASS, correction-required, verification-blocked |
@@ -22,7 +22,7 @@ Use when defining gate authority, freezing/hashing work orders, interpreting sta
 
 ## Version meanings
 
-- Skill package version: the version currently installed when a role acts; **not frozen by the gate**
+- Skill package version: the version actually loaded from the surface-appropriate source when a role acts; **not frozen by the gate**
 - Plugin identity: `gated-development-orchestration@aquanuity`
 - Marker version: e.g. `activation:v1`, `review:v2`
 - Work-order version: gate execution/correction sequence
@@ -41,10 +41,10 @@ Rules:
 
 - Do not make a plugin version, marketplace repo SHA, package commit, or historical `SKILL.md` URL controlling authority in a gate/activation/correction.
 - A historical line such as `Gated Development Orchestration 1.4.0, nivlekwat/myPlugins@...` is provenance only under the current contract. It does not require using that historical package.
-- Do not block because historical case text names a different plugin version/source from the current installation.
-- Use the current installed `gated-development-orchestration@aquanuity` plugin for workflow mechanics each time orchestration, implementation, correction, or review occurs.
+- Do not block because historical case text names a different plugin version/source from the current workflow source.
+- Use the shared **`gated-development-orchestration@aquanuity`** workflow contract from the source selected in [Workflow source by execution surface](../SKILL.md#workflow-source-by-execution-surface): Codex uses its currently installed plugin; ordinary ChatGPT Chat / Pro uses the current repository package. Load all required references from that same selected source.
 - A later plugin version may change workflow mechanics for subsequent actions on an open gate, but it does not rewrite the gate's product source pin, scope/path limits, branch/baseline, acceptance criteria, or historical records.
-- Report the actual installed plugin version/source used when observable, but treat that as execution/review provenance only.
+- Report the actual loaded workflow version/source, but treat that as execution/review provenance only.
 
 ## Routing authority
 
@@ -101,7 +101,7 @@ The gate body may be edited while draft/ready. On activation, treat the controll
 
 The plugin version/source is explicitly outside that freeze. A gate body hash may physically include a historical workflow-version line, but that line is non-authoritative workflow provenance under the current plugin contract.
 
-Do not rewrite history merely to update plugin metadata or add a missing thread marker. Historical records remain historical. New actions use the current installed plugin.
+Do not rewrite history merely to update plugin metadata or add a missing thread marker. Historical records remain historical. New actions resolve the current workflow source for their execution surface.
 
 Historical pre-1.4.1 executions that lack routing metadata may require manual review. That historical exception does not authorize creating new markerless activations/corrections. An open gate with a valid established route may reuse it under the current contract; the obsolete requirement to resubmit an ID for each correction is not a blocker. Record an explicit human routing change prospectively, not by editing frozen history.
 
@@ -138,7 +138,7 @@ A failed prerequisite build may stop dependent tests from running against stale 
 
 A gate body must not convert every required verification failure into a blocker with blanket wording such as `stop on required verification failure`. Stop conditions describe the unresolved reason further work is unsafe or unauthorized.
 
-If historical gate wording conflicts with a newer workflow mechanic, use the current installed plugin for generic workflow behavior while preserving the gate's product-specific authority. Do not use an obsolete plugin pin to revive superseded workflow mechanics.
+If historical gate wording conflicts with a newer workflow mechanic, use the current workflow source selected for the execution surface for generic workflow behavior while preserving the gate's product-specific authority. Do not use an obsolete plugin pin to revive superseded workflow mechanics.
 
 ## Evidence publication and storage authority
 
@@ -174,7 +174,7 @@ Every executable correction carries the established gate routing marker, reused 
 
 A correction may also carry its own `Execution reasoning effort` override. It applies only to that correction round and must be restated on any later correction that needs a non-default effort.
 
-Do not freeze/inherit a plugin version/source in a correction. Use the current installed plugin.
+Do not freeze/inherit a plugin version/source in a correction. The author uses the current workflow source selected for its execution surface; the receiving Codex worker uses its installed plugin.
 
 ## Independence
 
