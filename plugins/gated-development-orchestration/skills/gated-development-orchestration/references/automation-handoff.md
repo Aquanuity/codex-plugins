@@ -36,10 +36,13 @@ This marker is transport metadata only. The human supplies its ID at activation;
 
 At activation, ask for the human-supplied current ChatGPT thread ID if it has not already been supplied for that activation. Validate UUID shape. Without a valid supplied ID, do not activate. The activation establishes the gate's review-routing thread.
 
+For every newly authored executable activation/correction, also select and state the per-round Codex reasoning effort under [Runtime reasoning selection](#runtime-reasoning-selection). `xhigh` is the normal choice; `max` is a deliberate escalation. Do not rely on the launcher's historical omitted-field fallback for new work.
+
 For subsequent corrections:
 
 - read the applicable activation/correction chain and check that the exact evidence copied its triggering marker;
 - reuse the established gate routing marker unchanged; do not ask the human to resupply or reconfirm it for each correction;
+- re-evaluate the reasoning effort for the correction and state exactly one `Execution reasoning effort` field; routine bounded corrections normally use `xhigh`, while a genuinely difficult/root-cause correction may use `max`;
 - change the destination only when the human explicitly requests a replacement and supplies its ID; record that request and exactly one replacement marker in the next applicable work order;
 - propagate the replacement from that work order onward, without rewriting earlier comments;
 - recover missing/conflicting routing from the applicable chain or ask for clarification if it cannot be established; do not publish an executable correction with unresolved routing;
@@ -54,6 +57,8 @@ A triggering activation/correction must contain exactly one thread marker.
 
 - use the current installed `gated-development-orchestration@aquanuity` plugin;
 - verify exactly one marker is present before implementation; an inherited correction marker is valid without fresh human UUID input;
+- use the reasoning effort already applied by the launcher; do not self-relaunch or rewrite the work order to change reasoning effort after startup;
+- treat `xhigh` as a fully valid normal execution level, not as a blocker or permission to request Max before doing authorized work;
 - copy the exact triggering marker unchanged into evidence or blocker, including any replacement explicitly recorded by the orchestrator;
 - do not invent, infer, normalize, replace, or select a different thread ID;
 - do not invoke the ChatGPT bridge directly;
@@ -103,8 +108,9 @@ It should not enforce case-specific rules such as:
 - verification-failure diagnosis
 - checkpoint lifecycle validity
 - plugin-version/source matching against historical case text
+- whether a particular round deserved `xhigh` or `max`
 
-Those belong to Codex following the case and current installed plugin. The implementer preflight rejects a malformed/missing thread marker before development work begins.
+Those belong to ChatGPT/orchestrator selection plus Codex following the case and current installed plugin. The implementer preflight rejects a malformed/missing thread marker before development work begins.
 
 A GitHub Actions job or launcher must not turn a failing build/test exit code into a gate-level blocker decision. The detached Codex process diagnoses verification failures and decides whether to repair within primary paths, perform a qualifying incidental repair, or report a true blocker under the current skill/case.
 
@@ -134,31 +140,45 @@ Future executions may display readable live progress while preserving raw logs. 
 
 Closing the execution console may interrupt its attached Codex process. A read-only viewer may be closed safely when it is explicitly implemented as view-only.
 
-## Runtime default and per-round override
+## Runtime reasoning selection
 
-The automated AquaTwin launcher defaults to:
+### Current authoring policy
 
-```text
-model_reasoning_effort=max
-```
-
-An executable activation/correction may override that single round with exactly one standardized field:
+Every newly authored executable activation/correction must contain exactly one standardized field:
 
 ```text
 - Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
 ```
 
+Normal Gated Development Orchestration selection is:
+
+- `xhigh` — default for normal checkpoint implementation and routine bounded corrections;
+- `max` — explicit escalation for unusually difficult discovery/root-cause/architectural reconciliation, a repeated material failure after a reasonable `xhigh` attempt, or a human-requested Max round.
+
+Do not choose `max` merely because a gate is important, touches multiple files, or has strict verification. Full selection criteria live in [Model selection](model-selection.md).
+
+The human may explicitly choose another supported value for a round. Otherwise current workflow authoring should state `xhigh` or `max`; it must not omit the field and depend on fallback behavior.
+
+### Runner compatibility behavior
+
+The existing AquaTwin launcher still has a mechanical omitted-field fallback for historical already-authored comments:
+
+```text
+model_reasoning_effort=max
+```
+
 Runner behavior:
 
-- omitted field -> `max` with source `runner-default`;
 - one supported field -> that value with source `case-override`;
+- omitted field -> `max` with source `runner-default` for backward compatibility;
 - more than one field -> malformed delivery;
-- unsupported value -> malformed delivery / no valid override;
-- the override is per executable comment and is not inherited by later corrections.
+- unsupported value -> malformed delivery / no valid override.
+
+A correction does not inherit reasoning effort from the activation or an earlier correction. Current workflow authoring re-selects and states the value on every executable correction.
 
 The runner records the resolved value in its delivery record and inserts a run-local Codex shim that applies the resolved `model_reasoning_effort` to `codex exec`.
 
-This is runtime configuration, not scope or acceptance authority. The runner does not decide whether a lower/higher effort is appropriate.
+This is runtime configuration, not scope or acceptance authority. The runner does not decide whether `xhigh` or `max` is appropriate, and Codex does not self-relaunch to change it after startup.
 
 ## Artifact publication transport
 
@@ -196,8 +216,8 @@ Codex never calls the review bridge. GitHub evidence is the boundary between imp
 
 ```text
 Human supplies routing thread A at activation
-  -> activation + marker A (+ optional per-round reasoning override)
-  -> Codex using current installed plugin
+  -> activation + marker A + explicit xhigh/max reasoning selection
+  -> Codex using current installed plugin at the selected runtime effort
   -> implement / verify / repair primary-path or qualifying incidental failures / re-verify
   -> prepare redacted report/bundle + readiness; dispatch artifact publisher and stop
   -> publisher uploads artifact, then posts evidence + marker A copied unchanged
@@ -205,19 +225,19 @@ Human supplies routing thread A at activation
   -> independent ChatGPT review using current repository workflow source
       -> PASS (ledger only)
       OR
-      -> correction-required + reused marker A (no fresh UUID request)
+      -> correction-required + reused marker A + newly selected xhigh/max effort
           -> Codex -> bundle/publication handoff -> published evidence + marker A -> review workflow -> thread A
           -> repeat bounded correction/review under existing gate authority
 
 Only on explicit human request to change destination to B:
-  -> next applicable correction records the request + one marker B
+  -> next applicable correction records the request + one marker B + its own reasoning selection
   -> Codex -> bundle/publication handoff -> published evidence + marker B -> review workflow -> thread B
   -> later corrections reuse B without asking again
 ```
 
 Routing is inherited through the gate's current activation/correction chain; evidence alone cannot change it. Missing or ambiguous routing requires recovery/clarification, not an invented fallback.
 
-A correction reasoning override is independent of the activation or prior correction. Omit it to use `max` for that round. Reusing a routing ID does not reuse the previous reasoning-effort override.
+Reasoning effort is independently selected for each executable round. Routine work normally uses `xhigh`; a difficult round may use `max`. Reusing a routing ID does not reuse the previous reasoning effort.
 
 Plugin package version/source is likewise resolved from the current installation for each action; it is not inherited from the activation or prior correction.
 

@@ -37,6 +37,8 @@ Do not publish a blocker merely because the first verification attempt failed. A
 
 A valid triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line. The human supplies the route at activation; a correction normally reuses it. Codex copies its own trigger's marker, including an explicitly human-authorized replacement, without asking for a fresh ID or selecting another destination.
 
+Codex reports the launcher-applied reasoning effort when exposed, but it does not judge whether its own effort was sufficient, self-relaunch at a different effort, or treat `xhigh` as a blocker. Reasoning-level selection belongs to the executable activation/correction that started the round.
+
 ```markdown
 <!-- gated-development:codex-evidence:v2 -->
 <!-- gated-development:chatgpt-thread:v1 id=<copied exact UUID> -->
@@ -228,13 +230,13 @@ Only an explicit human request supplying a replacement destination changes the r
 
 If the route is absent or conflicting and cannot be recovered from the applicable chain, report the routing problem and ask for clarification before publishing an executable correction. Do not turn this exceptional recovery into a fresh-ID requirement on every round. All existing correction-scope and authority rules still apply.
 
-To override the runner default `max` for this correction round, include exactly one optional field in the executable correction:
+For every newly authored correction, explicitly select its Codex reasoning effort using [Model selection](model-selection.md):
 
-```text
-- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
-```
+- `xhigh` is the normal choice for a routine, well-bounded correction;
+- `max` is an escalation for a materially deeper root-cause/discovery problem, especially when a reasonable `xhigh` attempt did not resolve the same issue, or when the human explicitly requests Max;
+- do not inherit the previous round's effort and do not choose Max merely because the correction is important.
 
-The override applies only to this correction. Omit it for `max`; later corrections do not inherit it. Unlike reasoning effort, the routing ID is inherited.
+If the human explicitly selects another supported value, honor that current instruction. Historical comments without a field remain runner-compatible, but new corrections under this workflow state the field explicitly.
 
 ```markdown
 <!-- gated-development:review:v2 status=correction-required -->
@@ -257,7 +259,7 @@ The override applies only to this correction. Omit it for `max`; later correctio
 - Source-of-truth commit: `<SHA>`
 - Push policy: `agent | none`
 - Workflow: current installed `gated-development-orchestration@aquanuity`
-- Execution reasoning effort: `<optional: minimal|low|medium|high|xhigh|max; omit for max>`
+- Execution reasoning effort: `<xhigh normally; max when escalation criteria apply; another supported value only when explicitly selected>`
 
 ### Blocking findings
 1. ...
@@ -273,7 +275,7 @@ The override applies only to this correction. Omit it for `max`; later correctio
 This finalized correction is the execution authorization and trigger. No additional dispatch is required.
 ```
 
-Do not pin/inherit a plugin version/source in the correction.
+Do not pin/inherit a plugin version/source in the correction. Reasoning effort is selected independently for each execution round; routing metadata is the part that is inherited.
 
 ### Verification blocked
 

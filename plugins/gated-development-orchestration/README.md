@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 1.4.8
+# Gated Development Orchestration Plugin 1.4.9
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.8** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This plugin wraps the shared **Gated Development Orchestration 1.4.9** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
 
 ## Included
 
@@ -8,7 +8,24 @@ This plugin wraps the shared **Gated Development Orchestration 1.4.8** skill for
 - `.app.json` — existing GitHub app reference; unchanged
 - `skills/gated-development-orchestration/` — shared workflow contract
 
-## 1.4.8 behavior
+## 1.4.9 behavior
+
+Version 1.4.9 makes Codex reasoning effort an **explicit per-round orchestration decision** instead of relying on the launcher's historical Max fallback.
+
+For every newly authored executable activation and correction:
+
+- **Extra High (`xhigh`) is the normal choice** for standard checkpoint implementation and routine bounded corrections.
+- **Max (`max`) is an escalation level**, used when the round materially benefits from deeper exploration/checking: repeated unresolved work after a reasonable `xhigh` attempt, difficult root-cause debugging, ambiguous ownership/behavior across several subsystems, unusually deep cross-layer reconciliation, or an explicit human request for Max.
+- Max is not selected merely because a task is important, spans many files, or has strict verification.
+- The selected effort is written explicitly into the activation/correction with `- Execution reasoning effort: ...`.
+- Corrections re-select effort independently. Routing is inherited through the gate; reasoning effort is not.
+- Codex executes at the launcher-applied effort and does not self-relaunch to change it after startup.
+
+The AquaTwin launcher retains its existing omitted-field `max` fallback only for compatibility with historical already-authored work orders. New v1.4.9 work must not rely on omission. This lets new Codex runs start at the intended reasoning level while preserving older GitHub history.
+
+See [Model selection and runtime](skills/gated-development-orchestration/references/model-selection.md), [Gate and issue templates](skills/gated-development-orchestration/references/gate-issue-templates.md), and [Automation handoff](skills/gated-development-orchestration/references/automation-handoff.md).
+
+### Current repository workflow source
 
 Ordinary ChatGPT Chat / Pro loads the shared workflow directly from this repository's current `main` package. Codex workers continue loading their currently installed plugin. For each ChatGPT action, resolve `main`, then read the manifest, `SKILL.md`, and required references from the same commit. Report the actual version, repository commit, and loaded paths; do not claim installed-plugin access. See [Workflow source by execution surface](skills/gated-development-orchestration/SKILL.md#workflow-source-by-execution-surface) for exact paths and required review references.
 
@@ -39,10 +56,10 @@ Only an explicit human request supplying a replacement destination changes the r
 If a correction's route is genuinely missing or ambiguous, recover it from the applicable chain or ask for clarification before publishing. Never invent a route, substitute a Codex thread ID or a fixed default, or silently fall back to manual delivery. Existing gate history remains unchanged; open gates with a valid established route can reuse it under this contract.
 
 ```text
-Activation: human supplies A
+Activation: human supplies A + explicit reasoning selection
   -> Codex evidence A -> review A
-  -> correction A -> Codex evidence A -> review A
-  -> later corrections continue with A
+  -> correction A + newly selected reasoning effort -> Codex evidence A -> review A
+  -> later corrections continue with A but independently select effort
 
 Explicit human change to B:
   -> next applicable correction B -> evidence B -> review B
@@ -80,26 +97,17 @@ Version 1.4.4 makes plugin evolution explicit:
 
 A plugin update changes workflow mechanics for subsequent actions without rewriting the gate's frozen product/repository authority.
 
-### Per-round reasoning effort
+### Explicit per-round reasoning effort
 
-AquaTwin's Codex runner defaults each executable activation/correction to `max` reasoning effort.
-
-To override one specific round, put exactly one of these fields in that activation or correction comment:
+The standardized field remains:
 
 ```text
 - Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
 ```
 
-Examples:
+Under v1.4.9, **new activations/corrections always state it explicitly**. `xhigh` is the ordinary default selection; `max` is the deliberate escalation tier. A human may explicitly choose another supported value for a round.
 
-```text
-- Execution reasoning effort: `xhigh`
-- Execution reasoning effort: `high`
-```
-
-If the field is omitted, the runner uses `max`. The override applies only to that executable comment; later corrections do not inherit it. Duplicate or unsupported values are malformed delivery.
-
-Routing is inherited; reasoning-effort overrides are not. A correction reusing thread A still uses `max` when its effort field is omitted.
+The launcher's old omitted-field `max` behavior remains only for backward compatibility with historical comments. Do not intentionally omit the field from new executable work.
 
 ### Verification failures are repair feedback, not automatic blockers
 
@@ -115,7 +123,7 @@ The thread marker and reasoning-effort field are transport/runtime metadata only
 
 ## Launcher separation
 
-The AquaTwin implementation runner is intentionally transport-only: it validates the delivery origin/basic shape, resolves the optional reasoning-effort field, and starts Codex. Case rules remain in the issue, source-of-truth documents, repository instructions, and the currently installed skill.
+The AquaTwin implementation runner is intentionally transport-only: it validates the delivery origin/basic shape, resolves the reasoning-effort field when present, and starts Codex. Case rules remain in the issue, source-of-truth documents, repository instructions, and the currently installed skill.
 
 The ChatGPT return workflow is separate from the Codex launcher. Codex never directly invokes the ChatGPT bridge. The launcher also does not decide whether a failing build/test is repairable; that diagnosis belongs to Codex under the active gate/current plugin.
 

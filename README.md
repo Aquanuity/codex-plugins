@@ -6,7 +6,7 @@ Aquanuity's Codex plugin marketplace. The catalog lives at [`.agents/plugins/mar
 
 | Plugin | Version | Purpose |
 | --- | --- | --- |
-| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.8 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
+| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 1.4.9 | Coordinate checkpoint development through GitHub work orders, Codex implementation, and independent ChatGPT review. |
 
 The marketplace identifier is `aquanuity`. Gated Development Orchestration is the first catalog entry.
 
@@ -60,7 +60,18 @@ plugins/gated-development-orchestration/
 
 The catalog's `source.path` resolves from the repository root. Plugin version, display information, skills, and app references remain in the plugin manifest.
 
-## Version 1.4.8 behavior
+## Version 1.4.9 behavior
+
+Version 1.4.9 adds an explicit **Extra High vs Max execution policy** for Codex work. New executable activations and corrections no longer rely on an omitted-field default:
+
+- `xhigh` (Extra High) is the normal choice for standard checkpoint implementation and routine bounded corrections.
+- `max` is an escalation for materially harder rounds: repeated unresolved work after a reasonable `xhigh` attempt, difficult causal debugging, ambiguous behavior/ownership across several subsystems, unusually deep cross-layer reconciliation, or an explicit human request for Max.
+- Max is not selected simply because a checkpoint is important, spans many files, or has strict verification.
+- Every newly authored executable activation/correction states exactly one `Execution reasoning effort` field.
+- Effort is re-selected for each correction; it is not inherited with the routing ID.
+- Codex runs at the launcher-applied effort and does not self-relaunch to change it.
+
+The AquaTwin launcher keeps its existing omitted-field `max` fallback only so historical already-posted work orders remain compatible. Current v1.4.9 authoring explicitly states the intended effort, ensuring new Codex runs start at the selected level without rewriting history. See [Model selection](plugins/gated-development-orchestration/skills/gated-development-orchestration/references/model-selection.md).
 
 Ordinary ChatGPT Chat / Pro loads the current workflow directly from this repository; Codex keeps using its currently installed plugin. ChatGPT resolves `main` once per action and reads the manifest, `SKILL.md`, and required references from that same commit. It reports the loaded version/source without freezing the snapshot for later gates or claiming a plugin was installed. Missing repository access or required references remains a precise capability block. See [Workflow source by execution surface](plugins/gated-development-orchestration/skills/gated-development-orchestration/SKILL.md#workflow-source-by-execution-surface).
 
@@ -80,19 +91,11 @@ Codex must record the diagnosis before editing, reverify without weakening tests
 
 The workflow-version rules introduced in 1.4.4 remain: gates no longer pin a Gated Development Orchestration package version/source. The stable workflow identity is `gated-development-orchestration@aquanuity`, and each action loads the current workflow from the source selected for its execution surface. Historical plugin pins in older gate records are provenance only and must not force use of obsolete packages or become blockers. Product source commits, gate scope, branch/baseline, path boundaries, acceptance criteria, and work-order history remain frozen according to the case.
 
-The runner's per-round reasoning override field remains:
-
-```text
-- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
-```
-
-Omit it to use the runner default `max`. An override applies only to the activation/correction comment that contains it and is not inherited by later correction rounds. **The routing ID is inherited; reasoning-effort overrides are not.**
-
 The verification-failure rules from 1.4.2 remain: a failed required build/test/check is not automatically a blocker. Codex diagnoses the failure, repairs self-introduced defects when the fix remains inside the authorized gate, and reruns verification. Only failures that cannot be resolved within the authorized scope/environment become blockers. Dependent tests wait for their prerequisite build to pass rather than running against stale binaries.
 
 ## Package provenance
 
-Version 1.4.8 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata identify the currently published package version. Gate work orders intentionally do not freeze that version; Codex resolves the installed plugin while ordinary ChatGPT resolves the current repository package.
+Version 1.4.9 is maintained directly in this marketplace repository. The plugin manifest and `SKILL.md` metadata identify the currently published package version. Gate work orders intentionally do not freeze that version; Codex resolves the installed plugin while ordinary ChatGPT resolves the current repository package.
 
 `.gitattributes` disables line-ending conversion for the plugin package.
 

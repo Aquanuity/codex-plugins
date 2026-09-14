@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate checkpoint development through pinned product source documents, frozen GitHub work orders, local Codex execution, GitHub-routed return review, and independent ChatGPT review. Use for gate creation, activation, implementation, evidence review, bounded corrections, and review routing. Choose the current role before acting; reading or reviewing this skill does not authorize a checkpoint or a GitHub write.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration does not require access to the user's local filesystem.
 metadata:
-  version: "1.4.8"
+  version: "1.4.9"
   workflow: "github-codex-gated-development"
 ---
 
@@ -26,9 +26,9 @@ A checkpoint implementation run must never promote itself to its own independent
 | Role | Owns | Must not do |
 |---|---|---|
 | Human / product owner | Intent, scope, architecture decisions, activation authority, cancellation and overrides; supplies the ChatGPT thread ID at activation and explicitly authorizes any later destination change | Nothing in this skill delegates final product authority away from the human |
-| Orchestrator / reviewer | Source tracing, source-of-truth documents, issue topology, activation, fresh remote review, correction orders, acceptance records, review routing | Treat Codex summaries or Actions success as proof; silently replace ChatGPT review with Codex/Work/API review; invent or infer a thread ID |
-| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope and qualifying incidental repair, authorized commit/push, evidence/blocker authoring and publication handoff | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID |
-| Implementation launcher | Validate basic delivery and start Codex | Decide scope, branch policy, architecture, gate validity, acceptance, verification diagnosis, or repository repair |
+| Orchestrator / reviewer | Source tracing, source-of-truth documents, issue topology, activation, fresh remote review, correction orders, acceptance records, review routing, per-round Codex reasoning-effort selection | Treat Codex summaries or Actions success as proof; silently replace ChatGPT review with Codex/Work/API review; invent or infer a thread ID |
+| Codex implementer | Exact work-order preflight, bounded implementation/analysis, verification, in-scope and qualifying incidental repair, authorized commit/push, evidence/blocker authoring and publication handoff | Self-approve, activate the next gate, directly invoke the ChatGPT bridge, invent/change a ChatGPT thread ID, self-relaunch to change reasoning effort |
+| Implementation launcher | Validate basic delivery and start Codex | Decide scope, branch policy, architecture, gate validity, acceptance, verification diagnosis, repository repair, or whether a round deserves Extra High vs Max |
 | Artifact publisher | Upload the prepared review bundle and post the authored report with actual artifact references | Implement, rerun verification, change routing, decide acceptance, or wait for ChatGPT |
 | Review transport | Recognize review-target comments and route them to the declared ChatGPT thread | Judge evidence, issue PASS/correction, or reinterpret the case |
 
@@ -49,7 +49,7 @@ For each ChatGPT action, resolve `main` to its current commit, then fetch these 
 2. `skills/gated-development-orchestration/SKILL.md`;
 3. the references required for the current phase, resolving their paths relative to that skill directory.
 
-For independent review, load `authority-and-lifecycle.md`, `evidence-and-review.md`, `automation-handoff.md`, and `execution-artifacts.md` from the skill's `references/` directory; also load `gate-issue-templates.md` when preparing a review/correction record. Follow further references needed for a material decision. Do not substitute the README, a directory listing, remembered instructions, or search snippets for the actual files.
+For independent review, load `authority-and-lifecycle.md`, `evidence-and-review.md`, `automation-handoff.md`, and `execution-artifacts.md` from the skill's `references/` directory; also load `gate-issue-templates.md` when preparing a review/correction record. Load `model-selection.md` before authoring any executable activation or correction, because reasoning effort is an explicit per-round selection. Follow further references needed for a material decision. Do not substitute the README, a directory listing, remembered instructions, or search snippets for the actual files.
 
 Keep one source snapshot within an action. Resolve the current source again for later actions; the recorded commit is provenance, not a gate-wide version pin. Report the loaded version and source truthfully: installed package path/version for Codex when observable; repository, resolved commit, and loaded file paths for ChatGPT. Repository loading does not install a plugin or grant GitHub access.
 
@@ -71,7 +71,7 @@ This separates **product/work-order freezing** from **workflow-plugin evolution*
 - [Gate and issue templates](references/gate-issue-templates.md)
 - [Evidence and review](references/evidence-and-review.md)
 - [Automation handoff](references/automation-handoff.md)
-- [Model selection](references/model-selection.md)
+- [Model selection](references/model-selection.md) — required before authoring an executable activation/correction and when evaluating a human runtime-effort instruction
 - [Execution artifacts and publication](references/execution-artifacts.md) — required when preparing, publishing, retrieving, or retrying run evidence
 
 Read the references required for the current phase from the source selected above. Record the actual loaded workflow version/source when reporting an automated run or review.
@@ -102,7 +102,7 @@ Read the references required for the current phase from the source selected abov
 22. If a failure is repairable within primary authorized paths or qualifies for bounded incidental repair below, Codex must fix it and rerun verification rather than stop merely because a check failed or a file was not listed.
 23. A dependent verification step may pause after its prerequisite build/check fails, but the implementation session continues while an in-scope repair remains available.
 24. Stop and report a blocker only when resolving the failure requires unauthorized scope/path/repository operations, a product or architecture decision, unsafe runtime ownership, unavailable required tool/environment/access, or an external/baseline defect that cannot be resolved within the active gate.
-25. Runtime reasoning effort is per executable activation/correction. The standardized override field is `- Execution reasoning effort: <minimal|low|medium|high|xhigh|max>`; omission uses the runner default `max`.
+25. Runtime reasoning effort is selected independently for each executable activation/correction. New work orders authored under the current workflow state exactly one `Execution reasoning effort` field: normally `xhigh` (Extra High), with `max` reserved for the escalation conditions in `model-selection.md` unless the human explicitly selects another supported value. Do not rely on omission for new work; historical omitted fields remain compatible with the launcher's existing `max` fallback.
 26. Bounded incidental repairs outside primary listed paths are authorized only under the conditions below; explicitly protected paths, product scope, and independent review remain binding.
 27. Generated run logs/reports are execution artifacts, not repository source. Keep them out of git unless a particular durable artifact is explicitly required; publish a redacted review bundle outside the repository.
 28. Artifact upload precedes the single terminal evidence comment. Queued publication, artifact upload, and publisher success are not checkpoint PASS. Retry publication without rerunning implementation.
@@ -159,7 +159,7 @@ Rules:
 - Codex copies the exact triggering marker unchanged into terminal evidence or blocker. It never selects a replacement or calls the return bridge.
 - The reviewer reuses the applicable gate routing marker in every executable correction unless recording an explicit human replacement.
 - PASS and verification-blocked comments do not need a marker because they do not launch implementation; they do not clear or change the gate route.
-- Thread routing is inherited across correction rounds. Reasoning-effort overrides are not: omission of `Execution reasoning effort` still selects `max` for that round.
+- Thread routing is inherited across correction rounds. Reasoning effort is not inherited: current workflow authoring explicitly selects and states it for every executable round.
 
 ### Malformed, missing, or conflicting routing
 
@@ -202,6 +202,8 @@ Draft a **Primary authorized path boundary**, include the bounded incidental rep
 
 When drafting stop conditions, do **not** use a blanket rule such as `stop on required verification failure`. Required verification failures caused by the active implementation are expected development feedback and remain repairable inside the gate when the repair is authorized. Stop conditions should describe the unresolved condition that makes further in-scope work impossible or unauthorized.
 
+Reasoning effort is not frozen into the gate body. Select it immediately before each executable activation/correction from the actual round difficulty using [Model selection](references/model-selection.md).
+
 ### Activate
 
 After human authorization and prerequisite readiness:
@@ -210,15 +212,15 @@ After human authorization and prerequisite readiness:
 2. fetch the final GitHub body and hash it where the case requires;
 3. if the human has not already supplied the current ChatGPT thread ID for this activation, ask for it;
 4. validate the supplied UUID shape;
-5. if this activation needs a non-default reasoning effort, include exactly one standardized `Execution reasoning effort` field described under Runtime configuration; otherwise omit it and use `max`;
-6. publish a new activation comment containing the activation marker followed immediately by the supplied thread routing marker; this establishes the gate route to reuse in subsequent correction rounds;
+5. load the current model-selection policy and select the execution reasoning effort for this activation: use `xhigh` normally, use `max` only when the round meets the escalation criteria, or honor a human-selected supported value; include exactly one explicit `Execution reasoning effort` field;
+6. publish a new activation comment containing the activation marker followed immediately by the supplied thread routing marker and the selected effort in the activation manifest; this establishes the gate route to reuse in subsequent correction rounds;
 7. let the configured launcher perform the handoff.
 
 Do not add or inherit a frozen plugin version/source line in the activation. If useful, identify the workflow only as the current installed `gated-development-orchestration@aquanuity`.
 
 If step 3/4 is not satisfied, **do not activate**. Keep the gate READY and tell the human that activation requires the current ChatGPT thread ID.
 
-Posting the activation is the real handoff. Do not append another dispatch comment.
+Posting the activation is the real handoff. Do not append another dispatch comment. Do not omit the effort field to obtain the historical runner default when authoring current work.
 
 ## Implementer path
 
@@ -231,6 +233,10 @@ If historical case text names an older Gated Development Orchestration version/r
 The launcher only transported the instruction. Codex owns semantic preflight under the case/current plugin. If the case authorizes bootstrap branch/worktree creation or other repository setup, follow the case; if not, do not invent it.
 
 Verify that the triggering comment contains exactly one valid ChatGPT thread marker. Missing or multiple markers block execution. An inherited correction marker is valid; no fresh human UUID submission is required for that round.
+
+Read the launcher-applied reasoning effort when exposed. For current v1.4.9-authored work this should normally come from the explicit trigger field. Historical executable comments without the field may still arrive through the launcher's backward-compatible `max` fallback; absence in such historical work is not by itself a scope blocker.
+
+Codex must not self-relaunch, rewrite the triggering work order, or change its own effort after startup. Running at `xhigh` is not a reason to stop or ask for Max before attempting the authorized work. If a later independent review identifies a materially deeper correction, that future executable correction may select `max`.
 
 Stop and report when the trigger is edited/mismatched, superseded/cancelled/accepted, routing is malformed, scope conflicts, repository state violates the case, or a true blocker under the verification rules below is established. **Do not block because a historical gate workflow version/source differs from the current installed plugin.**
 
@@ -257,7 +263,7 @@ Evidence must separately disclose every qualifying incidental repair outside pri
 
 Evidence should report final required verification plus any material failed attempts that affected diagnosis. A transient self-introduced compile/test failure that was repaired and reverified is development history, not a blocker.
 
-Report the actual current installed plugin version/source used when observable. Do not restate a historical case pin as the controlling skill.
+Report the actual current installed plugin version/source used and launcher-applied reasoning effort/source when observable. Do not restate a historical case pin as the controlling skill, and do not present the requested effort as proof of correctness.
 
 After publisher dispatch acknowledgment, return **publication queued, not yet confirmed posted**, the request ID, actual publisher run URL if available, and local evidence path; then stop. Do not wait for the publisher or ChatGPT, invent its future artifact/comment IDs, or require `completed.json`/`final.txt` that will exist only after your own process exits. Once publication is independently confirmed, the actual comment URL is the report reference. Legacy/manual/malformed-trigger publication limitations must be reported explicitly; do not fabricate a request or silently commit logs as a fallback. **Do not call the ChatGPT return bridge yourself.**
 
@@ -293,8 +299,8 @@ For correction-required:
 1. prepare the complete bounded correction work order;
 2. resolve the established gate routing marker from the applicable activation/correction chain and checked evidence; reuse it unchanged without asking for the ID again;
 3. only if the human explicitly requested a different destination, validate and record that supplied replacement; if the established route is missing or ambiguous and cannot be recovered, ask for clarification and withhold the executable correction;
-4. if this correction round needs a non-default reasoning effort, include exactly one standardized `Execution reasoning effort` field; otherwise omit it and use `max`;
-5. publish the complete correction with exactly one routing marker immediately after the correction executable marker.
+4. load the current model-selection policy and explicitly choose this correction's reasoning effort: use `xhigh` for routine well-bounded corrections, `max` for a materially deeper/root-cause round that meets the escalation criteria, or a different supported value only when the human explicitly selects it; never inherit the previous round's effort;
+5. include exactly one standardized `Execution reasoning effort` field and publish the complete correction with exactly one routing marker immediately after the correction executable marker.
 
 Do not freeze or inherit a plugin version/source in the correction comment.
 
@@ -302,41 +308,43 @@ Do not issue a correction marker merely to solve delivery/access/publication pro
 
 ## Runtime configuration
 
-Automated AquaTwin Codex execution defaults to:
+### Per-round reasoning selection
 
-```text
-model_reasoning_effort=max
-```
-
-unless the executable activation/correction contains exactly one supported per-round override field.
-
-### Per-round reasoning-effort override
-
-Use this exact standardized field in the executable activation or correction comment:
+Every newly authored executable activation/correction under the current workflow explicitly states:
 
 ```text
 - Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
 ```
 
-Examples:
+The normal policy is:
 
-```text
-- Execution reasoning effort: `xhigh`
-- Execution reasoning effort: `high`
-- Execution reasoning effort: `max`
-```
+- **Extra High (`xhigh`)** — default for normal checkpoint implementation and routine bounded corrections, including substantial work whose objective, architecture/ownership, paths, acceptance criteria, and verification are clear;
+- **Max (`max`)** — deliberate escalation when the round materially benefits from extra exploration/checking, such as a repeated material failure after a reasonable `xhigh` attempt, difficult causal debugging, ambiguous ownership/behavior across several subsystems, unusually deep cross-layer reconciliation, or an explicit human request for Max.
+
+Do not select Max solely because the task is important, touches many files, has strict verification, or because older workflow versions defaulted the launcher to Max. Full criteria are in [Model selection](references/model-selection.md).
 
 Rules:
 
-- Omit the field to use the runner default `max`.
-- Exactly one field is allowed in an executable activation/correction.
-- Supported values are `minimal`, `low`, `medium`, `high`, `xhigh`, and `max`.
-- The override applies only to that single activation/correction execution.
-- A correction does not inherit an earlier activation or correction override. If a later correction needs a different effort, state the field again in that correction comment.
-- Duplicate fields or unsupported values make the delivery malformed; do not guess or silently fall back.
+- New activations/corrections must state exactly one effort field; do not rely on an omitted-field default.
+- Re-evaluate the effort independently for every correction. Routing is inherited; reasoning effort is not.
+- A routine correction after `max` normally returns to `xhigh` unless the correction itself still warrants Max.
+- A difficult correction after `xhigh` may escalate to `max` without changing any product/repository authority.
+- If the human explicitly selects another supported value, honor that current instruction.
+- Supported values remain `minimal`, `low`, `medium`, `high`, `xhigh`, and `max`.
+- Duplicate fields or unsupported values make delivery malformed; do not guess or silently normalize.
 - This field changes runtime reasoning effort only. It does not grant scope, architecture, repository, correction, or acceptance authority.
 
-The launcher records the resolved effort and whether it came from `runner-default` or `case-override`, then applies it to the Codex execution. Report actual/exposed runtime configuration truthfully; do not infer success from the requested effort.
+### Legacy runner fallback
+
+The existing AquaTwin launcher retains a mechanical backward-compatible fallback for historical executable comments that contain no field:
+
+```text
+model_reasoning_effort=max
+```
+
+This fallback is not the current authoring policy. New v1.4.9 activations/corrections explicitly state the selected effort so Codex starts with the intended level.
+
+The launcher records the resolved effort and whether it came from `runner-default` or `case-override`, then applies it to the Codex execution. Codex does not self-relaunch to change it after startup. Report actual/exposed runtime configuration truthfully; do not infer success from the requested effort.
 
 ## Terminal outcomes
 
