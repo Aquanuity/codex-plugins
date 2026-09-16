@@ -1,132 +1,112 @@
-# Gated Development Orchestration Plugin 1.4.9
+# Gated Development Orchestration Plugin 2.0.0
 
-This plugin wraps the shared **Gated Development Orchestration 1.4.9** skill for both ChatGPT Chat / Pro orchestration-review and local Codex implementation.
+This package provides the shared **Gated Development Orchestration v2.0.0** contract for ChatGPT Chat / Pro orchestration-discovery-review and local Codex implementation.
 
-## Included
+## v2 architecture
 
-- `.codex-plugin/plugin.json` — plugin manifest
-- `.app.json` — existing GitHub app reference; unchanged
-- `skills/gated-development-orchestration/` — shared workflow contract
-
-## 1.4.9 behavior
-
-Version 1.4.9 makes Codex reasoning effort an **explicit per-round orchestration decision** instead of relying on the launcher's historical Max fallback.
-
-For every newly authored executable activation and correction:
-
-- **Extra High (`xhigh`) is the normal choice** for standard checkpoint implementation and routine bounded corrections.
-- **Max (`max`) is an escalation level**, used when the round materially benefits from deeper exploration/checking: repeated unresolved work after a reasonable `xhigh` attempt, difficult root-cause debugging, ambiguous ownership/behavior across several subsystems, unusually deep cross-layer reconciliation, or an explicit human request for Max.
-- Max is not selected merely because a task is important, spans many files, or has strict verification.
-- The selected effort is written explicitly into the activation/correction with `- Execution reasoning effort: ...`.
-- Corrections re-select effort independently. Routing is inherited through the gate; reasoning effort is not.
-- Codex executes at the launcher-applied effort and does not self-relaunch to change it after startup.
-
-The AquaTwin launcher retains its existing omitted-field `max` fallback only for compatibility with historical already-authored work orders. New v1.4.9 work must not rely on omission. This lets new Codex runs start at the intended reasoning level while preserving older GitHub history.
-
-See [Model selection and runtime](skills/gated-development-orchestration/references/model-selection.md), [Gate and issue templates](skills/gated-development-orchestration/references/gate-issue-templates.md), and [Automation handoff](skills/gated-development-orchestration/references/automation-handoff.md).
-
-### Current repository workflow source
-
-Ordinary ChatGPT Chat / Pro loads the shared workflow directly from this repository's current `main` package. Codex workers continue loading their currently installed plugin. For each ChatGPT action, resolve `main`, then read the manifest, `SKILL.md`, and required references from the same commit. Report the actual version, repository commit, and loaded paths; do not claim installed-plugin access. See [Workflow source by execution surface](skills/gated-development-orchestration/SKILL.md#workflow-source-by-execution-surface) for exact paths and required review references.
-
-Implementation and independent review are routed by GitHub comment markers:
-
-- `gated-development:activation:v1` -> Codex implementation
-- `gated-development:review:v2 status=correction-required` -> Codex correction
-- `gated-development:codex-evidence:v2` -> independent ChatGPT review transport
-- `gated-development:blocker:v2` -> blocker record; may be routed to ChatGPT when blocker triage is configured
-- PASS / verification-blocked / state comments -> durable ledger only
-
-### Keep generated logs out of git
-
-Version 1.4.7 adds artifact-backed evidence publication. Codex prepares one redacted review bundle and concise report outside the repository, then dispatches `codex-artifact-publish.yml` in AquaTwin with its existing automation request ID. The separate publisher uploads the bundle, appends actual run/artifact ID/URL/digests/expiration, and posts the terminal report before exiting. The original implementation dispatcher still exits immediately, and Codex does not wait for ChatGPT or duplicate the terminal comment.
-
-The publisher requests 30-day artifact retention, suppresses duplicate report publication, and uses trusted personal GitHub credentials so the evidence comment triggers the existing review workflow. Generated logs/reports are not committed by default. Reviewers inspect raw artifacts only for a material claim or required acceptance check; essential proof is never waived. Publication failures are retried without rerunning implementation. GitHub artifact expiry does not clean up Windows logs or authorize project-file deletion.
-
-See [Execution artifacts and publication](skills/gated-development-orchestration/references/execution-artifacts.md) for fixed filenames, readiness schema, dispatch command, credential requirements, retrieval, and cleanup. Blocker reports remain blockers; automatic return triage depends on the separately configured review filter. This update does not repair the local ChatGPT adapter.
-
-### Supply the routing ID at activation; reuse it thereafter
-
-Every executable activation and correction still requires exactly one ChatGPT thread routing marker. **The human supplies the ID at activation, not again for every correction.** Ask for it when activating if it has not been supplied; without a valid supplied ID, do not activate.
-
-The activation establishes the gate's review-routing thread. Codex copies its triggering marker unchanged into evidence/blocker. The reviewer resolves the applicable activation/correction chain, verifies evidence propagation, and reuses the established marker in subsequent corrections without asking for fresh UUID input.
-
-Only an explicit human request supplying a replacement destination changes the route. Record it in the next applicable activation/correction with exactly one new marker; from that work order onward, evidence/blocker and later corrections use the replacement. Do not change destination merely because review occurs in another chat, and do not let stale evidence reset a newer route.
-
-If a correction's route is genuinely missing or ambiguous, recover it from the applicable chain or ask for clarification before publishing. Never invent a route, substitute a Codex thread ID or a fixed default, or silently fall back to manual delivery. Existing gate history remains unchanged; open gates with a valid established route can reuse it under this contract.
+v2 separates discovery/product reasoning from deterministic implementation:
 
 ```text
-Activation: human supplies A + explicit reasoning selection
-  -> Codex evidence A -> review A
-  -> correction A + newly selected reasoning effort -> Codex evidence A -> review A
-  -> later corrections continue with A but independently select effort
-
-Explicit human change to B:
-  -> next applicable correction B -> evidence B -> review B
-  -> later corrections continue with B
+ChatGPT: discover -> specify -> decompose -> independently judge
+Codex: execute -> verify -> repair -> report
+Unexpected material uncertainty: return to ChatGPT discovery
 ```
 
-The routing ID is metadata, not repeated approval. Correction scope, execution authority, and independent review remain governed by the existing workflow. Routing reuse itself introduces no new executable marker or development dispatch; the artifact publisher is a separate publication transport.
+### Discovery is not CP1-specific
 
-### Bounded incidental repair authority
+`discovery` is a first-class gate type that may appear anywhere in the checkpoint plan.
 
-Version 1.4.5 treats listed paths as the **primary authorized path boundary**, not an automatic stop for every omitted file. Codex may make a minimal adjacent off-list repair without another approval round when the active work introduced or exposed it, it is required to compile/test/verify the authorized gate, it is mechanical/low-risk, and it introduces no product-behavior, architecture, ownership, public-contract, persistence/authorization, dependency/framework, or repository/build-policy expansion.
+CP1 is commonly discovery because early feature uncertainty is often high, but:
 
-Codex records why the repair qualifies before editing, makes the smallest coherent change, reruns prerequisite/dependent checks without weakening them, and explicitly lists the off-list repair and results in evidence. The reviewer independently checks qualification and cumulative scope. A missing import, explicit generic argument, fixture wiring, or test compile/link item can qualify; a small diff alone is not permission.
+- CP1 does not have to be discovery;
+- discovery is not limited to CP1;
+- foreseeable later discovery should be inserted as its own discovery checkpoint;
+- surprise discovery during implementation becomes a linked child checkpoint such as `CP4.D1`.
 
-Explicit read-only/protected/no-touch restrictions and human denials still win. Analysis-only gates stay no-write. Repository-state repair, unsafe runtime changes, unrelated cleanup, or material design decisions still require authorization. If qualification cannot be established, report the specific blocker rather than only `file not pre-approved`. No new runner flag, workflow, or dispatch is added.
+ChatGPT Chat / Pro normally executes discovery at Extra High / Pro, investigating repository/native behavior, ownership, architecture, product meaning, acceptance oracle, and source-of-truth. Material product/architecture/source-of-truth decisions require human approval before controlling downstream implementation.
 
-See [the full incidental repair rule](skills/gated-development-orchestration/SKILL.md#bounded-incidental-repair).
+See [Discovery checkpoints and return-to-ChatGPT](skills/gated-development-orchestration/references/discovery-checkpoints.md).
 
-### Current workflow source, not a frozen gate pin
+### Codex normally runs at Medium
 
-The workflow plugin identity is:
+Once an implementation gate is discovery-complete and execution-ready, Codex normally starts at:
 
 ```text
-gated-development-orchestration@aquanuity
+- Execution reasoning effort: `medium`
 ```
 
-Version 1.4.4 makes plugin evolution explicit:
+Escalation is for **technical implementation difficulty**, not missing product knowledge:
 
-- product/source-of-truth commits, gate scope, branch/baseline, path boundaries, acceptance criteria, and executable work orders may be frozen as required;
-- the Gated Development Orchestration **plugin version/source is not frozen by the gate**;
-- each action uses the current `gated-development-orchestration@aquanuity` contract: installed plugin in Codex, current repository package in ordinary ChatGPT;
-- do not copy/pin a predecessor gate's plugin version, marketplace repo SHA, package commit, or historical `SKILL.md` URL;
-- historical plugin version/source lines in old gate records are provenance only and must not force Codex or ChatGPT to use an obsolete package;
-- evidence/review may report the actual loaded workflow version/source used for traceability, but that report does not pin later actions.
+- `medium` — normal implementation/correction/reactivation;
+- `high` — elevated implementation complexity;
+- `xhigh` — difficult implementation/debugging under known intended behavior;
+- `max` — exceptional technical escalation after lower tiers are inadequate or explicit human request;
+- unresolved discovery — return to ChatGPT instead of using Max as a discovery substitute.
 
-A plugin update changes workflow mechanics for subsequent actions without rewriting the gate's frozen product/repository authority.
+See [Model selection and runtime](skills/gated-development-orchestration/references/model-selection.md).
 
-### Explicit per-round reasoning effort
+### Foreseeable discovery
 
-The standardized field remains:
+If an implementation checkpoint will require material architecture/behavior/ownership discovery, create and complete a discovery checkpoint first. Do not activate Codex with Max to compensate for a work order that is not execution-ready.
+
+### Surprise discovery during Codex execution
+
+Codex stops before inventing the missing product/architecture decision and publishes normal routed evidence:
 
 ```text
-- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
+<!-- gated-development:codex-evidence:v2 -->
+<!-- gated-development:chatgpt-thread:v1 id=<copied UUID> -->
+...
+Submission outcome: DISCOVERY REQUIRED
 ```
 
-Under v1.4.9, **new activations/corrections always state it explicitly**. `xhigh` is the ordinary default selection; `max` is the deliberate escalation tier. A human may explicitly choose another supported value for a round.
+The existing evidence-return workflow therefore reaches the same ChatGPT conversation without a new transport protocol.
 
-The launcher's old omitted-field `max` behavior remains only for backward compatibility with historical comments. Do not intentionally omit the field from new executable work.
+ChatGPT creates a linked discovery child checkpoint (normally `<Gate>.D<n>`), investigates at Extra High / Pro, records/amends source-of-truth as authorized, and obtains human approval for material decisions.
 
-### Verification failures are repair feedback, not automatic blockers
+Then either:
 
-A failed required build, test, or verification check must be diagnosed before Codex decides to stop.
+- the original gate remains truthful -> record a discovery amendment and publish a new `activation:v1` comment with incremented work-order version, same route, approved source commit, resume SHA, and explicit Codex effort (normally Medium); or
+- discovery materially changes the gate -> supersede it and create replacement implementation gate(s).
 
-- If the repair fits primary authorized paths or qualifies for bounded incidental repair without changing the authorized product scope, architecture, or repository operations, Codex fixes it and reruns the failed prerequisite and dependent verification.
-- Dependent tests do not run against stale binaries after a failed build, but the implementation session continues while an authorized repair exists.
-- Codex reports a blocker only when resolution requires unauthorized scope/path/repository repair, a product or architecture decision, unavailable required environment/tool/access, unsafe runtime ownership, or an external/baseline defect with no authorized in-gate resolution.
+The frozen gate is never silently rewritten to hide discovery.
 
-Gate authors must not use blanket stop language such as `stop on required verification failure`. Stop conditions describe why further work is unsafe or unauthorized, not the fact that a verification command returned nonzero.
+## Existing v1 mechanics retained
 
-The thread marker and reasoning-effort field are transport/runtime metadata only. Neither grants product scope, implementation permission, correction authority, or acceptance.
+v2 retains the useful mechanics developed in v1:
 
-## Launcher separation
+- workflow source is current-by-execution-surface rather than frozen into product gates;
+- human-supplied ChatGPT route is established on initial activation and reused through corrections/reactivations;
+- bounded incidental repair for mechanical gate-related verification fixes;
+- verification failures are diagnosed rather than automatically becoming blockers;
+- artifact-backed evidence publication keeps generated logs out of git;
+- Codex never self-approves or directly invokes the ChatGPT bridge;
+- ChatGPT implementation review independently fetches remote code/diff/evidence.
 
-The AquaTwin implementation runner is intentionally transport-only: it validates the delivery origin/basic shape, resolves the reasoning-effort field when present, and starts Codex. Case rules remain in the issue, source-of-truth documents, repository instructions, and the currently installed skill.
+## Package contents
 
-The ChatGPT return workflow is separate from the Codex launcher. Codex never directly invokes the ChatGPT bridge. The launcher also does not decide whether a failing build/test is repairable; that diagnosis belongs to Codex under the active gate/current plugin.
+- `.codex-plugin/plugin.json` — manifest/version
+- `.app.json` — GitHub app reference
+- `skills/gated-development-orchestration/SKILL.md` — shared contract
+- references:
+  - `authority-and-lifecycle.md`
+  - `discovery-checkpoints.md`
+  - `gate-issue-templates.md`
+  - `evidence-and-review.md`
+  - `automation-handoff.md`
+  - `model-selection.md`
+  - `execution-artifacts.md`
+
+## Workflow source
+
+Codex uses the currently installed `gated-development-orchestration@aquanuity` plugin. Ordinary ChatGPT Chat / Pro resolves the current package from `Aquanuity/codex-plugins` `main` for each action and loads the manifest, skill, and phase-required references from the same repository commit.
+
+Product/source-of-truth commits, implementation gate scope, branch/base, acceptance criteria, and work-order history may be frozen. The workflow package version/source is provenance, not product authority.
 
 ## Compatibility
 
-No MCP server is declared by this plugin. Existing GitHub app configuration remains subject to normal user/workspace connection and permission controls.
+The implementation launcher does not need a new post-discovery marker: v2 reuses `activation:v1` for reactivation and `codex-evidence:v2` for discovery return.
+
+Historical executable comments without an explicit reasoning field may continue using the existing launcher fallback. New v2-authored Codex work always states reasoning effort explicitly.
+
+No MCP server is declared by this plugin. GitHub access remains subject to normal connection/permission controls.

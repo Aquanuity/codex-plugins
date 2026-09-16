@@ -1,43 +1,34 @@
 # Evidence and Independent Review Reference
 
-Use when Codex reports, ChatGPT independently reviews, a blocker is triaged, or a correction is issued.
+Use when Codex reports implementation evidence, returns `DISCOVERY REQUIRED`, ChatGPT independently reviews implementation, a true blocker is triaged, or a correction is issued.
 
-## Current plugin contract
+## Current workflow contract
 
-Use the shared **`gated-development-orchestration@aquanuity`** workflow contract from the source selected in [Workflow source by execution surface](../SKILL.md#workflow-source-by-execution-surface): Codex uses its currently installed plugin; ordinary ChatGPT Chat / Pro uses the current repository package. Load all required references from that same selected source.
+Use the current `gated-development-orchestration@aquanuity` workflow source selected by execution surface. Historical plugin-version references are provenance only.
 
-Historical gate/activation text that names an older plugin version, repository, commit, or `SKILL.md` URL is provenance only. It does not control the current implementation/review workflow and is not a blocker. Report the actual loaded workflow version/source, but do not turn that report into a new gate pin.
+Read `discovery-checkpoints.md` whenever evidence says `DISCOVERY REQUIRED` or review exposes material unresolved product/architecture discovery.
 
-## Artifact-backed publication
-
-Read [Execution artifacts and publication](execution-artifacts.md). Generated logs and machine reports stay out of git unless explicitly required as durable deliverables. For a valid AquaTwin launcher run, author the report below as `publication/evidence.md`, prepare a redacted snapshot bundle and checksum readiness record, and dispatch the fixed artifact publisher with that request ID. It uploads first and posts this report with actual artifact references. Do not pre-post a second terminal report or invent future artifact IDs/URLs.
-
-Codex's dispatch acknowledgment means **publication queued**, not evidence posted. The confirmed issue comment is the durable report; the artifact is associated with the publisher run, not the already-finished launcher job. A transport-only publisher posting Codex's authored report does not become an independent reviewer.
+Read `execution-artifacts.md` for AquaTwin evidence publication, bundle/redaction/checksum, retry, and artifact inspection rules.
 
 ## Evidence is not acceptance
 
-Actions success, CLI exit `0`, Codex summaries, and evidence URLs are not PASS. The reviewer independently fetches remote evidence.
+Actions success, CLI exit `0`, Codex summaries, artifact presence, publisher success, and evidence URLs are not PASS. ChatGPT independently inspects the remote case.
 
-## Verification failure classification
+## Verification / discovery classification during implementation
 
-A failed required build/test/check during implementation is not automatically a terminal blocker.
+Before terminal reporting, Codex classifies what it encountered:
 
-Before publishing a blocker, Codex classifies the cause:
+1. **Implementation defect within primary paths** — fix/reverify.
+2. **Qualifying bounded incidental repair** — diagnose, minimally repair, reverify, disclose.
+3. **Execution-only difficult technical problem** — continue authorized diagnosis under the selected runtime effort; report a true blocker only when no authorized resolution remains.
+4. **Material discovery required** — stop before inventing product/architecture/ownership/acceptance meaning and publish routed `DISCOVERY REQUIRED` evidence.
+5. **True blocker** — unauthorized scope/path/repository operation, unavailable required environment/tool/access, unsafe runtime ownership, or other condition with no authorized implementation/discovery-return resolution.
 
-1. **Active implementation defect within primary paths** — repair it within the authorized scope, architecture, and repository operations, then rerun the failed prerequisite and dependent verification.
-2. **Bounded incidental repair outside primary paths** — the active work introduced or exposed a directly necessary compile/test/verification repair and every [incidental repair condition](../SKILL.md#bounded-incidental-repair) holds. Record the diagnosis, make the smallest mechanical fix, reverify, disclose it, and continue the same execution without another dispatch.
-3. **Other authorized baseline/environment handling** — apply only an already-authorized, truthful resolution. Do not hide the condition or expand into unrelated maintenance.
-4. **True blocker** — a repair fails the incidental conditions, violates explicit hard exclusions, or requires unauthorized scope/repository repair, a material design decision, unavailable required tool/environment/access, unsafe runtime ownership, or an external/baseline defect with no authorized resolution. Preserve work, state the specific unmet condition, publish a blocker, and stop.
+A failed first build/test is not automatically a blocker or discovery request.
 
-When a prerequisite build fails, dependent tests stop until that prerequisite is repaired. This pauses the dependent verification sequence; it does not stop the implementation session when an in-scope repair is available.
+## Normal Codex evidence
 
-Do not publish a blocker merely because the first verification attempt failed. A repaired transient failure may be recorded in evidence as diagnostic history, but final required verification must still be rerun.
-
-## Codex evidence comment
-
-A valid triggering work order contains exactly one ChatGPT thread marker. Reproduce it exactly on the second line. The human supplies the route at activation; a correction normally reuses it. Codex copies its own trigger's marker, including an explicitly human-authorized replacement, without asking for a fresh ID or selecting another destination.
-
-Codex reports the launcher-applied reasoning effort when exposed, but it does not judge whether its own effort was sufficient, self-relaunch at a different effort, or treat `xhigh` as a blocker. Reasoning-level selection belongs to the executable activation/correction that started the round.
+A valid triggering Codex work order contains exactly one ChatGPT route marker. Reproduce it exactly on the second line.
 
 ```markdown
 <!-- gated-development:codex-evidence:v2 -->
@@ -50,21 +41,19 @@ Status: Evidence posted. **Not PASS.**
 - Gate: `<id>`
 - Gate type: `implementation | documentation | analysis-only`
 - Work-order version: `<executed version>`
-- Activation comment: `<actual URL>`
-- Source-of-truth commit: `<SHA or case-specific equivalent>`
-- Original gate starting SHA: `<original SHA>`
-- Review diff base: `<same original SHA>`
-- Correction review comment: `<URL or N/A>`
-- Required execution starting SHA: `<initial/correction SHA>`
+- Triggering activation/reactivation/correction: `<URL>`
+- Source-of-truth commit: `<approved SHA>`
+- Original gate starting SHA: `<B>`
+- Review diff base: `<B>`
+- Required execution starting SHA: `<SHA>`
+- Discovery amendment/reactivation reference: `<URL or N/A>`
 
 ### Execution correlation
-- Triggering comment: `<exact URL>`
-- Actions run: `<actual run URL or N/A — manual>`
-- Automation request ID: `<supplied ID or N/A — manual>`
+- Actions run: `<actual URL or N/A>`
+- Automation request ID: `<actual ID or N/A>`
 - Workflow plugin identity: `gated-development-orchestration@aquanuity`
-- Installed skill package version used: `<actual when observable>`
-- Installed skill source used: `<actual when observable>`
-- Requested reasoning effort/source: `<resolved value and runner-default|case-override when exposed>`
+- Installed workflow version/source used: `<actual when observable>`
+- Requested reasoning effort/source: `<resolved value/source when exposed>`
 - Runtime model/reasoning observed: `<actual or not exposed>`
 
 ### Repository state
@@ -75,43 +64,40 @@ Status: Evidence posted. **Not PASS.**
 - Remote availability:
 
 ### Changed files
-- `<path — primary authorized work | qualifying incidental repair | separately human-authorized change>`
+- `<path — primary authorized | qualifying incidental | separately human-authorized>`
 
-### Implemented or analyzed scope
+### Implemented scope
 - ...
 
-### Acceptance evidence by criterion
+### Acceptance evidence
 | Criterion | Evidence | Codex assessment |
 |---|---|---|
 | `AC-1` | ... | SATISFIED / NOT SATISFIED / NOT TESTED |
 
 ### Verification
-| Command or inspection | Outcome | Notes |
+| Command / inspection | Outcome | Notes |
 |---|---|---|
 | `...` | PASS / FAIL / NOT RUN | ... |
 
-### Material diagnostic failures repaired during execution
-- `<failure, cause, authorized repair, successful rerun; or none>`
+### Material diagnostic failures repaired
+- `<failure/cause/repair/rerun or none>`
 
 ### Incidental repairs outside primary paths
-`NONE` or one row per off-list repair. Include the pre-edit diagnosis; do not hide these under generic scope confirmations.
+`NONE` or one row per qualifying repair.
 
-| Path / repair | Gate-related failure and why repair was necessary | Why mechanical, minimal, and behavior-preserving; hard exclusions checked | Verification rerun and actual outcome |
+| Path / repair | Gate-related necessity | Why mechanical/minimal/behavior-preserving | Verification rerun |
 |---|---|---|---|
-| `<path and smallest change>` | `<cause introduced/exposed by active work>` | `<qualification evidence, including cumulative scope>` | `<command/inspection and result>` |
+| ... | ... | ... | ... |
 
-### Supporting evidence index
-- `<relevant bundle file names and material claims they support; snapshot cutoff and omissions>`
-- `<do not insert guessed artifact URLs; the publisher appends actual references after upload>`
-
-### Unresolved evidence or blockers
+### Unresolved evidence / blockers
 - ...
 
 ### Explicit confirmations
-- No unauthorized product/scope changes: `YES | NO`
-- All off-list incidental repairs disclosed and qualified: `YES | NO | N/A`
-- No next-gate work: `YES | NO`
+- No unauthorized product/scope decisions: `YES | NO`
+- No unresolved material discovery silently decided by Codex: `YES | NO`
+- All incidental repairs disclosed: `YES | NO | N/A`
 - Required verification complete: `YES | NO`
+- No next-gate work: `YES | NO`
 
 ### Submission outcome
 `COMPLETE EVIDENCE | PARTIAL EVIDENCE WITH BLOCKERS`
@@ -119,11 +105,71 @@ Status: Evidence posted. **Not PASS.**
 Awaiting independent review. Not PASS.
 ```
 
-If a newly delivered activation/correction lacks exactly one valid thread marker, Codex must not execute the work or invent routing. Publish a blocker when possible and stop.
+## Routed discovery-required evidence
 
-## Blocker comment
+Use the same `codex-evidence:v2` marker specifically so the existing evidence-return path sends the report to the established ChatGPT conversation.
 
-Use this only after establishing a true blocker, not for a repairable active-implementation defect, a qualifying incidental repair, or a historical plugin-version mismatch. File-list omission alone is not a blocker. A correction's reuse of an established routing ID is also not a blocker.
+```markdown
+<!-- gated-development:codex-evidence:v2 -->
+<!-- gated-development:chatgpt-thread:v1 id=<copied exact UUID> -->
+## Codex gate evidence — discovery required
+
+Status: Implementation paused. **Not PASS.**
+
+### Work order
+- Gate: `<id>`
+- Work-order version: `<n>`
+- Triggering comment: `<URL>`
+- Source-of-truth document/commit: `<path / SHA>`
+- Original gate starting SHA / review base: `<B>`
+
+### Execution correlation
+- Actions run / request ID:
+- Workflow version/source used:
+- Requested reasoning effort/source:
+
+### Repository state
+- Starting branch/SHA:
+- Current/ending SHA:
+- Commit/push state:
+
+### Discovery required
+- Concrete question(s):
+- Repository/native evidence exposing the unknown:
+- Why continuing requires a material product/architecture/ownership/acceptance decision rather than ordinary implementation diagnosis:
+- Work already completed:
+- Verification state:
+- Acceptance criteria / paths affected:
+
+### Explicit confirmations
+- Codex stopped before inventing the missing decision: `YES`
+- This is not being reported merely because debugging is difficult: `YES`
+
+### Submission outcome
+`DISCOVERY REQUIRED`
+```
+
+For AquaTwin automated runs, publish this through the same artifact-backed evidence path as normal evidence. Do not use a special direct ChatGPT call and do not invent a new route.
+
+## ChatGPT handling of `DISCOVERY REQUIRED`
+
+A routed discovery-required report is not a request for ordinary PASS/correction review.
+
+ChatGPT:
+
+1. loads the current workflow plus `discovery-checkpoints.md`;
+2. independently fetches the gate, exact report, trigger, approved source-of-truth, and relevant remote code;
+3. confirms that the issue is genuinely material discovery rather than a repairable implementation defect;
+4. creates a linked discovery child checkpoint such as `<Gate>.D1` when discovery is warranted;
+5. investigates in ChatGPT Extra High / Pro;
+6. records/amends source-of-truth as authorized and obtains human approval for material decisions;
+7. reactivates the original gate or supersedes/replaces it under the discovery rules.
+
+If ChatGPT determines Codex misclassified an ordinary implementation defect as discovery, it may issue a bounded correction/resume work order rather than creating artificial discovery.
+
+## True blocker comment
+
+Use blocker only when neither normal implementation repair nor discovery-return is the correct path.
 
 ```markdown
 <!-- gated-development:blocker:v2 -->
@@ -132,69 +178,49 @@ Use this only after establishing a true blocker, not for a repairable active-imp
 
 - Gate: `<id>`
 - Work-order version: `<version>`
-- Triggering comment: `<actual URL>`
-- Actions run: `<actual run URL or N/A — manual>`
-- Automation request ID: `<request ID or N/A — manual>`
-- Workflow plugin identity: `gated-development-orchestration@aquanuity`
-- Installed skill version/source used: `<actual when observable>`
+- Triggering comment: `<URL>`
+- Workflow identity/version/source: `<actual>`
 
 ### Blocker classification
-`unauthorized scope/path | architecture/product decision | repository-state repair | unavailable environment/tool/access | unsafe runtime ownership | unresolvable external/baseline defect | routing/preflight | other`
+`unauthorized scope/path | repository-state repair | unavailable environment/tool/access | unsafe runtime ownership | unresolvable external/baseline defect | routing/preflight | other`
 
 ### Blocker
 - ...
 
-### Diagnosis performed
-- Why this cannot be repaired within the active gate:
-- Primary-path or incidental repair attempted/considered:
-- Specific incidental-repair condition not satisfied or explicit hard exclusion preventing repair:
+### Diagnosis
+- Why normal implementation repair does not apply:
+- Why discovery-return does not apply:
+- Specific authority/tool/environment needed:
 
-### Work already performed
+### Work performed / repository state
 - ...
 
-### Required decision or resume condition
+### Resume condition
 - ...
 
-Execution is blocked. The gate remains Not PASS.
+Execution blocked. Not PASS.
 ```
 
-Do not classify an old case line naming `Gated Development Orchestration 1.x` or an old plugin repository as a blocker. Use the current installed plugin instead.
+For a malformed trigger with no valid route, never fabricate a routing line.
 
-For a malformed trigger with no valid routing marker, the blocker cannot invent one; post without a fabricated routing line if GitHub reporting is still possible.
+## Independent implementation review
 
-## Artifact references and on-demand inspection
+For normal implementation evidence, ChatGPT independently fetches and verifies:
 
-The publisher appends an `Execution artifacts` section containing request ID, launcher and publisher runs, artifact name/ID/download URL, outer artifact archive SHA-256, inner `review-bundle.zip` SHA-256, evidence SHA-256, and actual expiration. Do not compare the inner and outer digests as if they were the same archive. An integrity digest does not establish that a reported test passed.
-
-Begin with the concise issue evidence and fresh remote diff. Do not require full raw logs or committed log files by default. Identify a material claim/explicit acceptance check that needs further proof, then retrieve that exact run's artifact by ID/name and read its relevant indexed files. Required verification is unchanged. If essential evidence is missing, expired, inaccessible, or contradictory, identify the gap rather than waiving it; optional missing logs alone do not invalidate acceptance.
-
-Publication failures are not implementation correction orders. Check for an existing terminal receipt before retrying publication of the same frozen inputs, and do not rerun implementation to recover an upload. Keep issue summaries durable, retain artifacts for the requested 30 days rather than deleting on PASS, and treat Windows cleanup separately.
-
-## Independent review
-
-A routed review request is only a pointer. Load the current workflow source for the execution surface, then independently fetch:
-
-1. exact evidence comment;
-2. gate issue/body;
-3. activation or correction;
-4. pinned product source-of-truth;
-5. ending commit and expected remote branch;
-6. original-base-to-ending range;
-7. correction delta where applicable;
+1. gate issue/body;
+2. exact evidence;
+3. triggering activation/reactivation/correction;
+4. approved source-of-truth;
+5. remote ending commit/branch;
+6. original-base-to-ending diff;
+7. correction/reactivation delta when applicable;
 8. required verification evidence;
-9. each immutable acceptance criterion.
+9. every acceptance criterion;
+10. linked discovery checkpoint/amendment when the gate previously paused for discovery.
 
-Do not trust the evidence report's PASS-like statements without remote confirmation.
+Fresh remote inspection is required even when the same ChatGPT conversation originally planned the gate or performed discovery.
 
-Do not switch to a historical plugin package because the gate/evidence text names one. Historical plugin metadata is provenance only; the current workflow source selected for the execution surface governs review.
-
-During review, distinguish a historical transient failure that was repaired and successfully reverified from an unresolved blocker. A first-attempt compile/test failure does not invalidate a gate when final required verification passes and the repair was authorized, including qualifying incidental repair.
-
-Independently inspect every off-list change and its cumulative effect against all incidental-repair conditions, hard exclusions, and final checks. Neither absence from the primary file list nor Codex's `incidental` label decides acceptance. Reject semantic/design expansion and weakened tests; a qualifying mechanical repair is not a scope violation. Missing qualification/verification evidence is not proof of qualification.
-
-Resolve routing from the applicable activation/correction chain and confirm that the exact evidence copied its triggering marker. This is reuse of known gate metadata, not inference of the reviewer's current conversation ID. Evidence cannot authorize an unsolicited routing change; stale/superseded evidence must not reset a newer human-authorized destination.
-
-## Review outcomes
+Inspect off-list changes against the bounded incidental-repair rule. Do not accept because Codex labels a change incidental, and do not reject solely because a file was omitted from the primary list.
 
 ### PASS
 
@@ -204,78 +230,55 @@ Resolve routing from the applicable activation/correction chain and confirm that
 
 - Gate: `<id>`
 - Work-order version reviewed: `<n>`
-- Activation comment: `<URL>`
-- Reviewed evidence comment: `<URL>`
+- Triggering work order: `<URL>`
+- Reviewed evidence: `<URL>`
 - Original review diff base: `<B>`
-- Accepted ending commit: `<E or N/A for analysis-only>`
+- Accepted ending commit: `<E or N/A>`
 - Remote branch inspected: `<R or N/A>`
-- Workflow plugin identity: `gated-development-orchestration@aquanuity`
-- Reviewer loaded workflow version/source: `<actual version; repository and resolved commit plus loaded paths for ChatGPT, or installed package source for Codex>`
+- Workflow source/version loaded: `<actual>`
+- Discovery amendment reviewed: `<reference or N/A>`
 
 ### Acceptance criteria
 | Criterion | Result | Evidence |
 |---|---|---|
 | `AC-1` | PASS | ... |
 
-This checkpoint is accepted. A successor executes only through its own authorized activation.
+This checkpoint is accepted. A successor executes only through its own authorized path.
 ```
-
-PASS does not need a thread marker because it does not route implementation or review.
 
 ### Correction required
 
-A correction-required comment is executable and must contain exactly one valid routing marker. **Reuse the established gate routing ID from the applicable activation/correction chain without asking the human to submit it again.** A valid activation has already established the destination for the gate's correction cycles.
+Use only when the review finding is implementation-ready and does not require new material discovery.
 
-Only an explicit human request supplying a replacement destination changes the route. Record that request in the correction prose, put only the new ID in the single marker, and use it for subsequent evidence/blocker and corrections. A reviewer being in another conversation does not itself change the route.
-
-If the route is absent or conflicting and cannot be recovered from the applicable chain, report the routing problem and ask for clarification before publishing an executable correction. Do not turn this exceptional recovery into a fresh-ID requirement on every round. All existing correction-scope and authority rules still apply.
-
-For every newly authored correction, explicitly select its Codex reasoning effort using [Model selection](model-selection.md):
-
-- `xhigh` is the normal choice for a routine, well-bounded correction;
-- `max` is an escalation for a materially deeper root-cause/discovery problem, especially when a reasonable `xhigh` attempt did not resolve the same issue, or when the human explicitly requests Max;
-- do not inherit the previous round's effort and do not choose Max merely because the correction is important.
-
-If the human explicitly selects another supported value, honor that current instruction. Historical comments without a field remain runner-compatible, but new corrections under this workflow state the field explicitly.
+Normal correction reasoning is `medium`; select `high`/`xhigh`/`max` only for execution-ready technical complexity under `model-selection.md`.
 
 ```markdown
 <!-- gated-development:review:v2 status=correction-required -->
-<!-- gated-development:chatgpt-thread:v1 id=<established gate routing UUID; reuse unless human explicitly replaces it> -->
+<!-- gated-development:chatgpt-thread:v1 id=<established gate UUID> -->
 ## Independent gate review — NOT PASS / correction required
 
 ### Correction manifest
 - Gate: `<id>`
-- Gate type: `implementation | documentation | analysis-only`
-- Correction work-order version: `<prior highest + 1>`
-- Activation comment: `<URL>`
-- Reviewed evidence comment: `<URL>`
-- Required branch: `<same branch>`
-- Expected remote branch: `<remote>/<branch>`
-- Required correction starting SHA: `<reviewed ending SHA/baseline>`
-- Prior reviewed ending SHA: `<same>`
-- Original gate starting SHA: `<B>`
-- Review diff base: `<B>`
-- Source-of-truth document: `<path>`
-- Source-of-truth commit: `<SHA>`
-- Push policy: `agent | none`
-- Workflow: current installed `gated-development-orchestration@aquanuity`
-- Execution reasoning effort: `<xhigh normally; max when escalation criteria apply; another supported value only when explicitly selected>`
+- Correction work-order version: `<prior + 1>`
+- Reviewed evidence: `<URL>`
+- Required correction starting SHA: `<reviewed ending SHA>`
+- Original gate starting SHA / review base: `<B>`
+- Approved source-of-truth commit: `<SHA>`
+- Execution reasoning effort: `<medium normally>`
 
 ### Blocking findings
 1. ...
 
 ### Authorized correction
 - ...
-- Primary correction paths and explicit hard exclusions: `<bounded list>`
-- The current plugin's incidental repair allowance applies only to work necessary for this correction; no unrelated gate work is reopened.
 
 ### Required verification
 1. ...
 
-This finalized correction is the execution authorization and trigger. No additional dispatch is required.
+This correction is the execution authorization/trigger. No additional dispatch is required.
 ```
 
-Do not pin/inherit a plugin version/source in the correction. Reasoning effort is selected independently for each execution round; routing metadata is the part that is inherited.
+If the review finding exposes a material unresolved product/architecture question, use discovery rather than a Max correction.
 
 ### Verification blocked
 
@@ -284,21 +287,21 @@ Do not pin/inherit a plugin version/source in the correction. Reasoning effort i
 ## Independent gate review — VERIFICATION BLOCKED
 
 - Gate: `<id>`
-- Work-order version under review: `<n>`
-- Submitted evidence comment: `<URL or unavailable>`
+- Work-order version: `<n>`
+- Evidence: `<URL or unavailable>`
 - Last independently verified SHA/baseline: `<value>`
 
-### Unavailable or unverifiable evidence
+### Unavailable / unverifiable evidence
 - ...
 
 ### Resume condition
 - ...
 
-No PASS or implementation FAIL is issued while required evidence cannot be independently inspected.
+No PASS is issued while required evidence cannot be independently established.
 ```
 
-`VERIFICATION_BLOCKED` is for missing/unobtainable review evidence or a true unresolved verification blocker. It is not a substitute for fixing a repairable compile/test failure during implementation. PASS and verification-blocked comments do not clear or change the gate's established route.
+## Artifact references
 
-## Review routing boundary
+Begin with concise issue evidence and fresh remote source/diff. Fetch raw artifacts only when needed for a material claim or explicit acceptance requirement. Verify the appropriate artifact/bundle identity and digests when bytes are used. Artifact upload/checksum is not independent proof that tests passed.
 
-The review workflow transports the request to the exact ChatGPT thread declared by the marker copied from the triggering work order. It does not perform the review or choose a fallback destination. The reviewer must use fresh GitHub/remote evidence and the current workflow source selected for its execution surface, and may issue PASS, correction-required, or verification-blocked according to the case. Routine corrections reuse the gate's established route; they do not pause for repeated human UUID input.
+Publication/access failures are not implementation corrections. Retry publication only for the same frozen inputs; do not rerun implementation to recover an upload.

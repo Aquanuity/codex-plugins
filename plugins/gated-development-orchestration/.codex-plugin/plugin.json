@@ -1,15 +1,17 @@
 {
   "name": "gated-development-orchestration",
-  "version": "1.4.9",
-  "description": "Coordinate checkpoint development with GitHub-routed Codex implementation and independent ChatGPT review.",
+  "version": "2.0.0",
+  "description": "Coordinate discovery and checkpoint development with ChatGPT orchestration, GitHub-routed Codex implementation, and independent ChatGPT review.",
   "author": {
     "name": "Aquanuity"
   },
   "keywords": [
     "github",
     "codex",
+    "chatgpt",
     "orchestration",
     "checkpoint",
+    "discovery",
     "code-review",
     "gated-development"
   ],
@@ -17,8 +19,8 @@
   "apps": "./.app.json",
   "interface": {
     "displayName": "Gated Development Orchestration",
-    "shortDescription": "Orchestrate checkpointed Codex work and independent review",
-    "longDescription": "Coordinates gated software development through pinned product source documents, frozen GitHub work orders, a shared workflow loaded from the installed plugin in Codex or current repository source in ChatGPT, bounded Codex implementation, durable evidence, routed independent ChatGPT review, correction cycles, and explicit acceptance.",
+    "shortDescription": "Orchestrate discovery, Codex implementation, and independent review",
+    "longDescription": "Coordinates gated software development through ChatGPT-owned discovery checkpoints, approved source-of-truth documents, frozen GitHub implementation work orders, bounded Codex execution, routed discovery return, durable evidence, independent ChatGPT review, correction cycles, and explicit acceptance.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
     "capabilities": [
@@ -26,9 +28,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Review the current gate and tell me whether it is ready to activate.",
-      "Review the latest implementation evidence and issue PASS or a bounded correction.",
-      "Prepare the next gated checkpoint from the pinned source-of-truth document."
+      "Investigate this feature and prepare the discovery/source-of-truth checkpoint.",
+      "Review the current gate and tell me whether it is execution-ready for Codex.",
+      "Review the latest implementation evidence and issue PASS, a bounded correction, or handle routed discovery-required evidence."
     ]
   }
 }
