@@ -1,150 +1,55 @@
 # Model Selection and Runtime Reference
 
-Model advice, runtime configuration, workflow ownership, and permission to execute are different things.
+## v3 principle
 
-## Reasoning allocation in v2
+Worker role and reasoning level are separate decisions.
 
-Gated Development Orchestration v2 intentionally spends stronger reasoning on **discovery/specification and independent review**, while normal Codex implementation consumes an already execution-ready work order.
+v3 first assigns the correct worker:
+- Governance ChatGPT thread for Definition, Discovery, Independent Review;
+- Implementation ChatGPT thread for Implementation;
+- fresh Codex session for Evidence / Testing.
 
-Typical allocation:
+Do not use a stronger reasoning tier to compensate for routing work to the wrong worker.
 
-```text
-ChatGPT discovery / checkpoint definition: Extra High or Pro
-Codex normal implementation: medium
-ChatGPT independent implementation review: Extra High or Pro
-```
+## Governance ChatGPT
 
-This is a workflow default, not a claim that one reasoning level is universally superior.
+Definition and Discovery may require deep product/architecture reasoning.
 
-## Codex implementation reasoning policy
+Independent Review may require deep cross-checking of intent, source-of-truth, diff, and evidence.
 
-### Medium (`medium`) — normal default
+Use the human-selected ChatGPT surface/reasoning configuration. Stronger reasoning does not grant product authority and does not replace human approval for material Definition changes.
 
-Select `medium` for a normal execution-ready implementation checkpoint or routine bounded correction.
+## Implementation ChatGPT
 
-An execution-ready gate has already resolved the material product/architecture questions. Codex still reads code, traces local implementation details, writes code, verifies, diagnoses ordinary failures, and performs qualifying incidental repairs.
+Implementation receives an execution-ready checkpoint/sub-checkpoint and performs actual code/product writes.
 
-Typical Medium work includes:
+Use the human-selected ChatGPT implementation surface. If material architecture/product meaning is unresolved, return to Discovery rather than merely increasing reasoning effort.
 
-- implementing a well-specified MCP/API bridge against known native behavior;
-- wiring known owners/services/layers according to a frozen source-of-truth;
-- implementing clearly bounded UI/service/API/test changes;
-- routine compile/test repair caused by the active implementation;
-- straightforward review corrections with a concrete finding and bounded expected behavior.
+## Evidence / Testing Codex
 
-### High (`high`) — elevated implementation complexity
+Every Evidence / Testing round is a fresh Codex session.
 
-Select `high` when the gate is discovery-complete but implementation is noticeably more complex than routine Medium work, for example:
+Normal evidence work should use a cost-conscious execution level sufficient to:
+- build;
+- run tests;
+- perform live/E2E checks;
+- diagnose evidence failures;
+- make only qualifying tiny repair.
 
-- several interacting implementation layers must be coordinated;
-- difficult but bounded test/build diagnosis is likely;
-- there are multiple code-level approaches but the product behavior/architecture is already fixed;
-- a correction requires broader implementation reasoning without reopening product discovery.
+Escalation may be appropriate for technically difficult test diagnosis, but it never expands tiny-repair authority.
 
-### Extra High (`xhigh`) — difficult implementation/debugging
+If testing reveals a substantive product defect, return to Implementation.
 
-Select `xhigh` when the gate remains execution-ready but requires substantial implementation-time reasoning, such as:
+If it reveals a material architecture/system unknown, return to Discovery.
 
-- difficult root-cause debugging with known intended behavior;
-- complex cross-layer implementation reconciliation under already-defined architecture;
-- repeated implementation failure at Medium/High where the missing work is technical execution, not product discovery;
-- a difficult correction whose product meaning is clear but whose implementation cause is not.
+## Runtime reporting
 
-### Max (`max`) — exceptional execution escalation
+Record actual model/reasoning/session data only when exposed by a reliable runtime source.
 
-Select `max` only when the work is still discovery-complete and the execution/debugging problem is exceptionally difficult, such as:
+Do not infer runtime from elapsed time, output style, or workflow prose.
 
-- a reasonable `xhigh` implementation/debugging attempt did not resolve the same material technical problem;
-- known intended behavior must be reconciled across unusually complex runtime interactions without making a new product/architecture decision;
-- the human explicitly requests Max for that execution round.
-
-Do **not** select Max merely because:
-
-- the checkpoint is important or high consequence;
-- the diff touches many files;
-- verification is extensive;
-- the feature is architecturally important but already well specified;
-- unresolved product/architecture discovery remains.
-
-If the reason for wanting Max is that intended behavior, ownership, architecture, acceptance meaning, or source-of-truth is not actually known, follow [Discovery checkpoints and return-to-ChatGPT](discovery-checkpoints.md) instead of escalating Codex.
-
-## ChatGPT discovery/review reasoning
-
-Material discovery checkpoints should normally run in ChatGPT Chat at Extra High or on the human-selected Pro surface. The same applies to independent implementation review when the human wants the normal high-assurance path.
-
-This includes discovery checkpoints that happen to be CP1 and discovery checkpoints/sub-checkpoints created later in the feature.
-
-Reasoning selection does not transfer product authority from the human. Discovery conclusions that materially define product behavior/architecture/source-of-truth require human approval before becoming controlling.
-
-## Executable per-round Codex field
-
-For every newly authored Codex activation, reactivation, or correction, include exactly one standardized field:
-
-```text
-- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
-```
-
-Normal current-work selection is `medium`.
-
-Examples:
-
-```text
-- Execution reasoning effort: `medium`
-- Execution reasoning effort: `high`
-- Execution reasoning effort: `xhigh`
-- Execution reasoning effort: `max`
-```
-
-Rules:
-
-- Current activations/reactivations/corrections must state the field explicitly; do not rely on omission.
-- Select `medium` unless the current execution-ready round has concrete technical complexity justifying `high`, `xhigh`, or `max`, or the human explicitly selects another supported value.
-- Re-evaluate the effort for every executable round. Routing metadata may persist; reasoning effort does not.
-- A prior `max` never makes later `max` sticky. A now-clear bounded correction/reactivation normally returns to `medium`.
-- Exactly one field is allowed per executable comment.
-- Supported values remain `minimal`, `low`, `medium`, `high`, `xhigh`, and `max`.
-- Duplicate fields or unsupported values are malformed delivery; do not infer or silently normalize.
-- Runtime effort never changes product authority, scope, architecture, verification, repository permissions, or acceptance criteria.
-
-## Discovery is not a Codex reasoning tier
-
-Before activation, ChatGPT applies the execution-readiness test from `discovery-checkpoints.md`.
-
-During execution, Codex distinguishes:
-
-- **implementation difficulty** — stay in the implementation lane and diagnose/repair at the selected effort;
-- **material discovery required** — stop before inventing the missing decision and return routed `DISCOVERY REQUIRED` evidence to ChatGPT.
-
-Do not self-escalate from Medium/High/XHigh to Max to answer an unresolved product/architecture question.
-
-## Legacy runner fallback
-
-The existing AquaTwin launcher may still mechanically fall back to:
-
-```text
-model_reasoning_effort=max
-```
-
-when a historical executable comment contains no reasoning-effort field.
-
-That behavior exists only for backward compatibility with already-posted work orders. **Do not use omission as the current authoring policy.** v2-authored Codex work explicitly states the selected effort.
-
-The launcher records the resolved effort as `reasoning_effort` and the source such as `runner-default` or `case-override`.
-
-## Codex behavior after launch
-
-Codex executes at the effort supplied by the launcher. It must not rewrite the work order, relaunch itself, or change its reasoning effort after startup.
-
-If unexpected material discovery appears, use the routed discovery-required evidence path. If the problem is execution-only, continue normal authorized diagnosis/repair and report a true blocker only under the workflow's blocker rules.
-
-## Reporting runtime
-
-Report actual runtime model/reasoning only when exposed by a reliable runtime source or launcher record. Do not infer it from task duration or prose.
-
-A recorded reasoning effort is evidence of the requested runtime setting, not evidence that the implementation is correct.
+Runtime configuration is provenance, not evidence that the work is correct.
 
 ## Human preference
 
-When the human explicitly selects a supported Codex reasoning level or ChatGPT surface for a round, use that current instruction unless it conflicts with a higher-authority safety/repository constraint.
-
-Do not turn model recommendations into product authority. Stronger reasoning does not replace source-of-truth, verification, or independent remote review.
+Explicit human model/reasoning selection for a round takes precedence over workflow defaults when supported and when it does not conflict with higher-authority safety/repository constraints.
