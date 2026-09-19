@@ -6,7 +6,7 @@ Aquanuity's Codex plugin marketplace. The catalog lives at [`.agents/plugins/mar
 
 | Plugin | Version | Purpose |
 | --- | --- | --- |
-| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 3.0.0 | Coordinate human-verifiable product checkpoints through specialized ChatGPT Definition/Discovery/Implementation/Review rounds and fresh Codex Evidence / Testing rounds. |
+| [Gated Development Orchestration](plugins/gated-development-orchestration/README.md) | 3.0.1 | Coordinate human-verifiable product checkpoints through specialized ChatGPT Definition/Discovery/Implementation/Review rounds and fresh Codex Evidence / Testing rounds. |
 
 The marketplace identifier is `aquanuity`.
 
@@ -46,7 +46,7 @@ plugins/gated-development-orchestration/
       execution-artifacts.md
 ```
 
-## Version 3.0.0 behavior
+## Version 3.0.1 behavior
 
 GDO v3 makes **Round**, **Checkpoint**, and **worker identity** first-class concepts.
 
@@ -93,6 +93,6 @@ See the [v3 plugin README](plugins/gated-development-orchestration/README.md) an
 
 ## Package provenance
 
-Version 3.0.0 is maintained directly in this marketplace repository. Product/source-of-truth commits and checkpoint contracts may be frozen; workflow package source remains current-by-execution-surface unless explicitly overridden by the human.
+Version 3.0.1 is maintained directly in this marketplace repository. Product/source-of-truth commits and checkpoint contracts may be frozen; workflow package source remains current-by-execution-surface unless explicitly overridden by the human.
 
 `.gitattributes` disables line-ending conversion for the plugin package.
