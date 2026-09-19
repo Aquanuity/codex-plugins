@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate human-verifiable checkpoint development through Definition, Discovery, Implementation, Evidence / Testing, and Independent Review rounds. Use one persistent Governance ChatGPT thread for Definition, Discovery, and Independent Review; one separate persistent Implementation ChatGPT thread for actual product implementation; and a fresh Codex session for every Evidence / Testing round. GitHub is the authoritative workflow ledger and carries both persistent ChatGPT thread IDs through lifecycle comments.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Repository implementation requires an authorized working environment. Evidence / Testing requires a fresh Codex execution environment when the checkpoint calls for runtime/build/test evidence.
 metadata:
-  version: "3.0.0"
+  version: "3.0.1"
   workflow: "github-gated-development-v3"
 ---
 
@@ -30,22 +30,26 @@ Fresh Codex session every time
 
 GitHub is the durable workflow ledger. Thread/session memory is useful context, never authority.
 
-## Canonical hierarchy
+## Product hierarchy and work lifecycle
 
 ~~~text
+Product hierarchy:
 Parent Feature
-  -> Checkpoint
-       -> Round
-            -> optional engineering sub-checkpoint
+  -> top-level Checkpoint
+       -> optional engineering sub-checkpoints (CP4A / CP4B / CP4C / CP4D)
+
+Work lifecycle:
+Definition / Discovery / Implementation / Evidence / Testing / Independent Review Rounds
+  -> operate against the relevant feature, checkpoint, or sub-checkpoint
 ~~~
 
 A parent feature captures the overall product intent.
 
 A top-level Checkpoint is a reasonably substantial, coherent, human-verifiable product milestone. It is not a class/file/layer milestone. At a checkpoint boundary, a human should be able to inspect or exercise the product and decide whether development is on track.
 
-A Round is a type of work performed against a checkpoint.
-
 A sub-checkpoint such as CP4A, CP4B, CP4C, or CP4D may decompose engineering work underneath the human-verifiable parent checkpoint. Sub-checkpoints may be technical, but they must remain bounded and meaningful. They do not replace the parent checkpoint product outcome.
+
+A Round is workflow activity, not another level of product decomposition. Rounds may operate at the parent-feature level during Definition, at a top-level checkpoint, or at a bounded sub-checkpoint as appropriate.
 
 Read rounds-and-checkpoints.md for the canonical definitions.
 
