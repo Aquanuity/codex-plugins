@@ -1,352 +1,328 @@
 ---
 name: gated-development-orchestration
-description: Coordinate discovery, checkpoint development, local Codex execution, routed return-to-ChatGPT, and independent implementation review. Use for parent planning, discovery checkpoints, source-of-truth creation/amendment, implementation gate creation/activation, evidence review, bounded corrections, surprise-discovery routing, and review return. Choose the current role before acting; reading this skill does not itself authorize a GitHub write or checkpoint execution.
-compatibility: Requires access to the complete skill references and relevant GitHub sources. Codex implementation requires an authorized local git environment and configured tools. ChatGPT Chat orchestration/review does not require access to the user's local filesystem.
+description: Coordinate human-verifiable checkpoint development through Definition, Discovery, Implementation, Evidence / Testing, and Independent Review rounds. Use one persistent Governance ChatGPT thread for Definition, Discovery, and Independent Review; one separate persistent Implementation ChatGPT thread for actual product implementation; and a fresh Codex session for every Evidence / Testing round. GitHub is the authoritative workflow ledger and carries both persistent ChatGPT thread IDs through lifecycle comments.
+compatibility: Requires access to the complete skill references and relevant GitHub sources. Repository implementation requires an authorized working environment. Evidence / Testing requires a fresh Codex execution environment when the checkpoint calls for runtime/build/test evidence.
 metadata:
-  version: "2.0.0"
-  workflow: "github-codex-gated-development"
+  version: "3.0.0"
+  workflow: "github-gated-development-v3"
 ---
 
 # Gated Development Orchestration
 
 ## Purpose
 
-Use one shared workflow contract across ChatGPT orchestration/discovery/review and Codex implementation.
+GDO v3 separates product intent, architectural discovery, implementation, proof, and final acceptance into explicit rounds with specialized workers.
 
-The v2 division of labor is intentional:
+The stable worker model is:
 
-```text
-ChatGPT: discover -> specify -> decompose -> independently judge
-Codex: execute -> verify -> repair implementation defects -> report
-Unexpected material uncertainty: return to ChatGPT discovery, not upward through Codex reasoning tiers
-```
+~~~text
+Governance ChatGPT thread
+  Definition
+  Discovery
+  Independent Review
 
-**ChatGPT Chat / Pro normally owns feature discovery, source-of-truth work, checkpoint preparation, and independent implementation review. Local Codex normally owns execution of discovery-complete implementation/documentation work orders.**
+Implementation ChatGPT thread
+  Implementation
 
-Discovery is a checkpoint type/mode, not a checkpoint number. CP1 is often discovery, but CP1 is not required to be discovery and discovery may occur anywhere later in the feature.
+Fresh Codex session every time
+  Evidence / Testing
+~~~
 
-## Role selection
+GitHub is the durable workflow ledger. Thread/session memory is useful context, never authority.
 
-Select the role from the current human request and execution context:
+## Canonical hierarchy
 
-- parent/feature discussion, source tracing, discovery, checkpoint design -> ChatGPT orchestrator/discovery;
-- launcher-delivered implementation activation/reactivation/correction -> Codex implementer;
-- routed normal implementation evidence -> ChatGPT independent reviewer;
-- routed evidence with `Submission outcome: DISCOVERY REQUIRED` -> ChatGPT discovery orchestrator, not normal PASS/correction review.
+~~~text
+Parent Feature
+  -> Checkpoint
+       -> Round
+            -> optional engineering sub-checkpoint
+~~~
 
-| Role | Owns | Must not do |
-|---|---|---|
-| Human / product owner | Product intent, material architecture decisions, discovery approval, source-of-truth approval, activation, cancellation, explicit routing/runtime overrides | Nothing in this workflow removes final product authority from the human |
-| ChatGPT orchestrator / discovery | Parent issue shaping, repository/native-behavior discovery, source-of-truth drafting/amendment, checkpoint decomposition, execution-readiness, activation/reactivation, discovery child checkpoints | Pretend its own discovery proposal is human-approved product truth; hide material uncertainty inside an implementation gate |
-| ChatGPT independent reviewer | Fresh remote implementation review, PASS/correction/verification-blocked, correction work orders, discovery detection during review | Treat Codex summaries/Actions success/prior chat assumptions as proof |
-| Codex implementer | Exact work-order preflight, bounded implementation, verification, in-scope/incidental repair, authorized commit/push, routed evidence/blocker publication | Invent product/architecture decisions, self-approve, create/approve discovery outcomes, change ChatGPT route, self-relaunch to change reasoning effort |
-| Implementation launcher | Validate delivery shape and start Codex with selected runtime effort | Decide scope, architecture, discovery sufficiency, acceptance, repair qualification, or reasoning-tier appropriateness |
-| Artifact publisher | Upload prepared bundle and post authored report | Implement, decide acceptance/discovery, change routing, or wait for ChatGPT |
-| Review transport | Route eligible evidence to the declared ChatGPT thread | Judge evidence or reinterpret the case |
+A parent feature captures the overall product intent.
 
-GitHub remains the durable coordination record.
+A top-level Checkpoint is a reasonably substantial, coherent, human-verifiable product milestone. It is not a class/file/layer milestone. At a checkpoint boundary, a human should be able to inspect or exercise the product and decide whether development is on track.
 
-## Workflow source by execution surface
+A Round is a type of work performed against a checkpoint.
 
-The workflow identity is **`gated-development-orchestration@aquanuity`**. Its version/source is not frozen into product gates.
+A sub-checkpoint such as CP4A, CP4B, CP4C, or CP4D may decompose engineering work underneath the human-verifiable parent checkpoint. Sub-checkpoints may be technical, but they must remain bounded and meaningful. They do not replace the parent checkpoint product outcome.
 
-- **Codex:** load the currently installed plugin's `SKILL.md` and required references. Do not replace the installed plugin with a historical repository copy because a gate mentions one.
-- **Ordinary ChatGPT Chat / Pro:** resolve current `Aquanuity/codex-plugins` `main`, then load the package manifest, this `SKILL.md`, and phase-required references from that same commit.
+Read rounds-and-checkpoints.md for the canonical definitions.
 
-For ChatGPT independent implementation review, load at minimum:
+## Canonical rounds
 
-- `authority-and-lifecycle.md`
-- `evidence-and-review.md`
-- `automation-handoff.md`
-- `execution-artifacts.md`
-- `gate-issue-templates.md` when authoring a correction/reactivation record
-- `model-selection.md` before authoring executable Codex work
-- `discovery-checkpoints.md` whenever planned or surprise discovery is involved
+1. Definition Round
+   - architecture discussion;
+   - feature and intent discussion;
+   - scope and product boundaries;
+   - parent issue and human-verifiable checkpoint plan.
 
-Historical plugin version/source text is provenance only. Freeze product/work-order authority, not workflow package provenance.
+2. Discovery Round
+   - research and investigation;
+   - native/current behavior tracing;
+   - ownership and architecture tracing;
+   - source-of-truth documentation;
+   - architecture-lock documentation.
 
-## References
+3. Implementation Round
+   - actual product/code changes;
+   - satisfies the active checkpoint or implementation sub-checkpoint;
+   - performed by the separate Implementation ChatGPT thread.
 
-- [Authority and lifecycle](references/authority-and-lifecycle.md)
-- [Discovery checkpoints and return-to-ChatGPT](references/discovery-checkpoints.md)
-- [Gate and issue templates](references/gate-issue-templates.md)
-- [Evidence and independent review](references/evidence-and-review.md)
-- [Automation handoff](references/automation-handoff.md)
-- [Model selection and runtime](references/model-selection.md)
-- [Execution artifacts and publication](references/execution-artifacts.md)
+4. Evidence / Testing Round
+   - build, integration, live, UI, E2E, and acceptance evidence as applicable;
+   - starts a fresh Codex session every round;
+   - Codex may perform only tightly bounded tiny repair;
+   - substantive repair returns to Implementation.
 
-Load the references required for the current phase. Report the actually loaded workflow version/source when implementation/review evidence calls for it.
+5. Independent Review Round
+   - step back from the pinpoint implementation path;
+   - independently re-fetch the checkpoint, source-of-truth, remote code, diff, and evidence;
+   - judge whether the right product change landed in the intended architecture and is sufficiently proven;
+   - only this round may issue checkpoint PASS.
+
+## Worker identities
+
+### Governance ChatGPT thread
+
+Persistent for the feature/checkpoint context.
+
+Owns:
+- Definition;
+- Discovery;
+- Independent Review;
+- checkpoint shaping and amendment;
+- source-of-truth and architecture-lock work;
+- routing decisions after evidence/review;
+- human-facing decisions and approval requests.
+
+It must not perform substantive product implementation that it will later independently review.
+
+### Implementation ChatGPT thread
+
+Persistent for implementation rounds.
+
+Owns:
+- actual product implementation;
+- substantive correction rounds;
+- code changes needed to satisfy acceptance criteria;
+- implementation records and handoff to Evidence / Testing.
+
+It may inspect architecture/source-of-truth but must not silently redefine them.
+
+### Evidence / Testing Codex session
+
+A fresh Codex session starts for every Evidence / Testing round.
+
+Owns:
+- build/test/live/E2E execution;
+- evidence collection;
+- exact tested-commit recording;
+- tightly bounded tiny repair followed by rerun;
+- evidence record and routing outcome.
+
+It does not own product definition, architecture changes, substantive implementation, or PASS.
 
 ## Core invariants
 
-1. Human-approved product intent and the approved source-of-truth commit define feature meaning/architecture.
-2. Discovery is not tied to CP1; any checkpoint may be `discovery` when material uncertainty must be resolved.
-3. Foreseeable material discovery belongs in a discovery checkpoint before Codex implementation.
-4. Unexpected material discovery during Codex execution returns to ChatGPT through routed `DISCOVERY REQUIRED` evidence; Codex does not solve missing product/architecture truth by selecting Max.
-5. A discovery checkpoint/sub-checkpoint is normally executed by ChatGPT Extra High / Pro; material source-of-truth/product decisions require explicit human approval before controlling downstream work.
-6. Codex implementation gates should be execution-ready before activation. Ordinary repository reading remains Codex work; material product/architecture/ownership/acceptance decisions do not.
-7. Normal Codex implementation reasoning is `medium`. Escalate to `high`, `xhigh`, or `max` only for execution-ready technical difficulty under `model-selection.md` or explicit human instruction.
-8. Every current Codex activation/reactivation/correction explicitly states one reasoning-effort field. Do not rely on omission except historical compatibility.
-9. A valid activation/reactivation/correction is the Codex execution trigger. No generic dispatch comment is required.
-10. Codex implements/reports; ChatGPT independently reviews remote implementation evidence. Codex never accepts its own work.
-11. Preserve original implementation-gate review base through ordinary corrections and valid post-discovery reactivation. Supersede rather than disguise a materially different gate.
-12. Implementation/documentation execution: preflight -> implement -> verify -> repair authorized failures -> reverify -> commit/push as authorized -> confirm remote containment -> publish evidence -> stop.
-13. Analysis-only gates remain no-write.
-14. Discovery gates may write designated source-of-truth/documentation only when the human authorizes those writes.
-15. Do not merge, rebase, pull, reset, clean, force-push, switch worktrees, create branches, or repair repository state unless the case explicitly authorizes the operation.
-16. Unrelated cleanup/defects/future work remain unauthorized. Necessary adjacent repairs must satisfy bounded incidental-repair rules.
-17. Launch success, evidence publication, artifact upload, or CLI success is not PASS.
-18. Preserve history; never fabricate SHAs, hashes, issue numbers, tool outcomes, routing IDs, runtime settings, approvals, or verification.
-19. ChatGPT thread routing metadata grants no product/scope authority.
-20. Every executable Codex activation/reactivation/correction requires exactly one valid ChatGPT route marker. Reuse the established route unless the human explicitly replaces it.
-21. A failed required verification is not automatically a blocker. Diagnose first.
-22. Repair implementation defects in-scope or through qualifying incidental repair and rerun verification.
-23. Stop for true blockers or material discovery that cannot truthfully be resolved in the implementation lane.
-24. Generated run logs/reports stay outside git unless explicitly required; use artifact publication.
-25. Publication retries do not rerun implementation.
+1. Human product authority remains final.
+2. GitHub checkpoint state is authoritative over all ChatGPT/Codex thread memory.
+3. A top-level checkpoint is a human-verifiable product stage, not a mechanical coding milestone.
+4. A checkpoint should be substantial enough to matter and bounded enough to review as one coherent claim.
+5. Engineering decomposition belongs under the checkpoint as A/B/C/D sub-checkpoints when needed.
+6. Human activation authorizes execution of the current checkpoint contract.
+7. Material redefinition after activation requires explicit human re-authorization.
+8. Definition, Discovery, and Independent Review share the Governance ChatGPT thread.
+9. Implementation uses a separate persistent Implementation ChatGPT thread.
+10. Every Evidence / Testing round starts a fresh Codex session.
+11. Codex tiny repair is narrowly bounded; substantive repair returns to Implementation.
+12. Material architecture/product uncertainty returns to Discovery.
+13. Material invalidation of checkpoint intent/scope returns to Definition.
+14. Only Independent Review may issue PASS.
+15. Implementation does not skip directly to PASS.
+16. Evidence / Testing does not issue PASS.
+17. Independent Review independently fetches remote truth and does not accept worker summaries as proof.
+18. Thread IDs are routing/context metadata, not product authority.
+19. Both persistent ChatGPT thread IDs propagate through v3 lifecycle comments.
+20. Session/dispatch identities are provenance and idempotency metadata.
+21. Preserve lifecycle history; do not rewrite old comments to simulate a different sequence.
+22. Generated logs remain execution artifacts unless explicitly required in git.
+23. Do not fabricate SHAs, IDs, tests, approvals, routing, or outcomes.
 
-## Discovery checkpoints
+## Round transitions
 
-Read [Discovery checkpoints and return-to-ChatGPT](references/discovery-checkpoints.md) whenever uncertainty is material.
+Definition may transition to:
+- Discovery;
+- Implementation, after human activation.
 
-### Planned discovery
+Discovery may transition to:
+- Definition, when findings materially invalidate the expected direction;
+- Implementation;
+- Independent Review, when Discovery itself is the checkpoint deliverable.
 
-When discovery is foreseeable, create a gate with:
+Implementation may transition to:
+- Discovery, when material architectural/product uncertainty appears;
+- Evidence / Testing, when implementation is ready for proof.
 
-```text
-Gate type: discovery
-Execution owner: ChatGPT Chat / Pro
-```
+Evidence / Testing may transition to:
+- Implementation, when a substantive defect exceeds Codex tiny-repair authority;
+- Discovery, when testing exposes a material architectural/system unknown;
+- Independent Review, when required evidence is complete.
 
-The gate identifies questions, sources, expected source-of-truth output, non-goals, and completion criteria. ChatGPT investigates and may draft/write the designated source-of-truth when authorized. Material results require human approval before downstream implementation depends on them.
+Independent Review may transition to:
+- Definition, when the checkpoint intent/scope itself is fundamentally wrong;
+- Discovery;
+- Implementation;
+- Evidence / Testing;
+- PASS.
 
-Do not activate Codex just because the discovery gate is named CP1/CP3/etc.
+There is intentionally no normal Implementation -> Independent Review shortcut for product-code checkpoints and no Evidence / Testing -> PASS shortcut.
 
-### Execution-readiness before Codex
+## Checkpoint activation
 
-Before activation, ChatGPT asks whether the work order has resolved material:
+A checkpoint can be DEFINED or READY without being executable.
 
-- intended behavior/acceptance oracle;
-- owner/layer/service;
-- architecture and non-goals;
-- public/persistence/authorization semantics as relevant;
-- scope/path/exclusion boundaries;
-- acceptance criteria and verification.
+Human activation means the current intent, scope, authoritative inputs, acceptance criteria, verification expectations, and routing state are approved for the next executable round.
 
-If a foreseeable unknown would require Codex to choose product/architecture meaning, create/finish discovery first.
+For v3, do not reuse v2 executable markers. v3 uses distinct markers so an old v2 runner cannot route a v3 checkpoint to the wrong worker.
 
-### Unexpected discovery during Codex
+## v3 routing metadata
 
-Codex stops before inventing the missing decision and publishes existing routed evidence:
+Every v3 lifecycle record that can lead to another worker dispatch carries exactly one Governance thread marker and exactly one Implementation thread marker:
 
-```text
-<!-- gated-development:codex-evidence:v2 -->
-<!-- gated-development:chatgpt-thread:v1 id=<copied UUID> -->
-...
-Submission outcome: DISCOVERY REQUIRED
-```
+~~~text
+<!-- gated-development:governance-thread:v1 id=<UUID> -->
+<!-- gated-development:implementation-thread:v1 id=<UUID> -->
+~~~
 
-The report contains the concrete unknown, evidence exposing it, work completed, current repository state, affected criteria, and why continuing would require material discovery.
+The first executable activation must have both persistent IDs established. Later records propagate both unchanged unless the human explicitly authorizes a thread rebind.
 
-Because this uses `codex-evidence:v2`, the existing evidence-return transport can route it to the declared ChatGPT conversation.
+A thread rebind is prospective and does not rewrite history.
 
-### Discovery sub-checkpoint
+A Codex Evidence / Testing record may additionally record its fresh round-scoped session/run identity. That identity is provenance only.
 
-On routed `DISCOVERY REQUIRED`, ChatGPT:
+## v3 transport markers
 
-1. re-fetches the active gate/evidence/source truth;
-2. creates a linked discovery child checkpoint, normally `<Gate>.D<n>`;
-3. investigates in ChatGPT Extra High / Pro;
-4. drafts/amends source-of-truth and downstream plan when needed;
-5. obtains human approval for material decisions;
-6. either reactivates the original gate or supersedes it.
+Canonical first-line markers:
 
-Do not rewrite the frozen active gate to hide the detour.
+~~~text
+<!-- gated-development:activation:v3 -->
+<!-- gated-development:implementation-record:v3 -->
+<!-- gated-development:evidence:v3 -->
+<!-- gated-development:review:v3 status=correction-required -->
+<!-- gated-development:review:v3 status=verification-blocked -->
+<!-- gated-development:review:v3 status=discovery-required -->
+<!-- gated-development:review:v3 status=definition-required -->
+<!-- gated-development:review:v3 status=pass -->
+<!-- gated-development:thread-rebind:v3 -->
+~~~
 
-### Reactivation after approved discovery
+The v3 automation contract is defined in automation-handoff.md.
 
-If the original objective remains truthful, record a durable discovery amendment and publish a **new `activation:v1` comment** for the same gate with incremented work-order version, established route, approved source-of-truth commit, resume SHA, discovery reference, and explicitly selected Codex reasoning effort (normally `medium`).
+## Checkpoint quality rule
 
-If discovery materially changes objective/architecture/product scope, supersede the old gate and create replacement implementation gate(s).
+A top-level checkpoint must answer yes to all of these:
 
-## ChatGPT thread routing
+- Can a human inspect or exercise a meaningful product state here?
+- Is the state coherent rather than intentionally half-wired?
+- Is it substantial enough to represent meaningful progress?
+- Is it bounded enough for one independent reviewer to understand the claim?
+- Can acceptance criteria and verification prove the product outcome?
 
-Every executable Codex activation/reactivation/correction contains exactly one:
+Bad top-level checkpoints are internal-only milestones such as creating a class, DTO, helper, registration, or one file.
 
-```text
-<!-- gated-development:chatgpt-thread:v1 id=<UUID> -->
-```
+Those may be sub-checkpoint tasks.
 
-### Initial activation
+## Human verification
 
-The human supplies the current ChatGPT thread UUID when first activating the implementation gate. If it has already been explicitly supplied for that activation, use it. Otherwise ask for it. Without a valid supplied ID, keep the gate READY and do not publish an executable activation.
+Every top-level checkpoint must be designed so the human can stop at that boundary and manually check whether the feature is on track.
 
-### Reuse
+Manual human sign-off is not automatically required after every checkpoint unless the checkpoint or human says so. Human-verifiable and human-blocking are separate concepts.
 
-Corrections and post-discovery reactivations reuse the established gate route. Do not repeatedly ask the human for the same UUID.
+## Discovery authority
 
-Only an explicit human request supplying a replacement ID changes the destination. Record that prospectively in the next applicable executable comment. Preserve earlier history.
+Discovery is not tied to CP1.
 
-Codex copies the exact triggering marker unchanged into evidence/blocker/discovery-required evidence. It never chooses a replacement.
+Foreseeable discovery should be planned before deterministic implementation.
 
-## Bounded incidental repair
+Unexpected material uncertainty from Implementation, Evidence / Testing, or Independent Review returns to Discovery rather than being hidden inside implementation effort.
 
-The primary authorized path list is not automatically an absolute fence. During activated implementation/documentation work, Codex may make a minimal adjacent repair outside the list only when all of these hold before editing:
+If discovery materially changes checkpoint intent, route to Definition and obtain human re-authorization.
 
-1. the active work introduced/exposed the problem and the repair is directly necessary to compile/test/verify that authorized work;
-2. the repair is mechanical/low-risk with no material product/architecture decision;
-3. it is the smallest coherent change;
-4. it does not expand product behavior, ownership, public contracts, persistence/authorization semantics, dependencies/frameworks, or repository/build policy;
-5. no explicit protected/read-only/no-touch restriction is violated;
-6. verification is rerun without weakening checks.
+## Implementation authority
 
-Record the diagnosis, repair minimally, reverify, and disclose every off-list repair in evidence.
+The Implementation ChatGPT thread performs actual code/product writes needed to satisfy the checkpoint.
 
-If the needed change reveals material unknown behavior/architecture/ownership, it is not an incidental-repair excuse: use discovery-required.
+It may make ordinary implementation choices within the approved architecture.
 
-## Orchestrator path
+It must stop and return to Discovery when continuing would require a new material product/architecture/ownership decision.
 
-### Parent / feature preparation
+It posts an implementation record identifying at minimum:
+- checkpoint/sub-checkpoint;
+- implementation round number;
+- starting and ending commit;
+- changed paths;
+- implemented acceptance criteria;
+- known limitations;
+- next requested round;
+- both persistent ChatGPT thread IDs.
 
-ChatGPT inspects enough product/repository context to define the feature objective, known constraints, initial source-of-truth location, and checkpoint plan.
+## Evidence / Testing authority
 
-A parent issue may place discovery anywhere. CP1 is often discovery because early uncertainty is common, but do not encode CP1 as special workflow authority.
+Each Evidence / Testing round starts from a fresh Codex session and an exact implementation commit.
 
-### Discovery gate preparation/execution
+Codex may make a tiny repair only when all are true:
+- directly required to execute/complete the planned evidence;
+- mechanical and low risk;
+- no product/architecture/ownership/public-contract decision;
+- smallest coherent repair;
+- no material expansion of changed paths/behavior;
+- affected verification is rerun;
+- repair is explicitly disclosed.
 
-Use the discovery template. Investigate, author proposed source-of-truth, and derive downstream gates. Record actual findings rather than guesses. Obtain human approval for material product/architecture truth.
+Examples may include an obvious compile typo, missing using/import, narrow test-fixture mistake, or equivalent mechanical defect.
 
-### Implementation gate preparation
+Anything substantial returns to the Implementation ChatGPT thread.
 
-Derive the gate from the approved source-of-truth. Define objective, scope, primary paths, exclusions, acceptance criteria, verification, branch/baseline, and stop/discovery conditions.
+## Independent Review authority
 
-A gate should be execution-ready before activation. If not, create/complete discovery instead of raising Codex reasoning to compensate.
+Independent Review uses the Governance ChatGPT thread but is independent from the implementation worker.
 
-### Activate / reactivate
+Review independently fetches:
+- parent/checkpoint;
+- activation/amendments;
+- source-of-truth and architecture lock;
+- implementation record;
+- tested commit and any tiny-repair delta;
+- remote complete diff;
+- evidence;
+- every acceptance criterion.
 
-Before posting executable Codex work:
+It asks:
 
-1. confirm gate/work-order/source-of-truth readiness;
-2. confirm/resolve required branch/base/body hash fields according to the case;
-3. establish/reuse the ChatGPT route;
-4. select Codex reasoning from `model-selection.md` — normally `medium`;
-5. publish the activation/reactivation comment with one route marker and one reasoning-effort field;
-6. allow the configured launcher to hand off.
+Did we build the right thing, in the right place, in the intended way, and prove it sufficiently?
 
-A post-discovery reactivation also references the child discovery/amendment, approved source commit, and resume starting SHA.
+Only this round can issue PASS.
 
-## Codex implementer path
+## Workflow source
 
-### Revalidate
+The workflow identity is gated-development-orchestration@aquanuity.
 
-Use the currently installed plugin. Read repository instructions, exact triggering executable comment, relevant gate/history, approved product source, and actual repository state.
+Codex should use its currently installed plugin where available.
 
-Verify one valid route marker and the launcher-applied reasoning effort when exposed. Historical marker/effort exceptions do not authorize invention.
+Ordinary ChatGPT Chat should resolve current Aquanuity/codex-plugins main for each workflow action and load the manifest, SKILL.md, and required references from the same commit.
 
-### Execute
+Product/source-of-truth commits and checkpoint contracts may be pinned. The workflow package itself is current-by-execution-surface unless a human explicitly requires otherwise.
 
-Perform only the authorized implementation/correction/reactivation slice. Preserve native behavior when required.
+## References
 
-Classify failures/unknowns:
+- rounds-and-checkpoints.md
+- authority-and-lifecycle.md
+- discovery-checkpoints.md
+- gate-issue-templates.md
+- evidence-and-review.md
+- automation-handoff.md
+- model-selection.md
+- execution-artifacts.md
 
-1. **implementation defect within primary paths** -> fix/reverify;
-2. **qualifying incidental repair** -> diagnose/fix/reverify/disclose;
-3. **execution-only difficult technical problem** -> continue authorized diagnosis at the selected effort;
-4. **material discovery required** -> stop before making the missing product/architecture decision; publish routed `DISCOVERY REQUIRED` evidence;
-5. **true blocker** -> preserve work, publish blocker, stop.
-
-Do not run dependent tests against stale binaries after prerequisite build failure.
-
-Codex must not self-relaunch or rewrite the work order to change its reasoning level.
-
-### Publish
-
-For normal complete/partial implementation evidence, follow `evidence-and-review.md` and `execution-artifacts.md`.
-
-For discovery-required return, still use `codex-evidence:v2` with the copied route marker and `Submission outcome: DISCOVERY REQUIRED`. This is intentional so existing review transport can route the case back to ChatGPT.
-
-For AquaTwin automated publication, prepare the authored evidence, redaction-reviewed bundle, and readiness record, dispatch the artifact publisher with the existing request ID, then stop after dispatch acknowledgment. Do not call the ChatGPT bridge directly.
-
-## Independent reviewer path
-
-For normal implementation evidence, ChatGPT independently fetches:
-
-- gate issue;
-- exact evidence;
-- triggering activation/reactivation/correction;
-- approved source-of-truth;
-- remote ending commit/branch;
-- full original-base-to-ending diff and correction/reactivation delta;
-- required verification evidence;
-- acceptance criteria;
-- any discovery amendment/child gate when applicable.
-
-Do not trust Codex summaries, artifact presence, or prior planning assumptions as proof.
-
-Outcomes remain:
-
-- PASS
-- correction-required
-- verification-blocked
-
-If a review finding itself exposes material unresolved product/architecture discovery, create discovery rather than issuing a Max correction that asks Codex to invent the answer.
-
-For a routine bounded correction, select `medium` normally. Use `high`/`xhigh`/`max` only for execution-ready technical complexity under the model policy.
-
-## Runtime reasoning summary
-
-Current Codex executable comments include:
-
-```text
-- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
-```
-
-Policy:
-
-- `medium` — normal implementation/correction/reactivation;
-- `high` — elevated execution complexity;
-- `xhigh` — difficult execution/debugging with known product meaning;
-- `max` — exceptional execution escalation after lower tiers are inadequate or explicit human request;
-- unresolved discovery — return to ChatGPT, not Max.
-
-The launcher's historical omitted-field `max` fallback may remain for old comments; v2 authoring does not rely on it.
-
-## Terminal outcomes
-
-Normal queued publication:
-
-```text
-Evidence publication queued. Not yet confirmed posted. Not PASS.
-Automation request ID: <actual request_id>
-Publisher run: <actual URL if available>
-Local evidence: <actual path>
-```
-
-Normal evidence after confirmed post:
-
-```text
-Evidence posted. Awaiting independent review. Not PASS.
-Report: <actual evidence URL>
-```
-
-Discovery-required evidence:
-
-```text
-Discovery required. Implementation paused. Not PASS.
-Report: <actual evidence URL or publication state>
-Return route: <copied ChatGPT thread marker in the report>
-```
-
-True blocker:
-
-```text
-Blocked: <concise reason>. Not PASS.
-Report: <actual blocker URL or publication state>
-```
-
-Reviewer outcomes:
-
-- `PASS — accepted commit <SHA>`
-- `PASS — analysis evidence <reference>`
-- `NOT PASS — correction required`
-- `VERIFICATION BLOCKED`
+Load references required by the active round before authoring executable workflow records.
