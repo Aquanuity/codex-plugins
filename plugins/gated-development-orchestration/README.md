@@ -1,94 +1,122 @@
-# Gated Development Orchestration Plugin 2.0.0
+# Gated Development Orchestration Plugin 3.0.0
 
-This package provides the shared **Gated Development Orchestration v2.0.0** contract for ChatGPT Chat / Pro orchestration-discovery-review and local Codex implementation.
+GDO v3 coordinates development around **human-verifiable product checkpoints** and five explicit Rounds.
 
-## v2 architecture
-
-v2 separates discovery/product reasoning from deterministic implementation:
+## Worker architecture
 
 ```text
-ChatGPT: discover -> specify -> decompose -> independently judge
-Codex: execute -> verify -> repair -> report
-Unexpected material uncertainty: return to ChatGPT discovery
+Governance ChatGPT thread
+  Definition Round
+  Discovery Round
+  Independent Review Round
+
+Implementation ChatGPT thread
+  Implementation Round
+
+Fresh Codex session each time
+  Evidence / Testing Round
 ```
 
-### Discovery is not CP1-specific
+The Governance and Implementation ChatGPT threads persist through the checkpoint lifecycle. Every Evidence / Testing round starts a fresh Codex session.
 
-`discovery` is a first-class gate type that may appear anywhere in the checkpoint plan.
+GitHub is the durable authoritative ledger and carries both persistent ChatGPT thread IDs through dispatchable lifecycle comments.
 
-CP1 is commonly discovery because early feature uncertainty is often high, but:
+## Checkpoints
 
-- CP1 does not have to be discovery;
-- discovery is not limited to CP1;
-- foreseeable later discovery should be inserted as its own discovery checkpoint;
-- surprise discovery during implementation becomes a linked child checkpoint such as `CP4.D1`.
+A top-level checkpoint is a reasonably substantial, coherent product state that a human can inspect or exercise and say “this is right” before development continues.
 
-ChatGPT Chat / Pro normally executes discovery at Extra High / Pro, investigating repository/native behavior, ownership, architecture, product meaning, acceptance oracle, and source-of-truth. Material product/architecture/source-of-truth decisions require human approval before controlling downstream implementation.
+Top-level checkpoints are not:
+- one class;
+- one DTO;
+- registration/plumbing;
+- one source layer;
+- compile completion.
 
-See [Discovery checkpoints and return-to-ChatGPT](skills/gated-development-orchestration/references/discovery-checkpoints.md).
+When a meaningful checkpoint is too large for one implementation pass, decompose it into bounded engineering sub-checkpoints such as CP4A/CP4B/CP4C/CP4D. The parent checkpoint remains the product gate.
 
-### Codex normally runs at Medium
+See [Rounds and Checkpoints](skills/gated-development-orchestration/references/rounds-and-checkpoints.md).
 
-Once an implementation gate is discovery-complete and execution-ready, Codex normally starts at:
+## Canonical rounds
+
+### Definition
+
+Defines product intent, architecture discussion, scope, parent issue, and human-verifiable checkpoint plan.
+
+### Discovery
+
+Investigates repository/native behavior, ownership, architecture, constraints, source-of-truth, and architecture lock.
+
+Discovery may happen anywhere; it is not synonymous with CP1.
+
+### Implementation
+
+The separate Implementation ChatGPT thread performs actual product/code writes to satisfy the approved checkpoint or sub-checkpoint.
+
+### Evidence / Testing
+
+A fresh Codex session runs build/test/live/UI/E2E verification and gathers durable evidence. Codex may perform only tightly bounded tiny repair. Substantive repair returns to Implementation.
+
+### Independent Review
+
+The Governance ChatGPT thread steps back from the local implementation tactic, independently fetches the checkpoint, source-of-truth, remote diff, and evidence, and judges the whole checkpoint.
+
+Only Independent Review may issue PASS.
+
+## Canonical transitions
 
 ```text
-- Execution reasoning effort: `medium`
+Definition -> Discovery | Implementation
+
+Discovery -> Definition | Implementation | Independent Review
+
+Implementation -> Discovery | Evidence / Testing
+
+Evidence / Testing -> Implementation | Discovery | Independent Review
+
+Independent Review ->
+  Definition | Discovery | Implementation | Evidence / Testing | PASS
 ```
 
-Escalation is for **technical implementation difficulty**, not missing product knowledge:
+Material Definition changes after activation require human re-authorization.
 
-- `medium` — normal implementation/correction/reactivation;
-- `high` — elevated implementation complexity;
-- `xhigh` — difficult implementation/debugging under known intended behavior;
-- `max` — exceptional technical escalation after lower tiers are inadequate or explicit human request;
-- unresolved discovery — return to ChatGPT instead of using Max as a discovery substitute.
+## Routing
 
-See [Model selection and runtime](skills/gated-development-orchestration/references/model-selection.md).
-
-### Foreseeable discovery
-
-If an implementation checkpoint will require material architecture/behavior/ownership discovery, create and complete a discovery checkpoint first. Do not activate Codex with Max to compensate for a work order that is not execution-ready.
-
-### Surprise discovery during Codex execution
-
-Codex stops before inventing the missing product/architecture decision and publishes normal routed evidence:
+Every dispatchable v3 lifecycle record carries:
 
 ```text
-<!-- gated-development:codex-evidence:v2 -->
-<!-- gated-development:chatgpt-thread:v1 id=<copied UUID> -->
-...
-Submission outcome: DISCOVERY REQUIRED
+<!-- gated-development:governance-thread:v1 id=<UUID> -->
+<!-- gated-development:implementation-thread:v1 id=<UUID> -->
 ```
 
-The existing evidence-return workflow therefore reaches the same ChatGPT conversation without a new transport protocol.
+Thread IDs are routing/context metadata, not product authority.
 
-ChatGPT creates a linked discovery child checkpoint (normally `<Gate>.D<n>`), investigates at Extra High / Pro, records/amends source-of-truth as authorized, and obtains human approval for material decisions.
+A thread replacement is recorded prospectively with a v3 thread-rebind record.
 
-Then either:
+Every dispatch also gets a stable dispatch identity for idempotency. Codex session/run IDs are round-scoped provenance only.
 
-- the original gate remains truthful -> record a discovery amendment and publish a new `activation:v1` comment with incremented work-order version, same route, approved source commit, resume SHA, and explicit Codex effort (normally Medium); or
-- discovery materially changes the gate -> supersede it and create replacement implementation gate(s).
+## v3 markers
 
-The frozen gate is never silently rewritten to hide discovery.
+```text
+<!-- gated-development:activation:v3 -->
+<!-- gated-development:implementation-record:v3 -->
+<!-- gated-development:evidence:v3 -->
+<!-- gated-development:review:v3 status=correction-required -->
+<!-- gated-development:review:v3 status=verification-blocked -->
+<!-- gated-development:review:v3 status=discovery-required -->
+<!-- gated-development:review:v3 status=definition-required -->
+<!-- gated-development:review:v3 status=pass -->
+<!-- gated-development:thread-rebind:v3 -->
+```
 
-## Existing v1 mechanics retained
-
-v2 retains the useful mechanics developed in v1:
-
-- workflow source is current-by-execution-surface rather than frozen into product gates;
-- human-supplied ChatGPT route is established on initial activation and reused through corrections/reactivations;
-- bounded incidental repair for mechanical gate-related verification fixes;
-- verification failures are diagnosed rather than automatically becoming blockers;
-- artifact-backed evidence publication keeps generated logs out of git;
-- Codex never self-approves or directly invokes the ChatGPT bridge;
-- ChatGPT implementation review independently fetches remote code/diff/evidence.
+These are deliberately distinct from v2. The old AquaTwin runner routes v2 activations/corrections to Codex implementation; v3 routes substantive implementation to ChatGPT. Reusing the old markers would risk dispatching the wrong worker.
 
 ## Package contents
 
-- `.codex-plugin/plugin.json` — manifest/version
-- `.app.json` — GitHub app reference
-- `skills/gated-development-orchestration/SKILL.md` — shared contract
+- `.codex-plugin/plugin.json`
+- `.app.json`
+- `skills/gated-development-orchestration/SKILL.md`
 - references:
+  - `rounds-and-checkpoints.md`
   - `authority-and-lifecycle.md`
   - `discovery-checkpoints.md`
   - `gate-issue-templates.md`
@@ -99,14 +127,19 @@ v2 retains the useful mechanics developed in v1:
 
 ## Workflow source
 
-Codex uses the currently installed `gated-development-orchestration@aquanuity` plugin. Ordinary ChatGPT Chat / Pro resolves the current package from `Aquanuity/codex-plugins` `main` for each action and loads the manifest, skill, and phase-required references from the same repository commit.
+Codex uses the currently installed `gated-development-orchestration@aquanuity` plugin where available.
 
-Product/source-of-truth commits, implementation gate scope, branch/base, acceptance criteria, and work-order history may be frozen. The workflow package version/source is provenance, not product authority.
+Ordinary ChatGPT Chat resolves the current package from `Aquanuity/codex-plugins` `main` for each workflow action and loads the manifest, skill, and round-required references from the same commit.
 
-## Compatibility
+Product/source-of-truth commits and activated checkpoint authority can be pinned. Workflow package provenance is not product authority.
 
-The implementation launcher does not need a new post-discovery marker: v2 reuses `activation:v1` for reactivation and `codex-evidence:v2` for discovery return.
+## Automation migration
 
-Historical executable comments without an explicit reasoning field may continue using the existing launcher fallback. New v2-authored Codex work always states reasoning effort explicitly.
+v3 requires the runner transport to understand:
+- two persistent ChatGPT destinations;
+- ChatGPT implementation dispatch;
+- fresh Codex Evidence / Testing dispatch;
+- v3 evidence/review return routing;
+- thread rebind and dispatch idempotency.
 
-No MCP server is declared by this plugin. GitHub access remains subject to normal connection/permission controls.
+Keep machine-local state limited to authentication, ephemeral runtime receipts, and environment-specific configuration. Critical transport code should be repository-backed so the runner can be rebuilt from source.
