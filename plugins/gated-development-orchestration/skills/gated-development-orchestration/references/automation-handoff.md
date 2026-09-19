@@ -1,197 +1,181 @@
 # Automation Handoff Reference
 
-This is the shared automation contract for ChatGPT orchestration/discovery/review, local Codex implementation, the transport-only implementation runner, the artifact publisher, and the return-to-ChatGPT workflow.
+## v3 transport principle
 
-## Current workflow plugin
+The runner is deliberately dumb transport.
 
-Use current `gated-development-orchestration@aquanuity` from the execution-surface source defined in `SKILL.md`. Product gates do not pin the workflow package version/source.
+It reads authoritative GitHub lifecycle records, extracts routing/provenance metadata, dispatches the correct worker, records dispatch identity, and exits.
 
-## Routing by first-line marker
+It does not judge architecture, implementation quality, evidence sufficiency, or PASS.
 
-| First-line marker | Destination | Meaning |
-|---|---|---|
-| `<!-- gated-development:activation:v1 -->` | Codex | Execute initial activation or approved post-discovery reactivation |
-| `<!-- gated-development:review:v2 status=correction-required -->` | Codex | Execute bounded implementation correction |
-| `<!-- gated-development:codex-evidence:v2 -->` | ChatGPT return transport | Normal independent review **or** discovery-required return, determined by report content |
-| `<!-- gated-development:blocker:v2 -->` | Blocker transport when configured | True blocker triage; not the v2 discovery-return path |
-| PASS / verification-blocked / amendment/state markers | Ledger/control only | Do not launch Codex or ChatGPT review by themselves |
+## Persistent routing state
 
-## ChatGPT thread routing marker
+Every dispatchable v3 lifecycle record carries exactly one of each:
 
-Every executable Codex activation/reactivation/correction requires exactly one:
+~~~text
+<!-- gated-development:governance-thread:v1 id=<UUID> -->
+<!-- gated-development:implementation-thread:v1 id=<UUID> -->
+~~~
 
-```text
-<!-- gated-development:chatgpt-thread:v1 id=<UUID> -->
-```
+The runner reads current routing from GitHub. It must not depend on hidden runner memory for worker destination.
 
-The human supplies the ID on initial gate activation. Corrections and reactivations reuse the established route unless the human explicitly supplies a replacement.
+The Governance ID is used for Definition, Discovery, and Independent Review returns.
 
-Codex copies the exact triggering marker into normal evidence, discovery-required evidence, or blocker. It never selects a different destination.
+The Implementation ID is used for substantive implementation/correction returns.
 
-## Discovery return uses existing evidence transport
+## Round-scoped identities
 
-v2 deliberately does **not** introduce a new transport marker for surprise discovery.
+Every dispatch has a durable dispatch identity, for example:
 
-When Codex encounters material discovery, it publishes:
+~~~text
+issue-353-cp4c-implementation-r2
+~~~
 
-```text
-<!-- gated-development:codex-evidence:v2 -->
-<!-- gated-development:chatgpt-thread:v1 id=<copied UUID> -->
-...
-Submission outcome: DISCOVERY REQUIRED
-```
+The runner suppresses duplicate delivery of the same dispatch ID.
 
-The normal evidence return workflow routes that report to the declared ChatGPT thread. ChatGPT reads the report and switches from normal independent review into discovery orchestration.
+Every Evidence / Testing round starts a fresh Codex session. Record its session/run identity for provenance where available, but do not reuse it as persistent routing.
 
-This preserves compatibility with evidence-only return transports that already recognize `codex-evidence:v2`.
+## v3 first-line markers
 
-The transport must not decide whether discovery is valid; it only routes. ChatGPT independently checks the classification.
+### Human activation
 
-## Implementation transport
+~~~text
+<!-- gated-development:activation:v3 -->
+~~~
 
-The implementation runner is deliberately dumb.
+Destination is determined by the declared next round:
+- Implementation -> Implementation ChatGPT thread;
+- Discovery -> Governance ChatGPT thread.
 
-It may validate:
+Activation is not sent to Codex.
 
-- repository/sender/event identity;
-- issue/comment IDs;
-- supported executable first-line marker;
-- nonempty instruction;
-- local launch prerequisites;
-- duplicate delivery of the exact same comment;
-- reasoning-effort field shape/value.
+### Implementation record
 
-It must not decide:
+~~~text
+<!-- gated-development:implementation-record:v3 -->
+~~~
 
-- feature/gate validity;
-- discovery sufficiency;
-- source-of-truth authority;
-- scope/path/architecture;
-- branch creation/repair policy;
-- verification sufficiency;
-- incidental-repair qualification;
-- PASS/correction/discovery validity;
-- whether Medium/High/XHigh/Max was the right human/orchestrator choice.
+Typical outcomes:
+- READY FOR EVIDENCE / TESTING -> start a fresh Codex session;
+- DISCOVERY REQUIRED -> Governance ChatGPT thread;
+- DEFINITION REQUIRED -> Governance ChatGPT thread and require human re-authorization before substantive continuation;
+- BLOCKED -> Governance thread for triage unless checkpoint-specific transport says otherwise.
 
-### Supported executable markers
+### Evidence / Testing record
 
-The existing launcher supports:
+~~~text
+<!-- gated-development:evidence:v3 -->
+~~~
 
-- activation marker for initial activation and post-discovery reactivation;
-- correction-required marker for bounded implementation corrections.
+Typical outcomes:
+- REVIEW READY -> Governance ChatGPT thread for Independent Review;
+- IMPLEMENTATION REQUIRED -> Implementation ChatGPT thread;
+- DISCOVERY REQUIRED -> Governance ChatGPT thread.
 
-Post-discovery resume intentionally reuses `activation:v1`, so no new launcher marker is required. The work-order version and discovery-amendment reference distinguish reactivation from the original activation.
+A fresh Codex session posts each evidence record.
 
-## Runtime reasoning selection
+### Independent review records
 
-Every current v2 Codex activation/reactivation/correction explicitly contains:
+~~~text
+<!-- gated-development:review:v3 status=correction-required -->
+<!-- gated-development:review:v3 status=verification-blocked -->
+<!-- gated-development:review:v3 status=discovery-required -->
+<!-- gated-development:review:v3 status=definition-required -->
+<!-- gated-development:review:v3 status=pass -->
+~~~
 
-```text
-- Execution reasoning effort: `<minimal|low|medium|high|xhigh|max>`
-```
+Routing:
+- correction-required -> Implementation ChatGPT thread;
+- verification-blocked -> fresh Codex Evidence / Testing session;
+- discovery-required -> Governance ChatGPT thread;
+- definition-required -> Governance ChatGPT thread; human re-authorization required before execution;
+- pass -> ledger only, no worker dispatch.
 
-Normal selection:
+## Why v3 markers are new
 
-- `medium` — ordinary execution-ready implementation/correction/reactivation;
-- `high` — elevated implementation complexity;
-- `xhigh` — difficult implementation/debugging with already-known product meaning;
-- `max` — exceptional technical execution escalation or explicit human request;
-- material discovery — return to ChatGPT rather than using Max as a discovery substitute.
+Do not reuse v2 executable first-line markers for new v3 work.
 
-The launcher applies the explicit value to Codex and records the resolved effort/source.
+The existing v2 AquaTwin automation sends activation:v1 and correction-required review:v2 to Codex implementation. GDO v3 changes worker ownership, so distinct markers are required to fail closed until transport is migrated.
 
-Historical executable comments without a field may continue using the runner's old `max` fallback. That is backward compatibility, not current authoring policy.
+Historical v2 records remain historical.
 
-Codex does not self-relaunch to change reasoning effort after startup.
+## ChatGPT dispatch contract
 
-## Detached execution
+The local ChatGPT bridge receives:
+- target thread ID;
+- compact message identifying issue/checkpoint/comment/round/dispatch ID;
+- instruction to resolve current GDO source;
+- instruction to fetch GitHub authority fresh;
+- no copied worker summary treated as proof.
 
-GitHub Actions may end after startup acknowledgment while Codex continues in its own process/console. Launch acknowledgment is not completion or PASS.
+The bridge must support arbitrary authorized target UUIDs rather than one hard-coded thread.
 
-Durable local run records may include request/prompt/event/stderr/progress/start/completion/error/publication files. These remain execution artifacts, not default repository deliverables.
+Implementation dispatch goes only to the Implementation thread ID.
 
-## Artifact publication
+Governance/review/discovery dispatch goes only to the Governance thread ID.
 
-For AquaTwin automated runs, follow `execution-artifacts.md`.
+## Codex Evidence / Testing dispatch contract
 
-Codex authors the terminal report and redaction-reviewed bundle, writes readiness/checksums, dispatches the fixed artifact publisher with the existing request ID, then stops after dispatch acknowledgment.
+Each Evidence / Testing dispatch starts a new Codex session with:
+- exact checkpoint issue/comment;
+- exact commit to test;
+- acceptance criteria and required verification source;
+- explicit tiny-repair boundary;
+- both persistent ChatGPT routing IDs for the resulting record;
+- dispatch ID;
+- instruction to post evidence and stop.
 
-The publisher uploads the immutable bundle and posts the authored report with actual artifact metadata. It does not change report type, implementation scope, discovery classification, routing, or acceptance.
+Do not resume a previous Codex session for a new Evidence / Testing round.
 
-A discovery-required report is published through this same mechanism as normal Codex evidence.
+## Tiny-repair routing
 
-## Return-to-ChatGPT workflow
+Codex may keep the round internal only for a qualifying tiny repair.
 
-Minimum path:
+After tiny repair:
+- record original tested commit;
+- record repair commit;
+- rerun affected verification;
+- Independent Review sees the full delta.
 
-```text
-codex-evidence:v2
-  -> extract exactly one ChatGPT thread marker
-  -> route repository + issue + exact evidence URL to that thread
-  -> ChatGPT fetches evidence independently
-  -> if normal evidence: independent implementation review
-     if Submission outcome == DISCOVERY REQUIRED: discovery orchestration
-```
+If repair is substantive, Codex posts IMPLEMENTATION REQUIRED and stops.
 
-Do not copy the entire report into transport unless necessary; the ChatGPT recipient should fetch the exact GitHub evidence.
+## Discovery routing
 
-Codex never directly calls the ChatGPT bridge.
+Any worker may identify material Discovery need.
 
-## Normal implementation loop
+Implementation -> Governance thread.
+Evidence / Testing -> Governance thread.
+Independent Review -> remains Governance thread context but still posts the discovery-required ledger record.
 
-```text
-ChatGPT prepares execution-ready gate
-  -> human activates with route A + explicit Codex effort (normally medium)
-  -> Codex executes / verifies / repairs
-  -> publisher posts evidence + route A
-  -> return workflow -> ChatGPT thread A
-  -> independent review
-       -> PASS
-       OR
-       -> correction + route A + newly selected effort
-           -> Codex -> evidence -> review -> repeat
-```
+Discovery results may:
+- resume Implementation;
+- go to Independent Review if discovery itself is the checkpoint deliverable;
+- return to Definition when expected direction materially changes.
 
-## Surprise-discovery loop
+## Definition routing
 
-```text
-implementation gate active with route A
-  -> Codex encounters material unforeseen discovery
-  -> stops before deciding product/architecture meaning
-  -> codex-evidence:v2 + route A + Submission outcome: DISCOVERY REQUIRED
-  -> return workflow -> ChatGPT thread A
-  -> ChatGPT validates discovery need
-  -> create linked <Gate>.D<n> discovery checkpoint
-  -> ChatGPT Extra High / Pro investigates
-  -> source-of-truth amendment + human approval when material
-  -> discovery amendment record
-       -> if original gate remains truthful:
-            new activation:v1 (reactivation) + route A + new work-order version + explicit effort
-            -> Codex resumes
-       -> otherwise:
-            supersede old gate and create replacement gate(s)
-```
+Definition is human/governance work.
 
-No fresh UUID is required for the discovery return or reactivation unless the human explicitly changes the destination.
+A material Definition change after activation requires a human re-authorization record before a new executable dispatch.
 
-## Reasoning and discovery separation
+## Thread rebind transport
 
-The runner does not infer discovery from reasoning level. The orchestration contract does not treat Max as automatic permission for architecture/product discovery.
+Use:
 
-If a gate is not execution-ready before activation, ChatGPT creates/completes discovery first. If unexpected discovery appears after activation, Codex uses the routed evidence path.
+~~~text
+<!-- gated-development:thread-rebind:v3 -->
+~~~
 
-## Duplicate delivery / publication retry
+Record previous/new ID, role, reason, and human authorization.
 
-Suppress duplicate launch for the exact same executable comment according to the existing runner contract. A new post-discovery activation is a new comment/work-order version and is therefore a distinct authorized execution.
+The runner uses the latest valid rebind prospectively.
 
-Evidence publication must be confirmed from GitHub. Retry publication only; do not reactivate, rerun Codex, or create a correction merely to repair report transport.
+## Security and durability
 
-## Security
+Never publish cookies, tokens, private app credentials, or named-pipe secrets.
 
-Keep local bridge mechanics/authentication local. Only the human-supplied ChatGPT thread UUID needs to travel in GitHub comments for routing.
+Repository-backed transport code is preferred over machine-only scripts.
 
-Never publish cookies, tokens, credentials, or secret connection material.
+Machine-local state should contain only secrets, runtime receipts, and environment-specific configuration that cannot safely live in git.
 
-## Boundaries
-
-The routing marker is metadata, not cryptographic authentication or product authority. Shared GitHub identity does not prove author role. Role behavior comes from the current workflow contract and independent verification.
+A fresh machine should be recoverable from repository code plus documented authentication/setup.
