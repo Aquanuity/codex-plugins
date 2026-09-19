@@ -1,8 +1,16 @@
 # Rounds and Checkpoints Reference
 
-## Canonical hierarchy
+## Product hierarchy and work lifecycle
 
-Parent Feature -> Checkpoint -> Round -> optional engineering sub-checkpoint.
+The product decomposition hierarchy is:
+
+~~~text
+Parent Feature
+  -> top-level Checkpoint
+       -> optional engineering sub-checkpoints such as CP4A / CP4B / CP4C / CP4D
+~~~
+
+Rounds are orthogonal workflow activity, not children in that product hierarchy. A Definition, Discovery, Implementation, Evidence / Testing, or Independent Review Round operates against the relevant feature, checkpoint, or sub-checkpoint.
 
 These concepts are deliberately different.
 
@@ -63,7 +71,7 @@ The parent checkpoint remains the product gate.
 
 ## Round
 
-A Round is a work cycle against a checkpoint.
+A Round is a workflow work cycle. Depending on the phase, it may operate against the parent feature, a top-level checkpoint, or a bounded engineering sub-checkpoint.
 
 Canonical rounds:
 - Definition Round;
