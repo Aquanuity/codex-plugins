@@ -1,4 +1,4 @@
-# Gated Development Orchestration Plugin 3.0.0
+# Gated Development Orchestration Plugin 3.0.1
 
 GDO v3 coordinates development around **human-verifiable product checkpoints** and five explicit Rounds.
 
@@ -33,6 +33,8 @@ Top-level checkpoints are not:
 - compile completion.
 
 When a meaningful checkpoint is too large for one implementation pass, decompose it into bounded engineering sub-checkpoints such as CP4A/CP4B/CP4C/CP4D. The parent checkpoint remains the product gate.
+
+Rounds are not another level of product decomposition. The product hierarchy is Feature -> top-level Checkpoint -> optional engineering sub-checkpoints; Rounds are workflow activity applied to the relevant feature/checkpoint/sub-checkpoint.
 
 See [Rounds and Checkpoints](skills/gated-development-orchestration/references/rounds-and-checkpoints.md).
 
