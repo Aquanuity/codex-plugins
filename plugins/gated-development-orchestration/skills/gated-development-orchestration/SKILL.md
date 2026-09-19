@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate human-verifiable checkpoint development through Definition, Discovery, Implementation, Evidence / Testing, and Independent Review rounds. Use one persistent Governance ChatGPT thread for Definition, Discovery, and Independent Review; one separate persistent Implementation ChatGPT thread for actual product implementation; and a fresh Codex session for every Evidence / Testing round. GitHub is the authoritative workflow ledger and carries both persistent ChatGPT thread IDs through lifecycle comments.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Repository implementation requires an authorized working environment. Evidence / Testing requires a fresh Codex execution environment when the checkpoint calls for runtime/build/test evidence.
 metadata:
-  version: "3.0.1"
+  version: "3.0.2"
   workflow: "github-gated-development-v3"
 ---
 
@@ -152,6 +152,7 @@ It does not own product definition, architecture changes, substantive implementa
 21. Preserve lifecycle history; do not rewrite old comments to simulate a different sequence.
 22. Generated logs remain execution artifacts unless explicitly required in git.
 23. Do not fabricate SHAs, IDs, tests, approvals, routing, or outcomes.
+24. A fresh Evidence / Testing session means fresh worker context, not automatic re-execution of every previously valid check; reuse prior proof only under the canonical evidence-reuse rules.
 
 ## Round transitions
 
@@ -287,6 +288,8 @@ Codex may make a tiny repair only when all are true:
 Examples may include an obvious compile typo, missing using/import, narrow test-fixture mistake, or equivalent mechanical defect.
 
 Anything substantial returns to the Implementation ChatGPT thread.
+
+A fresh Evidence / Testing session isolates worker context and authority; it does not by itself invalidate prior proof. Apply the evidence-reuse and bounded-rerun rules in evidence-and-review.md so later rounds execute only the proof that is affected, missing, invalid, stale, ambiguous, explicitly required fresh, or otherwise not safely reusable.
 
 ## Independent Review authority
 

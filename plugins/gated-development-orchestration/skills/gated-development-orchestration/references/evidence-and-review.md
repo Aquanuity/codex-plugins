@@ -43,6 +43,31 @@ Evidence should be proportionate to the checkpoint but may include:
 
 Record exact commands/actions and actual results. Do not report skipped/unavailable proof as PASS.
 
+## Evidence reuse and bounded rerun scope
+
+A fresh Evidence / Testing session means fresh worker context and independent execution authority. It does **not** mean every previously valid verification check must be executed again.
+
+Prior evidence may be retained and reused in a later round only when all of these are true:
+- the earlier proof identifies the exact commit, command/action, result, and artifact or durable record needed for independent inspection;
+- the worker inspects the delta from the earlier tested commit to the current ending and confirms that no source, dependency, fixture, configuration, environment assumption, or other input relevant to that proof has changed in a way that invalidates it;
+- the active checkpoint, implementation handoff, correction, or review record does not explicitly require that check to be executed fresh;
+- the proof is sufficiently bound to its inputs and provenance that Independent Review can determine what was actually demonstrated.
+
+If any of those conditions is uncertain, treat the proof as stale, ambiguous, or unbound and rerun the relevant check.
+
+For correction rounds and verification-blocked continuations, execute the smallest sufficient verification set:
+- checks affected by the new implementation or tiny-repair delta;
+- missing, invalid, stale, ambiguous, or insufficiently bound evidence;
+- checks explicitly required fresh by current authority;
+- additional regression checks made necessary by failures or material risk exposed by the affected verification.
+
+Do not rerun unaffected expensive suites merely because the Evidence round number changed or because the worker session is fresh.
+
+Every later-round evidence record should distinguish:
+- **retained/reused evidence** — identify the earlier round/artifact and explain why it remains applicable;
+- **freshly executed evidence** — identify the exact new commands/actions and results;
+- **not reused** — identify any prior proof rejected as stale, ambiguous, unbound, or invalid and what replaced it.
+
 ## Exact tested commit
 
 Every evidence record identifies the exact commit under test.
@@ -145,6 +170,14 @@ Route to the Implementation ChatGPT thread.
 Use when implementation may be acceptable but required evidence is missing, invalid, stale, or inconclusive.
 
 Route to a fresh Codex Evidence / Testing round.
+
+The review record must define the smallest bounded continuation that can close the proof gap. Explicitly identify:
+- evidence that remains valid and should be retained/reused;
+- evidence that is missing, invalid, stale, ambiguous, or insufficiently bound;
+- whether each gap can be closed by recovering retained artifacts or requires new execution;
+- the specific checks, if any, that must actually be rerun.
+
+Do not request a full verification campaign merely because the next worker is a fresh Codex session. Require broad reruns only when the implementation delta, invalidated provenance, checkpoint contract, or observed failures justify them.
 
 ### discovery-required
 

@@ -72,7 +72,7 @@ Typical outcomes:
 - IMPLEMENTATION REQUIRED -> Implementation ChatGPT thread;
 - DISCOVERY REQUIRED -> Governance ChatGPT thread.
 
-A fresh Codex session posts each evidence record.
+A fresh Codex session authors each evidence record. When automated publication is enabled, the publisher transports the authored record and artifacts to the durable GitHub ledger; Codex does not bypass that publication path. Manual/direct publication is used only when the active checkpoint explicitly authorizes it.
 
 ### Independent review records
 
@@ -126,6 +126,8 @@ Each Evidence / Testing dispatch starts a new Codex session with:
 - instruction to post evidence and stop.
 
 Do not resume a previous Codex session for a new Evidence / Testing round.
+
+Fresh session means fresh worker context, not mandatory re-execution of every earlier valid check. Apply the canonical evidence-reuse and bounded-rerun rules from evidence-and-review.md and the latest authoritative lifecycle record. Reuse only proof whose inputs and provenance remain valid; execute only affected, missing, invalid, stale, ambiguous, explicitly-fresh, or otherwise non-reusable verification.
 
 ## Tiny-repair routing
 
