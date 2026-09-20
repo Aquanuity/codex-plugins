@@ -33,6 +33,8 @@ issue-353-cp4c-implementation-r2
 
 The runner suppresses duplicate delivery of the same dispatch ID.
 
+For publisher-created `evidence:v3` records, downstream dispatch identity is based on the original Evidence publication request ID carried in the publisher receipt, not the resulting GitHub comment ID. If the same Evidence request is accidentally published twice, both comments therefore collapse to the same exactly-once downstream dispatch identity.
+
 Every Evidence / Testing round starts a fresh Codex session. Record its session/run identity for provenance where available, but do not reuse it as persistent routing.
 
 ## v3 first-line markers
@@ -135,6 +137,8 @@ Fresh session means fresh worker context, not mandatory re-execution of every ea
 The Evidence worker must externalize completion state in its closure ledger rather than relying on conversation memory. Before every expensive action it identifies the ledger item being closed; after the action it records the result and secures the required artifacts before moving on. Before `REVIEW READY`, it re-fetches authority and verifies every mandatory ledger item is actually satisfied.
 
 When automated publication is enabled, Codex must not hand-author `evidence.md` transport headers or `ready.json`. It authors the evidence body and review bundle, chooses one allowed Evidence outcome, completes redaction review, and invokes the deterministic publication helper. The helper derives routing from the frozen request, serializes the canonical record, computes digests, validates locally, and queues the publisher. The publisher remains the only component that posts the durable `evidence:v3` GitHub comment.
+
+The helper also owns publication state. It freezes the selected bytes/outcome, records a queue attempt before the external queue call, records queue acknowledgement on success, and treats queued/published state as terminal for the Evidence worker. Codex must never invoke `gdo-v3-artifact-publish.yml` directly. An uncertain queue attempt is reconciled, not blindly repeated.
 
 ## Tiny-repair routing
 

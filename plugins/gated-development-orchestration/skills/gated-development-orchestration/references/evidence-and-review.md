@@ -35,6 +35,8 @@ Do not rely on memory of a long prose handoff. Convert current GitHub authority 
 
 After loading current GDO, the checkpoint, and the exact triggering lifecycle comment, create a durable round-local `evidence-plan.md` (or equivalent non-git execution file) before starting an expensive build/test/browser command.
 
+At the top of the ledger, keep a short `ACTIVE TASK` summary of the current bounded continuation. Keep exactly one mandatory item `IN PROGRESS` at a time; all others remain `PENDING`, `SATISFIED`, or truthfully blocked.
+
 Give every current mandatory obligation a stable round-local ID and record:
 - the exact authority text or source section;
 - mode: `REUSE`, `RECOVER`, or `EXECUTE`;
@@ -61,6 +63,8 @@ A passing test does not satisfy an attachment/provenance requirement if the requ
 For repeated runs, use unique output/report locations established before launch. Do not start the next repetition until the previous repetition's required evidence is secured against overwrite.
 
 Do not infer that an environment action is impossible from one failed setup attempt. Distinguish observed facts from hypotheses. Use an explicitly authorized recovery/isolation approach when available. If execution remains impossible, preserve the diagnostics and use the truthful blocked outcome.
+
+Do not repeat the same failed setup/tool approach indefinitely. After two materially equivalent failures, either use a different explicitly authorized recovery path or record the blocker and route truthfully.
 
 ### 3. Preserve the authorized verification contract
 
@@ -100,6 +104,14 @@ The final evidence record must distinguish:
 - freshly executed proof;
 - prior proof rejected as stale/ambiguous/unbound;
 - unresolved items and the truthful routing outcome.
+
+## Terminal publication rule
+
+Automated publication is a one-way transition. Before queueing, deterministic preparation freezes the selected outcome plus evidence and bundle digests. Queueing creates a durable attempt/acknowledgement state. Once queue acknowledgement exists, the Evidence worker stops and may not change the publication bytes or outcome.
+
+A publication retry is transport recovery only. It must reuse the same frozen request/outcome/digests. If queue state is uncertain, reconcile the durable queue/workflow state before retrying; do not automatically issue another queue request.
+
+A terminal `published.json` receipt prevents automatic republication even if the GitHub comment is later missing. That case requires manual reconciliation rather than silently creating a replacement Evidence record.
 
 ## Required evidence
 

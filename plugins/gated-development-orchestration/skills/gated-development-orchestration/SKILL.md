@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate human-verifiable checkpoint development through Definition, Discovery, Implementation, Evidence / Testing, and Independent Review rounds. Use one persistent Governance ChatGPT thread for Definition, Discovery, and Independent Review; one separate persistent Implementation ChatGPT thread for actual product implementation; and a fresh Codex session for every Evidence / Testing round. GitHub is the authoritative workflow ledger and carries both persistent ChatGPT thread IDs through lifecycle comments.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Repository implementation requires an authorized working environment. Evidence / Testing requires a fresh Codex execution environment when the checkpoint calls for runtime/build/test evidence.
 metadata:
-  version: "3.0.4"
+  version: "3.0.5"
   workflow: "github-gated-development-v3"
 ---
 
@@ -154,6 +154,7 @@ It does not own product definition, architecture changes, substantive implementa
 23. Do not fabricate SHAs, IDs, tests, approvals, routing, or outcomes.
 24. A fresh Evidence / Testing session means fresh worker context, not automatic re-execution of every previously valid check; reuse prior proof only under the canonical evidence-reuse rules.
 25. Evidence / Testing must maintain an explicit closure ledger and perform a final requirement-by-requirement closure audit; attempted work is not complete until the required proof exists and is inspected.
+26. Automated Evidence publication is terminal after queue acknowledgement: freeze the evidence/outcome, stop execution, do not mutate/repackage/requeue, and recover transport only from the same frozen publication identity.
 
 ## Round transitions
 
@@ -295,6 +296,10 @@ A fresh Evidence / Testing session isolates worker context and authority; it doe
 For automated publication, the Evidence worker owns the evidence substance, review bundle, redaction judgment, and v3 outcome. Deterministic transport code owns publication serialization: routing markers, canonical Outcome line, SHA-256 digests, readiness metadata, structural preflight, and publisher queueing. The worker must not manually construct transport metadata that code can derive from the frozen dispatch request.
 
 Before starting expensive verification, the Evidence worker must create a durable round-local closure ledger from the exact current GitHub authority. It must update that ledger after each required action and re-audit it immediately before choosing an outcome. `REVIEW READY` is forbidden while any mandatory item is pending, attempted-but-unproven, ambiguous, or missing a required artifact/provenance binding.
+
+Keep the active execution state small: place a short current-task summary at the top of the ledger and keep only one mandatory item `IN PROGRESS` at a time. This is the authoritative working checklist for the session after the long GitHub source material has been read.
+
+After deterministic publication reports queued/already queued/already published, the Evidence round is terminal. The worker must stop immediately. It must not continue testing, change the evidence body/bundle/outcome, call the publisher workflow directly, or create another publication for the same request.
 
 ## Independent Review authority
 

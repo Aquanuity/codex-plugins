@@ -66,7 +66,23 @@ Publication transport then:
 
 The publisher remains strict and independently validates the generated package before upload/posting. Do not weaken publisher validation to accommodate malformed worker output.
 
-A publication retry is transport recovery, not another Evidence / Testing round.
+Publication state is one-way:
+
+~~~text
+evidence body + review bundle
+  -> frozen publication identity
+  -> queue-attempt claim
+  -> queue acknowledgement
+  -> published terminal receipt
+~~~
+
+After queue acknowledgement, the Evidence worker stops. It may not continue execution, change evidence bytes/outcome, or issue another publisher workflow request.
+
+A queue-attempt claim without acknowledgement is ambiguous external-write state and requires reconciliation before any retry.
+
+A terminal local publication receipt prevents automatic republication even if the matching GitHub comment later disappears. Missing/deleted durable ledger content requires manual reconciliation, not a second Evidence publication.
+
+A publication retry is transport recovery, not another Evidence / Testing round, and must reuse the same frozen request/outcome/digests.
 
 ## Redaction
 
