@@ -27,6 +27,80 @@ The fresh session receives:
 
 The session does not inherit authority from a previous Codex conversation.
 
+## Mandatory Evidence execution protocol
+
+Do not rely on memory of a long prose handoff. Convert current GitHub authority into an explicit completion ledger before expensive execution.
+
+### 1. Build the closure ledger before execution
+
+After loading current GDO, the checkpoint, and the exact triggering lifecycle comment, create a durable round-local `evidence-plan.md` (or equivalent non-git execution file) before starting an expensive build/test/browser command.
+
+Give every current mandatory obligation a stable round-local ID and record:
+- the exact authority text or source section;
+- mode: `REUSE`, `RECOVER`, or `EXECUTE`;
+- the action required;
+- the exact proof/artifact/provenance required;
+- status: initially `PENDING`.
+
+The latest authoritative lifecycle record may narrow earlier rerun requirements, but it does not silently erase still-applicable checkpoint acceptance criteria.
+
+For acceptance-criterion mapping, copy the authoritative criterion wording verbatim. Do not reorder, paraphrase into a different meaning, replace criteria with repair subcases, or invent new acceptance meanings.
+
+### 2. Execute and close one obligation at a time
+
+Before each expensive command, identify which ledger obligation it closes and why existing reusable proof is insufficient.
+
+Immediately after each command/run:
+- record the exact command, relevant nonsecret configuration/environment, exit/result, and run identity;
+- preserve required logs, screenshots, reports, attachments, downloads, hashes, and provenance before starting the next repetition;
+- inspect enough of each required artifact to confirm that it exists, belongs to the intended run, and is usable evidence;
+- mark an obligation `SATISFIED` only when all proof named by that obligation exists and is bound to the correct inputs/run.
+
+A passing test does not satisfy an attachment/provenance requirement if the required attachment/provenance was not preserved.
+
+For repeated runs, use unique output/report locations established before launch. Do not start the next repetition until the previous repetition's required evidence is secured against overwrite.
+
+Do not infer that an environment action is impossible from one failed setup attempt. Distinguish observed facts from hypotheses. Use an explicitly authorized recovery/isolation approach when available. If execution remains impossible, preserve the diagnostics and use the truthful blocked outcome.
+
+### 3. Preserve the authorized verification contract
+
+Treat explicit timeouts, retry counts, assertions, fixtures, renderer qualification, commands, and other verification constraints as requirements, not suggestions.
+
+Do not:
+- silently increase/decrease timeouts;
+- add retries or retry until green;
+- remove/weaken assertions;
+- substitute a different fixture/runtime and call it equivalent proof;
+- force/replay product state merely to satisfy an assertion.
+
+If an authorized deviation is necessary, obtain or cite authority for it and identify the resulting evidence as different from the original contract.
+
+Preserve failed/interrupted attempts truthfully.
+
+### 4. Perform a closure audit before outcome/publication
+
+Immediately before choosing the Evidence outcome:
+1. re-fetch the exact triggering lifecycle comment and current checkpoint authority;
+2. re-read the closure ledger line by line;
+3. verify every mandatory item against its proof path/run identity;
+4. inspect the assembled review bundle/inventory for every artifact explicitly required by authority;
+5. confirm the final evidence maps the original acceptance criteria without semantic drift.
+
+`REVIEW READY` is allowed only when every mandatory ledger item is `SATISFIED` and its required proof is present and inspectable.
+
+If a mandatory item remains unresolved:
+- substantive product defect -> `IMPLEMENTATION REQUIRED`;
+- material architecture/product uncertainty -> `DISCOVERY REQUIRED`;
+- execution/provenance/environment gap -> `BLOCKED`.
+
+Do not call an item "done", "closed", "satisfied", or "complete" merely because it was attempted or because nearby tests passed.
+
+The final evidence record must distinguish:
+- retained/reused proof;
+- freshly executed proof;
+- prior proof rejected as stale/ambiguous/unbound;
+- unresolved items and the truthful routing outcome.
+
 ## Required evidence
 
 Evidence should be proportionate to the checkpoint but may include:

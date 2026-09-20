@@ -124,11 +124,15 @@ Each Evidence / Testing dispatch starts a new Codex session with:
 - both persistent ChatGPT routing IDs for the resulting record;
 - dispatch ID;
 - deterministic publication-helper location/instructions when automated publication is enabled;
+- instruction to create and maintain a closure ledger before expensive execution;
+- instruction to perform a fresh authority/ledger closure audit before selecting an outcome;
 - instruction to author evidence, publish through the helper/publisher path, and stop.
 
 Do not resume a previous Codex session for a new Evidence / Testing round.
 
 Fresh session means fresh worker context, not mandatory re-execution of every earlier valid check. Apply the canonical evidence-reuse and bounded-rerun rules from evidence-and-review.md and the latest authoritative lifecycle record. Reuse only proof whose inputs and provenance remain valid; execute only affected, missing, invalid, stale, ambiguous, explicitly-fresh, or otherwise non-reusable verification.
+
+The Evidence worker must externalize completion state in its closure ledger rather than relying on conversation memory. Before every expensive action it identifies the ledger item being closed; after the action it records the result and secures the required artifacts before moving on. Before `REVIEW READY`, it re-fetches authority and verifies every mandatory ledger item is actually satisfied.
 
 When automated publication is enabled, Codex must not hand-author `evidence.md` transport headers or `ready.json`. It authors the evidence body and review bundle, chooses one allowed Evidence outcome, completes redaction review, and invokes the deterministic publication helper. The helper derives routing from the frozen request, serializes the canonical record, computes digests, validates locally, and queues the publisher. The publisher remains the only component that posts the durable `evidence:v3` GitHub comment.
 

@@ -26,6 +26,8 @@ Bind evidence to:
 
 Do not reuse an artifact from another round as if it were fresh evidence.
 
+For repeated executions, establish unique output/report locations before launch and preserve/hash the required artifacts from each completed attempt before starting the next attempt. A later run must never overwrite the only copy of an earlier run's required proof.
+
 ## Tiny-repair artifacts
 
 If Codex makes a qualifying tiny repair, artifact metadata must identify:

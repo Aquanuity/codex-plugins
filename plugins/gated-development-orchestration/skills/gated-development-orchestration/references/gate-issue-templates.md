@@ -112,6 +112,20 @@ Both persistent ChatGPT IDs are required before executable activation.
 
 ### Verification performed during implementation
 <supporting only; not independent evidence>
+
+### Required Evidence / Testing continuation
+Retain/reuse:
+- <specific still-valid proof that must not be rerun merely because the session is fresh>
+
+Fresh execution required:
+- E<n>-1 — <exact action> -> required proof: <artifact/result/provenance>
+- E<n>-2 — ...
+
+Execution constraints:
+- <timeouts/retries/fixtures/environment/renderer requirements that must not drift>
+
+Closure condition:
+- REVIEW READY only when every listed fresh requirement is satisfied with the named proof and the original acceptance criteria remain fully mapped.
 ~~~
 
 ## Evidence / Testing record
@@ -172,8 +186,18 @@ Both persistent ChatGPT IDs are required before executable activation.
 - Commit requiring evidence: <sha>
 - Dispatch ID for next fresh Evidence / Testing round: <id>
 
-### Missing/invalid proof
-- ...
+### Retain/reuse without rerunning
+- <specific artifact-bound proof that remains valid>
+
+### Missing/invalid proof and bounded closure ledger
+- E<n>-1 — <missing/invalid item> -> required proof: <exact artifact/result/provenance>
+- E<n>-2 — ...
+
+### Execution constraints
+- <timeouts/retries/fixtures/environment/renderer requirements that must not drift>
+
+### Closure condition
+- The next Evidence worker must create its round-local closure ledger from these IDs, secure each required proof before moving on, and may use REVIEW READY only when every mandatory item is satisfied.
 ~~~
 
 ## Independent Review — discovery required
