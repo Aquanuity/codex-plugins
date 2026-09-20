@@ -38,12 +38,31 @@ If Codex makes a qualifying tiny repair, artifact metadata must identify:
 
 ## Publication
 
-Publication transport:
+The Evidence worker owns:
+- evidence substance and acceptance-criterion mapping;
+- the selected review bundle contents;
+- redaction review;
+- the v3 Evidence outcome.
+
+Deterministic publication preparation owns:
+- the `evidence:v3` first-line marker;
+- both persistent ChatGPT routing markers copied from the frozen dispatch request;
+- canonical `- Outcome:` serialization from the worker-selected outcome;
+- SHA-256 digests;
+- `ready.json` schema/identity fields;
+- local structural preflight;
+- queueing the publisher after successful preparation.
+
+Codex should author a body-only evidence file and the review bundle. It must not manually construct or edit generated `evidence.md` / `ready.json` transport metadata after deterministic preparation.
+
+Publication transport then:
 - uploads/stores the selected redaction-reviewed evidence;
 - posts or augments the authored Evidence / Testing record;
 - preserves both persistent ChatGPT routing IDs;
 - records actual artifact references/digests;
 - does not decide the next workflow outcome beyond transporting the worker-authored result.
+
+The publisher remains strict and independently validates the generated package before upload/posting. Do not weaken publisher validation to accommodate malformed worker output.
 
 A publication retry is transport recovery, not another Evidence / Testing round.
 
