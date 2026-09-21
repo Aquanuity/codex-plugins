@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate human-verifiable checkpoint development through Definition, Discovery, Implementation, Evidence / Testing, and Independent Review rounds. Use one persistent Governance ChatGPT thread for Definition, Discovery, and Independent Review; one separate persistent Implementation ChatGPT thread for actual product implementation; and a fresh Codex session for every Evidence / Testing round. GitHub is the authoritative workflow ledger and carries both persistent ChatGPT thread IDs through lifecycle comments.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Repository implementation requires an authorized working environment. Evidence / Testing requires a fresh Codex execution environment when the checkpoint calls for runtime/build/test evidence.
 metadata:
-  version: "3.0.5"
+  version: "3.1.0"
   workflow: "github-gated-development-v3"
 ---
 
@@ -69,7 +69,7 @@ Read rounds-and-checkpoints.md for the canonical definitions.
    - architecture-lock documentation.
 
 3. Implementation Round
-   - actual product/code changes;
+   - actual product/code changes and necessary durable tests/fixtures/verification recipes;
    - satisfies the active checkpoint or implementation sub-checkpoint;
    - performed by the separate Implementation ChatGPT thread.
 
@@ -110,6 +110,7 @@ Owns:
 - actual product implementation;
 - substantive correction rounds;
 - code changes needed to satisfy acceptance criteria;
+- evidence-ready durable tests, fixtures, observation hooks, AC-to-proof mapping, and runnable verification recipes;
 - implementation records and handoff to Evidence / Testing.
 
 It may inspect architecture/source-of-truth but must not silently redefine them.
@@ -274,6 +275,8 @@ It posts an implementation record identifying at minimum:
 - next requested round;
 - both persistent ChatGPT thread IDs.
 
+Implementation must leave the checkpoint evidence-ready. Existing adequate tests should be reused; missing runtime access is reported, not replaced by fabricated execution. Substantive missing test coverage returns to Implementation. Read references/evidence-execution-contract.md for the 3.1 responsibility and opt-in execution contract; no extra round is introduced.
+
 ## Evidence / Testing authority
 
 Each Evidence / Testing round starts from a fresh Codex session and an exact implementation commit.
@@ -293,13 +296,15 @@ Anything substantial returns to the Implementation ChatGPT thread.
 
 A fresh Evidence / Testing session isolates worker context and authority; it does not by itself invalidate prior proof. Apply the evidence-reuse and bounded-rerun rules in evidence-and-review.md so later rounds execute only the proof that is affected, missing, invalid, stale, ambiguous, explicitly required fresh, or otherwise not safely reusable.
 
-For automated publication, the Evidence worker owns the evidence substance, review bundle, redaction judgment, and v3 outcome. Deterministic transport code owns publication serialization: routing markers, canonical Outcome line, SHA-256 digests, readiness metadata, structural preflight, and publisher queueing. The worker must not manually construct transport metadata that code can derive from the frozen dispatch request.
+For automated publication, the Evidence worker owns the evidence substance, required proof selection, redaction judgment, and v3 outcome. For explicitly opted-in 3.1 contracts the helper owns mechanical attempt state, artifact collection, bundle assembly and closure validation; historical requests retain their original path. Deterministic transport code owns publication serialization: routing markers, canonical Outcome line, SHA-256 digests, readiness metadata, structural preflight, and publisher queueing. The worker must not manually construct transport metadata that code can derive from the frozen dispatch request.
 
-Before starting expensive verification, the Evidence worker must create a durable round-local closure ledger from the exact current GitHub authority. It must update that ledger after each required action and re-audit it immediately before choosing an outcome. `REVIEW READY` is forbidden while any mandatory item is pending, attempted-but-unproven, ambiguous, or missing a required artifact/provenance binding.
+For legacy/manual execution, before starting expensive verification the Evidence worker must create a durable round-local closure ledger from the exact current GitHub authority. It must update that ledger after each required action and re-audit it immediately before choosing an outcome. `REVIEW READY` is forbidden while any mandatory item is pending, attempted-but-unproven, ambiguous, or missing a required artifact/provenance binding.
 
 Keep the active execution state small: place a short current-task summary at the top of the ledger and keep only one mandatory item `IN PROGRESS` at a time. This is the authoritative working checklist for the session after the long GitHub source material has been read.
 
 After deterministic publication reports queued/already queued/already published, the Evidence round is terminal. The worker must stop immediately. It must not continue testing, change the evidence body/bundle/outcome, call the publisher workflow directly, or create another publication for the same request.
+
+For a 3.1 strict request, the helper-created plan/receipts are the mechanical ledger; keep a short ACTIVE TASK interpretation note, not a duplicate hand-maintained execution history. REVIEW READY requires both independent coverage judgment and deterministic validation of the final bundle. Missing/unsupported contracts, helpers or evidence never silently fall back. Mechanical validation does not establish semantic test adequacy or PASS.
 
 ## Independent Review authority
 
@@ -341,5 +346,6 @@ Product/source-of-truth commits and checkpoint contracts may be pinned. The work
 - automation-handoff.md
 - model-selection.md
 - execution-artifacts.md
+- evidence-execution-contract.md
 
 Load references required by the active round before authoring executable workflow records.

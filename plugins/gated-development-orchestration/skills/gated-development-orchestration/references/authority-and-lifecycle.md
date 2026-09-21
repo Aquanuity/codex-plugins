@@ -48,6 +48,8 @@ It must not:
 - issue PASS;
 - treat its own tests as independent acceptance.
 
+Implementation must also leave necessary durable tests, fixtures, observations, the original AC-to-proof map and a runnable verification recipe evidence-ready. Missing execution access is disclosed. Implementation does not approve its own coverage or dictate acceptance. See evidence-execution-contract.md.
+
 ### Evidence / Testing Codex
 
 Each Evidence / Testing round starts a fresh Codex session.
@@ -63,6 +65,8 @@ It must not:
 - decide material product/architecture questions;
 - issue PASS;
 - reuse a prior Codex session as the next evidence worker.
+
+Evidence is primarily independent execution/proof, not substantive test authoring. A missing/materially inadequate durable test returns IMPLEMENTATION REQUIRED; a material question about the expected behavior returns DISCOVERY REQUIRED. Recipe/helper checks never outrank GitHub authority or replace semantic review. Tiny mechanical repair remains allowed under the existing boundary.
 
 ### Independent Review
 

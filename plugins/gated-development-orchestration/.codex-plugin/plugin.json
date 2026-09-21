@@ -1,6 +1,6 @@
 {
   "name": "gated-development-orchestration",
-  "version": "3.0.5",
+  "version": "3.1.0",
   "description": "Coordinate human-verifiable checkpoint development through persistent ChatGPT governance and implementation threads, fresh Codex evidence/testing sessions, and independent review.",
   "author": {
     "name": "Aquanuity"

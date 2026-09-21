@@ -27,6 +27,14 @@ The fresh session receives:
 
 The session does not inherit authority from a previous Codex conversation.
 
+## 3.1 evidence-ready handoff and strict execution
+
+Implementation owns necessary durable tests, fixtures, observation hooks, an AC-to-proof map and a runnable recipe. Evidence independently checks that surface against current GitHub authority; it is not an uncritical runner. Missing substantive acceptance coverage returns IMPLEMENTATION REQUIRED; unresolved expected semantics returns DISCOVERY REQUIRED. Temporary configuration files cannot silently alter assertions, selectors, timeouts or fixture meaning. Existing tiny-repair limits remain.
+
+For prospectively opted-in strict requests, [Evidence execution contract](evidence-execution-contract.md) defines the canonical helper interface. Initialize its mechanical ledger from the committed recipe and frozen trigger; run/recover only authorized obligations. Use helper-generated attempt state and bundle inventory instead of duplicating them in handwritten prose. Keep a short ACTIVE TASK and independent coverage/reuse assessment. Legacy requests retain the protocol below and are not rewritten.
+
+The helper checks exact inputs, child completion, raw reports, referenced attachments and actual package bytes. Both publication preparation and publisher validate the assembled strict bundle. REVIEW READY needs mechanical closure AND the worker's independent coverage judgment. A recipe omitting an AC, weak assertions or an inadequate environment is not excused by helper success. Partial blocked/correction/discovery publication remains available and must preserve unresolved facts. None of these checks grants PASS.
+
 ## Mandatory Evidence execution protocol
 
 Do not rely on memory of a long prose handoff. Convert current GitHub authority into an explicit completion ledger before expensive execution.

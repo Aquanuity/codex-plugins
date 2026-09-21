@@ -1,6 +1,12 @@
-# Gated Development Orchestration Plugin 3.0.1
+# Gated Development Orchestration Plugin 3.1.0
 
 GDO v3 coordinates development around **human-verifiable product checkpoints** and five explicit Rounds.
+
+## 3.1: evidence-ready implementation and deterministic execution
+
+Implementation owns necessary durable tests/fixtures/observability, an AC-to-proof map and a runnable recipe. A fresh Evidence worker independently evaluates and executes/reuses/recovers proof; the local helper owns mechanical attempt tracking, collection and bundle validation. Independent Review still judges semantic sufficiency and alone grants PASS.
+
+Strict execution is a **prospective opt-in pilot**, not a default-mode migration or a deployment claim. Existing requests retain their frozen contracts. Read the canonical [Evidence execution contract](skills/gated-development-orchestration/references/evidence-execution-contract.md) before adding a strict marker. Runner, publisher and fresh Windows pilot verification must be independently accepted before production activation. No extra mandatory round, model mandate, CP4E reopening or CP5 activation is introduced.
 
 ## Worker architecture
 
@@ -46,7 +52,7 @@ Defines product intent, architecture discussion, scope, parent issue, and human-
 
 ### Discovery
 
-Investigates repository/native behavior, ownership, architecture, constraints, source-of-truth, and architecture lock.
+Investigates repository/native behavior, ownership, architecture, constraints, source-of-truth documentation, and architecture lock.
 
 Discovery may happen anywhere; it is not synonymous with CP1.
 
@@ -126,6 +132,7 @@ These are deliberately distinct from v2. The old AquaTwin runner routes v2 activ
   - `automation-handoff.md`
   - `model-selection.md`
   - `execution-artifacts.md`
+  - `evidence-execution-contract.md`
 
 ## Workflow source
 

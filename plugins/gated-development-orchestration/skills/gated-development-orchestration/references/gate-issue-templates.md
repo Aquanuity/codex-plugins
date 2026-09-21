@@ -89,6 +89,10 @@ Both persistent ChatGPT IDs are required before executable activation.
 
 ## Implementation record
 
+Implementation must leave a usable proof surface, not merely a prose testing suggestion. Reuse adequate existing tests; add necessary durable tests/fixtures/observability within the approved scope. Evidence independently checks the mapping. Missing substantial coverage returns to Implementation.
+
+For a newly opted-in strict request, add the real post-commit execution marker defined in [Evidence execution contract](evidence-execution-contract.md), after the existing routing markers. Do not insert an illustrative marker into a real activation, predict the commit SHA inside its own recipe, rewrite an active request, or opt in before compatible tooling is available.
+
 ~~~markdown
 <!-- gated-development:implementation-record:v3 -->
 <!-- gated-development:governance-thread:v1 id=<UUID> -->
@@ -109,6 +113,14 @@ Both persistent ChatGPT IDs are required before executable activation.
 
 ### Implementation summary
 ...
+
+### Evidence-ready deliverables
+- Durable tests/fixtures/observation paths: <existing and changed paths>
+- AC-to-proof map: <each verbatim criterion -> scenario/assertion -> observable result>
+- Recipe: <repository-relative path at ending commit; actual SHA-256 when strict>
+- Execution inputs: <cwd, command selectors, dependencies, fixture variants, exact constraints>
+- Required artifacts: <reports/attachments/package binding; not just success totals>
+- Not executed here: <honest environment limitations>
 
 ### Verification performed during implementation
 <supporting only; not independent evidence>
@@ -149,6 +161,9 @@ Closure condition:
 - AC-2: ...
 
 ### Evidence
+- Retained, recovered, fresh, rejected and unresolved proof: <original identities>
+- Strict contract/helper and mechanical closure: <actual versions/digests, or legacy mode>
+- Semantic coverage assessment: <not inferred from helper success>
 ...
 ~~~
 

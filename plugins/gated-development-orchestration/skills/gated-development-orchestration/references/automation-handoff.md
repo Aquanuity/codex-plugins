@@ -8,6 +8,16 @@ It reads authoritative GitHub lifecycle records, extracts routing/provenance met
 
 It does not judge architecture, implementation quality, evidence sufficiency, or PASS.
 
+## 3.1 execution contract (prospective opt-in)
+
+See [Evidence execution contract](evidence-execution-contract.md). A real post-commit recipe marker in a new frozen request selects the strict local helper and compact prompt. Existing requests without that marker retain legacy behavior; malformed/unsupported markers or missing strict prerequisites fail closed. Do not rewrite saved requests or borrow historical thread identities.
+
+The dispatcher still exits after worker startup. The separate local Evidence helper owns test-child lifecycle, attempt records, artifact collection and mechanical closure; it is not the dispatcher and cannot grant PASS. Strict mode uses its machine ledger plus a short worker ACTIVE TASK note, not a duplicate handwritten attempt ledger.
+
+Strict Evidence supplies the narrative, independent coverage assessment, redaction decision and outcome; the execution helper assembles the bundle. `prepare-gdo-v31-publication.mjs` validates it before delegating the existing freeze/queue protocol. AquaTwin's publisher re-fetches the validator from the exact dispatch-runtime repository revision and checks the staged ZIP. No `validated=true` flag replaces raw checks. Partial outcomes remain reportable; REVIEW READY additionally requires mechanical closure.
+
+No new rounds, changed destinations, resumed Evidence sessions, model mandate or automatic product acceptance are introduced. Deployment must be independently validated before strict activation; the plugin version alone is not deployment evidence.
+
 ## Persistent routing state
 
 Every dispatchable v3 lifecycle record carries exactly one of each:
@@ -136,7 +146,7 @@ Fresh session means fresh worker context, not mandatory re-execution of every ea
 
 The Evidence worker must externalize completion state in its closure ledger rather than relying on conversation memory. Before every expensive action it identifies the ledger item being closed; after the action it records the result and secures the required artifacts before moving on. Before `REVIEW READY`, it re-fetches authority and verifies every mandatory ledger item is actually satisfied.
 
-When automated publication is enabled, Codex must not hand-author `evidence.md` transport headers or `ready.json`. It authors the evidence body and review bundle, chooses one allowed Evidence outcome, completes redaction review, and invokes the deterministic publication helper. The helper derives routing from the frozen request, serializes the canonical record, computes digests, validates locally, and queues the publisher. The publisher remains the only component that posts the durable `evidence:v3` GitHub comment.
+When automated publication is enabled, Codex must not hand-author `evidence.md` transport headers or `ready.json`. It authors the evidence body and, in legacy mode, the review bundle (strict mode uses helper assembly), chooses one allowed Evidence outcome, completes redaction review, and invokes the deterministic publication helper. The helper derives routing from the frozen request, serializes the canonical record, computes digests, validates locally, and queues the publisher. The publisher remains the only component that posts the durable `evidence:v3` GitHub comment.
 
 The helper also owns publication state. It freezes the selected bytes/outcome, records a queue attempt before the external queue call, records queue acknowledgement on success, and treats queued/published state as terminal for the Evidence worker. Codex must never invoke `gdo-v3-artifact-publish.yml` directly. An uncertain queue attempt is reconciled, not blindly repeated.
 
