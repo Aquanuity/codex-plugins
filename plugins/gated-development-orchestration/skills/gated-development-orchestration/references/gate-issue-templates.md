@@ -2,6 +2,22 @@
 
 These templates are normative shapes for v3 records. Adapt wording to the actual feature; do not copy placeholders as facts.
 
+### Canonical machine-readable fields
+
+Fields consumed by transport are serialization, not prose. Emit enumerated/token values exactly as plain text, with no Markdown emphasis, backticks, quotes, or trailing punctuation.
+
+Valid examples:
+- `- Next round: Implementation`
+- `- Outcome: READY FOR EVIDENCE / TESTING`
+- `- Outcome: REVIEW READY`
+
+Invalid examples:
+- `- Next round: **Implementation**.`
+- `- Outcome: **REVIEW READY**`
+- `- Outcome: BLOCKED.`
+
+This rule applies to `Next round`, `Outcome`, `Role`, and any other machine-consumed enumerated lifecycle field. Human-facing prose fields may use normal Markdown.
+
 ## Parent feature
 
 ~~~markdown

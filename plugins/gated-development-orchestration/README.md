@@ -1,6 +1,10 @@
-# Gated Development Orchestration Plugin 3.1.0
+# Gated Development Orchestration Plugin 3.1.1
 
 GDO v3 coordinates development around **human-verifiable product checkpoints** and five explicit Rounds.
+
+## 3.1.1: canonical lifecycle serialization
+
+Machine-readable lifecycle fields now have an explicit canonical serialization rule: enum/token values such as `Next round` and `Outcome` must be plain literals with no Markdown decoration or trailing punctuation. Human-facing prose may still use normal Markdown. This prevents worker-authored formatting from changing transport meaning.
 
 ## 3.1: evidence-ready implementation and deterministic execution
 
