@@ -118,13 +118,18 @@ Historical v2 records remain historical.
 The local ChatGPT bridge receives:
 - target thread ID;
 - compact message identifying issue/checkpoint/comment/round/dispatch ID;
-- instruction to resolve current GDO source;
+- the canonical GDO package URL: https://github.com/Aquanuity/codex-plugins/tree/main/plugins/gated-development-orchestration;
+- the canonical GDO skill URL: https://github.com/Aquanuity/codex-plugins/blob/main/plugins/gated-development-orchestration/skills/gated-development-orchestration/SKILL.md;
+- instruction to resolve current `Aquanuity/codex-plugins` `main` to a commit and load the manifest, skill, and required references from that same commit;
 - instruction to fetch GitHub authority fresh;
+- instruction to inspect the current ChatGPT tool/connector surface before claiming the round is unavailable;
+- instruction to use the GitHub connector for authoritative AquaTwin reads and authorized repository/ledger writes when that capability is available;
+- instruction that missing local shell/worktree/filesystem access does not by itself make Implementation unavailable;
 - no copied worker summary treated as proof.
 
 The bridge must support arbitrary authorized target UUIDs rather than one hard-coded thread.
 
-Implementation dispatch goes only to the Implementation thread ID.
+Implementation dispatch goes only to the Implementation thread ID. The worker must perform the authorized repository implementation through available GitHub write capability when possible; it must not return only a patch, prompt, or payload because a local terminal is absent.
 
 Governance/review/discovery dispatch goes only to the Governance thread ID.
 
