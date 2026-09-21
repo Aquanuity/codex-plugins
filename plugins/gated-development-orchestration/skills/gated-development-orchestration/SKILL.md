@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate human-verifiable checkpoint development through Definition, Discovery, Implementation, Evidence / Testing, and Independent Review rounds. Use one persistent Governance ChatGPT thread for Definition, Discovery, and Independent Review; one separate persistent Implementation ChatGPT thread for actual product implementation; and a fresh Codex session for every Evidence / Testing round. GitHub is the authoritative workflow ledger and carries both persistent ChatGPT thread IDs through lifecycle comments.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Repository implementation requires an authorized working environment. Evidence / Testing requires a fresh Codex execution environment when the checkpoint calls for runtime/build/test evidence.
 metadata:
-  version: "3.1.0"
+  version: "3.1.1"
   workflow: "github-gated-development-v3"
 ---
 
@@ -156,6 +156,7 @@ It does not own product definition, architecture changes, substantive implementa
 24. A fresh Evidence / Testing session means fresh worker context, not automatic re-execution of every previously valid check; reuse prior proof only under the canonical evidence-reuse rules.
 25. Evidence / Testing must maintain an explicit closure ledger and perform a final requirement-by-requirement closure audit; attempted work is not complete until the required proof exists and is inspected.
 26. Automated Evidence publication is terminal after queue acknowledgement: freeze the evidence/outcome, stop execution, do not mutate/repackage/requeue, and recover transport only from the same frozen publication identity.
+27. Machine-readable lifecycle token fields are serialization, not prose. Emit canonical plain-text values exactly as defined by the templates; do not wrap them in Markdown emphasis, backticks, quotes, or append punctuation. For example, use `- Next round: Implementation`, never `- Next round: **Implementation**.`.
 
 ## Round transitions
 

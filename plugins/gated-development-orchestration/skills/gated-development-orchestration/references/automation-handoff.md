@@ -8,6 +8,8 @@ It reads authoritative GitHub lifecycle records, extracts routing/provenance met
 
 It does not judge architecture, implementation quality, evidence sufficiency, or PASS.
 
+Lifecycle routing fields are machine-readable serialization. Worker-authored enumerated values must be emitted as the canonical plain token from the GDO template, without Markdown emphasis, backticks, quotes, or trailing punctuation. Example: `- Next round: Implementation`, not `- Next round: **Implementation**.` The same rule applies to `Outcome` and other machine-consumed enum fields.
+
 ## 3.1 execution contract (prospective opt-in)
 
 See [Evidence execution contract](evidence-execution-contract.md). A real post-commit recipe marker in a new frozen request selects the strict local helper and compact prompt. Existing requests without that marker retain legacy behavior; malformed/unsupported markers or missing strict prerequisites fail closed. Do not rewrite saved requests or borrow historical thread identities.
