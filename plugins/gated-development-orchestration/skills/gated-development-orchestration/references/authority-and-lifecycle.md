@@ -12,7 +12,7 @@ For a checkpoint, authority normally resolves in this order:
 5. current repository/native behavior where not superseded;
 6. worker interpretation.
 
-Worker thread/session memory never outranks GitHub-authoritative records.
+Worker thread/session memory never outranks GitHub-authoritative records. Ordinary ChatGPT workers must also inspect their current connected capabilities before declaring an authorized operation unavailable; see chatgpt-capabilities.md.
 
 ## Worker authority
 
@@ -48,7 +48,7 @@ It must not:
 - issue PASS;
 - treat its own tests as independent acceptance.
 
-Implementation must also leave necessary durable tests, fixtures, observations, the original AC-to-proof map and a runnable verification recipe evidence-ready. Missing execution access is disclosed. Implementation does not approve its own coverage or dictate acceptance. See evidence-execution-contract.md.
+Implementation must also leave necessary durable tests, fixtures, observations, the original AC-to-proof map and a runnable verification recipe evidence-ready. Missing runtime/test execution access is disclosed, but missing local shell/worktree access alone is not an implementation blocker when authorized GitHub repository-write capability is available. Implementation does not approve its own coverage or dictate acceptance. See chatgpt-capabilities.md and evidence-execution-contract.md.
 
 ### Evidence / Testing Codex
 

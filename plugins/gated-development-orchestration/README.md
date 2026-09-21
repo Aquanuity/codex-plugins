@@ -1,6 +1,12 @@
-# Gated Development Orchestration Plugin 3.1.1
+# Gated Development Orchestration Plugin 3.1.2
 
 GDO v3 coordinates development around **human-verifiable product checkpoints** and five explicit Rounds.
+
+## 3.1.2: ChatGPT capability discovery
+
+Fresh ChatGPT workers now have an explicit capability contract. They must inspect the current tool/connector surface before declaring a GDO action unavailable. For AquaTwin repository work, the GitHub connector is the preferred read/write capability; absence of a local terminal/worktree does not by itself make Implementation impossible.
+
+Canonical discovery anchors are documented for the package root, manifest, `SKILL.md`, and references. The URLs point at `main` for discovery only; each action still resolves `main` to a commit and loads required files from one consistent commit.
 
 ## 3.1.1: canonical lifecycle serialization
 

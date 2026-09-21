@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Coordinate human-verifiable checkpoint development through Definition, Discovery, Implementation, Evidence / Testing, and Independent Review rounds. Use one persistent Governance ChatGPT thread for Definition, Discovery, and Independent Review; one separate persistent Implementation ChatGPT thread for actual product implementation; and a fresh Codex session for every Evidence / Testing round. GitHub is the authoritative workflow ledger and carries both persistent ChatGPT thread IDs through lifecycle comments.
 compatibility: Requires access to the complete skill references and relevant GitHub sources. Repository implementation requires an authorized working environment. Evidence / Testing requires a fresh Codex execution environment when the checkpoint calls for runtime/build/test evidence.
 metadata:
-  version: "3.1.1"
+  version: "3.1.2"
   workflow: "github-gated-development-v3"
 ---
 
@@ -156,7 +156,7 @@ It does not own product definition, architecture changes, substantive implementa
 24. A fresh Evidence / Testing session means fresh worker context, not automatic re-execution of every previously valid check; reuse prior proof only under the canonical evidence-reuse rules.
 25. Evidence / Testing must maintain an explicit closure ledger and perform a final requirement-by-requirement closure audit; attempted work is not complete until the required proof exists and is inspected.
 26. Automated Evidence publication is terminal after queue acknowledgement: freeze the evidence/outcome, stop execution, do not mutate/repackage/requeue, and recover transport only from the same frozen publication identity.
-27. Machine-readable lifecycle token fields are serialization, not prose. Emit canonical plain-text values exactly as defined by the templates; do not wrap them in Markdown emphasis, backticks, quotes, or append punctuation. For example, use `- Next round: Implementation`, never `- Next round: **Implementation**.`.
+27. Machine-readable lifecycle token fields are serialization, not prose. Emit canonical plain-text values exactly as defined by the templates; do not wrap them in Markdown emphasis, backticks, quotes, or append punctuation. For example, use `- Next round: Implementation`, never `- Next round: **Implementation**.`.\n28. Before an ordinary ChatGPT worker declares a required action unavailable, it must inspect the current tool/connector surface and use an authorized connected capability when one can perform the operation. For AquaTwin repository work, prefer the GitHub connector. Missing local shell/worktree access does not by itself mean Implementation is unavailable. Read references/chatgpt-capabilities.md.
 
 ## Round transitions
 
@@ -276,7 +276,7 @@ It posts an implementation record identifying at minimum:
 - next requested round;
 - both persistent ChatGPT thread IDs.
 
-Implementation must leave the checkpoint evidence-ready. Existing adequate tests should be reused; missing runtime access is reported, not replaced by fabricated execution. Substantive missing test coverage returns to Implementation. Read references/evidence-execution-contract.md for the 3.1 responsibility and opt-in execution contract; no extra round is introduced.
+Implementation must leave the checkpoint evidence-ready. Existing adequate tests should be reused; missing runtime access is reported, not replaced by fabricated execution. Substantive missing test coverage returns to Implementation. Missing local terminal/worktree access is not an implementation blocker when authorized GitHub repository-write capability is available; perform the actual repository change through the available connector. Read references/chatgpt-capabilities.md and references/evidence-execution-contract.md; no extra round is introduced.
 
 ## Evidence / Testing authority
 
