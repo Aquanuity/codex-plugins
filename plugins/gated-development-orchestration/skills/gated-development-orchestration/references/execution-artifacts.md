@@ -42,7 +42,7 @@ If Codex makes a qualifying tiny repair, artifact metadata must identify:
 
 The Evidence worker owns:
 - evidence substance and acceptance-criterion mapping;
-- the selected review bundle contents;
+- selection of required proof; for strict 3.1 requests the helper assembles the bundle from validated records;
 - redaction review;
 - the v3 Evidence outcome.
 
@@ -55,7 +55,7 @@ Deterministic publication preparation owns:
 - local structural preflight;
 - queueing the publisher after successful preparation.
 
-Codex should author a body-only evidence file and the review bundle. It must not manually construct or edit generated `evidence.md` / `ready.json` transport metadata after deterministic preparation.
+Codex authors a body-only evidence file. For historical/manual execution it also assembles the review bundle; for opted-in 3.1 execution the helper assembles it, preserving original reporters, body/path attachments, package bytes and mappings. It must not manually construct or edit generated `evidence.md` / `ready.json` transport metadata after deterministic preparation.
 
 Publication transport then:
 - uploads/stores the selected redaction-reviewed evidence;
@@ -83,6 +83,10 @@ A queue-attempt claim without acknowledgement is ambiguous external-write state 
 A terminal local publication receipt prevents automatic republication even if the matching GitHub comment later disappears. Missing/deleted durable ledger content requires manual reconciliation, not a second Evidence publication.
 
 A publication retry is transport recovery, not another Evidence / Testing round, and must reuse the same frozen request/outcome/digests.
+
+## Strict 3.1 execution artifacts
+
+Read evidence-execution-contract.md for the canonical schema and rollout. The helper owns attempt receipts and the content-addressed inventory. Never hand-edit them. The preparation adapter validates the final ZIP before freezing; the publisher fetches the exact dispatch-runtime validator and revalidates staged bytes. Mechanical closure cannot issue PASS. Original attempt identities survive recovery; legacy proof is not relabelled as freshly executed strict proof. Missing/unsupported strict tooling never silently falls back. Partial blocked/correction/discovery publication remains possible with truthful unresolved items.
 
 ## Redaction
 
