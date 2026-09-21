@@ -6,7 +6,7 @@ Strict mode does not change worker authority, acceptance semantics, tiny-repair 
 
 ## Initialize
 
-Use the existing deterministic Evidence helper from the runner repository. Resolve the frozen recipe path/commit/SHA-256 from the trigger. Verify:
+Use the existing deterministic Evidence helper from the runner repository: `scripts/gdo_evidence.py` (https://github.com/kelvin-wat/actions-runner/blob/main/scripts/gdo_evidence.py). Publication preparation uses `scripts/prepare-gdo-v31-publication.mjs` when the active runner contract requires it. Resolve the frozen recipe path/commit/SHA-256 from the trigger. Verify:
 - exact clean source commit;
 - recipe bytes/hash and schema;
 - required dependencies/configuration/fixtures;

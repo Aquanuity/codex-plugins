@@ -71,7 +71,7 @@ The publisher may generate transport headers; do not hand-edit generated metadat
 
 - Checkpoint: <ID>
 - Dispatch ID: <id>
-- Fresh session/run: <id when exposed>
+- Fresh Codex session/run: <id when exposed>
 - Implementation commit received: <sha>
 - Final tested commit: <sha>
 - Tiny repair: <none or exact repair>

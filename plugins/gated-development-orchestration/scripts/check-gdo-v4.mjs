@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = path.resolve(import.meta.dirname, '..');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
 const bytes = p => Buffer.byteLength(read(p), 'utf8');
 const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
@@ -37,6 +38,10 @@ for (const role of standard) {
   for (const p of paths) ensure(fs.existsSync(path.join(root,p)), `missing required path: ${p}`);
   totals[role]=paths.reduce((n,p)=>n+bytes(p),0);
   ensure(totals[role] <= contract.budgets_bytes.standard_role_total, `${role} load exceeds budget`);
+  if (role === 'implementation') {
+    totals.implementation_product_code=totals[role]+bytes('skills/gdo-workflow/references/verification-recipe.md');
+    ensure(totals.implementation_product_code <= contract.budgets_bytes.standard_role_total, 'implementation product-code load exceeds budget');
+  }
 }
 {
   const paths=[skills.workflow,skills.review];

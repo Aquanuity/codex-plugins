@@ -51,6 +51,7 @@ IDs are routing/provenance, not authority. Only Independent Review may PASS.
 - Publication acknowledgement is terminal for Evidence; recovery keeps the frozen publication identity.
 - Check capability before declaring an authorized operation unavailable; capability does not create authority.
 - Frozen requests keep their original contract/mode unless explicitly amended.
+- Human-selected model/reasoning may be used when supported; it never expands authority. Record actual runtime identity only when reliably exposed.
 
 ## Transitions
 

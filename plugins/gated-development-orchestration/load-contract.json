@@ -17,10 +17,10 @@
     },
     "implementation": {
       "path": "skills/gdo-implementation/SKILL.md",
-      "required": [
-        "skills/gdo-workflow/references/verification-recipe.md"
-      ],
-      "conditional": []
+      "required": [],
+      "conditional": [
+        "skills/gdo-workflow/references/verification-recipe.md for product-code handoff continuing to Evidence"
+      ]
     },
     "evidence": {
       "path": "skills/gdo-evidence/SKILL.md",

@@ -60,6 +60,29 @@ Use durable GitHub records with:
 
 Do not copy placeholders as facts.
 
+Canonical checkpoint starts with:
+
+```markdown
+<!-- gated-development:checkpoint:v3 -->
+# <CP ID> — <human-verifiable product milestone>
+
+## Intent
+...
+## Human verification seam
+...
+## Scope
+IN:
+- ...
+OUT:
+- ...
+## Authoritative inputs
+- ...
+## Acceptance criteria
+- AC-1 — ...
+## Verification expectations
+- ...
+```
+
 ## Activation record
 
 Activation is an authority event, not transport decoration. Both persistent thread IDs must already be established.

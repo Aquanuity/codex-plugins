@@ -84,15 +84,16 @@ Use when material architecture/source truth/system behavior is unresolved. Route
 
 Use when checkpoint intent/scope/decomposition is fundamentally wrong or materially invalidated. Route to Definition and require human re-authorization before substantive execution.
 
-## Formal non-PASS record envelope
-
-Use the matching existing marker:
-- `status=correction-required`
-- `status=verification-blocked`
-- `status=discovery-required`
-- `status=definition-required`
+## Formal non-PASS records
 
 Always propagate both persistent thread IDs and preserve the original review base/history.
+
+- `status=correction-required`: record Checkpoint, Reviewed ending commit, next Implementation dispatch ID, findings, required correction, and required verification.
+- `status=verification-blocked`: record Checkpoint, commit requiring evidence, next fresh Evidence dispatch ID, retained proof, missing/invalid proof, execution constraints, and closure condition.
+- `status=discovery-required`: record the material unknown and bounded Discovery questions.
+- `status=definition-required`: record why current intent/scope is no longer valid and stop substantive execution pending human re-authorization.
+
+Machine fields follow the core plain-token serialization rule.
 
 ## Human check
 
