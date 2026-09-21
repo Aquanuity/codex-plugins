@@ -1,0 +1,61 @@
+{
+  "schema": "gdo-role-load/v1",
+  "version": "4.0.0",
+  "protocol": "github-gated-development-v3",
+  "workflow": "skills/gdo-workflow/SKILL.md",
+  "compatibility": "skills/gated-development-orchestration/SKILL.md",
+  "roles": {
+    "definition": {
+      "path": "skills/gdo-definition/SKILL.md",
+      "required": [],
+      "conditional": []
+    },
+    "discovery": {
+      "path": "skills/gdo-discovery/SKILL.md",
+      "required": [],
+      "conditional": []
+    },
+    "implementation": {
+      "path": "skills/gdo-implementation/SKILL.md",
+      "required": [],
+      "conditional": [
+        "skills/gdo-workflow/references/verification-recipe.md for product-code handoff continuing to Evidence"
+      ]
+    },
+    "evidence": {
+      "path": "skills/gdo-evidence/SKILL.md",
+      "modes": {
+        "legacy": {
+          "required": [
+            "skills/gdo-evidence/references/legacy-operator.md"
+          ]
+        },
+        "strict": {
+          "required": [
+            "skills/gdo-evidence/references/strict-operator.md",
+            "skills/gdo-workflow/references/verification-recipe.md"
+          ]
+        }
+      }
+    },
+    "independent_review": {
+      "path": "skills/gdo-independent-review/SKILL.md",
+      "required": [],
+      "conditional": [
+        "skills/gdo-workflow/references/verification-recipe.md when recipe/provenance detail is material"
+      ]
+    },
+    "governance_triage": {
+      "path": null,
+      "required": [],
+      "conditional": [
+        "load the selected role only after blocker classification"
+      ]
+    }
+  },
+  "budgets_bytes": {
+    "core": 5000,
+    "standard_role_total": 15000,
+    "evidence_total": 22000
+  }
+}

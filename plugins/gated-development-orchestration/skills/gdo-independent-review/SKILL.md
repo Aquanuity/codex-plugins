@@ -1,0 +1,104 @@
+---
+name: gdo-independent-review
+description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
+compatibility: Load with gdo-workflow from the same package commit.
+metadata:
+  version: "4.0.0"
+  role: "Independent Review"
+---
+
+# GDO Independent Review
+
+Required: load `../gdo-workflow/SKILL.md` from the same snapshot. Do not treat Implementation/Evidence summaries as proof. Load detailed recipe/operator schemas only when material to a provenance claim.
+
+## Question
+
+Did we build the right thing, in the right place, in the intended way, and prove the complete checkpoint claim sufficiently?
+
+Only this role may issue checkpoint PASS.
+
+## Fresh authority and inputs
+
+Independently fetch at minimum:
+- parent feature and complete top-level checkpoint;
+- relevant sub-checkpoints;
+- activation/re-authorization/amendments;
+- approved source-of-truth / architecture lock;
+- implementation records;
+- exact remote ending/tested commit and branch;
+- full original review-base-to-ending diff, including tiny-repair delta;
+- Evidence record and material raw proof;
+- every original acceptance criterion;
+- human-verifiable product seam.
+
+For aggregate checkpoints, independently evaluate the complete parent claim. Passing every engineering slice does not automatically prove aggregate acceptance.
+
+## Review
+
+Check:
+- intended product behavior and scope;
+- placement/ownership/architecture;
+- cumulative diff and scope creep;
+- regression/compatibility risks material to the checkpoint;
+- tests/fixtures/recipe adequacy, not only their existence;
+- evidence binding to the exact source/runtime/fixtures;
+- whether reused proof remains applicable;
+- whether required artifacts/observations were actually inspected;
+- whether the product state is human-verifiable as intended.
+
+CI green, launcher success, artifact presence, helper validation, or worker summary is never sufficient by itself. Read concise evidence first and retrieve raw artifacts proportionately when needed for a material claim.
+
+Independent Review must not silently implement substantive corrections it will then accept.
+
+## Outcomes
+
+### PASS
+
+Use only when the complete checkpoint claim is satisfied and sufficiently proven.
+
+```markdown
+<!-- gated-development:review:v3 status=pass -->
+<!-- gated-development:governance-thread:v1 id=<UUID> -->
+<!-- gated-development:implementation-thread:v1 id=<UUID> -->
+## Independent Review Round <n> — PASS
+
+- Checkpoint: <ID>
+- Accepted ending commit: <sha>
+- Human-verifiable product seam: <manual check>
+- Evidence summary: <concise>
+```
+
+### correction-required
+
+Use when product intent/architecture remain valid but substantive implementation correction is required. Route to Implementation and specify the bounded correction plus verification affected.
+
+### verification-blocked
+
+Use when implementation may be acceptable but required proof is missing, invalid, stale, ambiguous, or inconclusive. Route to a fresh Evidence session. Identify proof to retain, exact missing/invalid proof, whether recovery or execution is needed, constraints, and closure condition. Do not request a full rerun merely because the next session is fresh.
+
+### discovery-required
+
+Use when material architecture/source truth/system behavior is unresolved. Route to Discovery.
+
+### definition-required
+
+Use when checkpoint intent/scope/decomposition is fundamentally wrong or materially invalidated. Route to Definition and require human re-authorization before substantive execution.
+
+## Formal non-PASS records
+
+Always propagate both persistent thread IDs and preserve the original review base/history.
+
+- `status=correction-required`: record Checkpoint, Reviewed ending commit, next Implementation dispatch ID, findings, required correction, and required verification.
+- `status=verification-blocked`: record Checkpoint, commit requiring evidence, next fresh Evidence dispatch ID, retained proof, missing/invalid proof, execution constraints, and closure condition.
+- `status=discovery-required`: record the material unknown and bounded Discovery questions.
+- `status=definition-required`: record why current intent/scope is no longer valid and stop substantive execution pending human re-authorization.
+
+Machine fields follow the core plain-token serialization rule.
+
+## Human check
+
+Identify how the human can inspect the meaningful checkpoint if desired. Human inspection does not replace required automated/live evidence, and automated evidence does not remove the product-visible checkpoint requirement.
+
+## Stop
+
+Publish the formal review outcome and stop. Do not absorb the next worker's implementation or evidence round.
