@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,9 +54,9 @@
     }
   },
   "budgets_bytes": {
-    "core": 8000,
-    "standard_role_total": 20000,
-    "evidence_total": 26000
+    "core": 9500,
+    "standard_role_total": 22000,
+    "evidence_total": 28000
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -77,5 +77,32 @@
     "defect_aggregation": "Evidence may continue independent useful authorized checks after a failure when safe; aggregate related demonstrated failures without speculative expansion.",
     "implementation_completeness": "Implementation resolves explicit findings and the directly implicated bounded failure class, while avoiding unrelated refactor/scope expansion.",
     "later_round_evidence": "Fresh Evidence round is not a fresh campaign; retain applicable proof and execute only failed, blocked/missing, concretely invalidated, explicitly fresh, or directly affected obligations."
+  },
+  "lifecycle_comments": {
+    "principle": "Compress prose, never provenance. Lifecycle comments are delta-oriented control-plane records.",
+    "scan_order": [
+      "reason",
+      "what_happened",
+      "findings_or_correction",
+      "proof_impact",
+      "result_or_next"
+    ],
+    "must_preserve": [
+      "checkpoint/work-order identity",
+      "dispatch identity",
+      "source/tested SHA and branch when relevant",
+      "machine outcome/status/next-round fields",
+      "affected AC/proof IDs",
+      "durable recipe/artifact/source references",
+      "blockers/limitations that affect downstream work"
+    ],
+    "reference_not_repeat": [
+      "unchanged AC text",
+      "unchanged architecture/source-of-truth prose",
+      "recipe bodies",
+      "raw logs/command output",
+      "previously accepted evidence"
+    ],
+    "correction_packet": "Evidence->Implementation and Implementation->Evidence must preserve the GDO 4.2 correction boundary and proof disposition."
   }
 }

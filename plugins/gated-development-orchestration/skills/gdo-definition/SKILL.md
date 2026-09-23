@@ -3,7 +3,7 @@ name: gdo-definition
 description: GDO Definition role for product intent, human-verifiable checkpoints, acceptance criteria, activation, amendments, and thread rebind records.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.2.0"
+  version: "4.3.0"
   role: "Definition"
 ---
 
@@ -85,7 +85,7 @@ OUT:
 
 ## Activation record
 
-Activation is an authority event, not transport decoration. Both persistent thread IDs must already be established.
+Activation is an authority event, not transport decoration. Both persistent thread IDs must already be established. The checkpoint body/amendment owns the detailed contract; the activation comment should serialize authorization, starting identity, references, and next route without restating unchanged scope/ACs.
 
 ```markdown
 <!-- gated-development:activation:v3 -->

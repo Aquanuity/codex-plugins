@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.2.0', 'manifest version must be 4.2.0');
+ensure(manifest.version === '4.3.0', 'manifest version must be 4.3.0');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.2.0"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.3.0"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -63,7 +63,9 @@ for (const marker of [
   '- Next round: Implementation',
   'gated-development:actor-override:v1',
   '- Contract effect: NONE',
-  'Human actor takeover'
+  'Human actor takeover',
+  'Compress prose, never provenance',
+  'Result / next'
 ]) ensure(core.includes(marker), `core missing canonical marker/token: ${marker}`);
 
 const impl=read(skills.implementation);
@@ -72,6 +74,7 @@ ensure(impl.includes('Checks actually performed during Implementation'), 'Implem
 ensure(impl.includes('Verification assigned to Evidence'), 'Implementation template conflates Evidence work');
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
+for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
 ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
@@ -79,6 +82,7 @@ ensure(evidence.includes('Defect aggregation expands diagnosis, not automatic re
 ensure(evidence.includes('A fresh Evidence round is not a fresh campaign.'), 'Evidence later-round economy invariant missing');
 ensure(evidence.includes('A newer candidate/source SHA by itself does not invalidate unrelated proof.'), 'Evidence SHA-only invalidation guard missing');
 ensure(evidence.includes('After durable queue acknowledgement'), 'Evidence terminal stop rule missing');
+for (const phrase of ['### Reason','### What ran','### Result / findings','### Correction packet','### Proof disposition']) ensure(evidence.includes(phrase), `Evidence delta-comment field missing: ${phrase}`);
 
 const review=read(skills.review);
 ensure(review.includes('Only this role may issue checkpoint PASS'), 'Review PASS authority missing');
@@ -86,6 +90,8 @@ ensure(review.includes('cannot retroactively redefine that contract'), 'Review c
 ensure(review.includes('Contract effect: NONE'), 'Review actor-override non-amendment invariant missing');
 ensure(review.includes('fresh round is not a fresh campaign'), 'Review Evidence-economy invariant missing');
 ensure(review.includes('demonstrated root cause/failure class'), 'Review correction-completeness invariant missing');
+ensure(review.includes('Review record discipline'), 'Review delta-comment discipline missing');
+ensure(review.includes('### Main reason'), 'Review main-reason field missing');
 
 const legacy=read('skills/gdo-evidence/references/legacy-operator.md');
 ensure(legacy.includes('source SHA alone does not reset satisfied unrelated proof'), 'Legacy Evidence reuse guard missing');
@@ -97,6 +103,10 @@ ensure(strict.includes('Related demonstrated failures may be aggregated'), 'Stri
 
 const recipe=read('skills/gdo-workflow/references/verification-recipe.md');
 ensure(recipe.includes('not a blanket instruction to rerun every step'), 'Verification recipe later-round economy rule missing');
+
+ensure(contract.lifecycle_comments?.principle?.includes('Compress prose, never provenance'), 'load-contract lifecycle comment principle missing');
+ensure(Array.isArray(contract.lifecycle_comments?.scan_order) && contract.lifecycle_comments.scan_order.length === 5, 'load-contract lifecycle comment scan order missing');
+ensure(contract.lifecycle_comments?.correction_packet?.includes('GDO 4.2'), 'load-contract correction packet preservation missing');
 
 const shim=read(skills.compatibility);
 ensure(shim.includes('../gdo-workflow/SKILL.md'), 'compatibility shim does not route to v4 core');

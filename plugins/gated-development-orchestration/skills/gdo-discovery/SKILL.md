@@ -3,7 +3,7 @@ name: gdo-discovery
 description: GDO Discovery role for source-backed investigation, architecture/ownership tracing, source-of-truth and architecture-lock decisions, and downstream routing.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.2.0"
+  version: "4.3.0"
   role: "Discovery"
 ---
 
@@ -44,7 +44,7 @@ Do not perform substantive implementation merely to avoid a Discovery return.
 
 There is no new executable Discovery marker in GDO v4. Preserve v3 protocol semantics.
 
-A Discovery comment/document should identify:
+A Discovery comment/document should be delta-oriented and identify:
 - checkpoint and Discovery round;
 - questions investigated;
 - exact sources/commits/native behavior inspected;
@@ -52,7 +52,10 @@ A Discovery comment/document should identify:
 - decisions and unresolved items;
 - source-of-truth/architecture-lock path and commit when created;
 - whether checkpoint intent remains valid;
-- requested next round.
+- requested next round;
+- durable source-of-truth references rather than copied source text.
+
+Prefer concise headings such as **Reason / Findings / Decision / Impact / Next**. Do not repeat unchanged checkpoint or architecture text merely for completeness.
 
 The next executable dispatch still uses the existing authorized lifecycle record type rather than inventing a Discovery marker.
 
