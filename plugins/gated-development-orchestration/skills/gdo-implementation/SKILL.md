@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.1.0"
+  version: "4.2.0"
   role: "Implementation"
 ---
 
@@ -40,6 +40,23 @@ If material product/architecture meaning becomes unresolved, stop and route DISC
 A valid Human TAKEOVER may replace the Implementation ChatGPT for the same authorized round. The human may inspect, edit, commit/push, test, and prepare the normal Implementation handoff within existing authority. If human work changes source identity, record the exact starting/ending SHAs and changed paths. If the work contradicts the activated intent/architecture, it is not legalized by being human-authored; route to Definition/re-authorization before it can be accepted.
 
 Before any irreversible repository write or lifecycle publication, an automated Implementation worker must re-fetch the issue and stop if a later valid TAKEOVER claims its exact dispatch.
+
+## Correction-round completeness
+
+When Evidence or Independent Review routes a substantive defect back to Implementation, the incoming finding is the minimum demonstrated problem boundary, not an instruction to patch only one literal assertion or line.
+
+Within the still-authorized checkpoint contract:
+1. resolve every explicit incoming finding;
+2. determine the demonstrated root cause or coherent failure class where reasonably possible;
+3. inspect directly coupled manifestations that share that cause/path;
+4. make the smallest coherent correction that closes that bounded failure class;
+5. add or update durable regression coverage for the cause/class where practical;
+6. identify which acceptance/proof obligations are actually affected by the correction;
+7. avoid unrelated cleanup/refactors that would expand risk or invalidate otherwise reusable proof.
+
+Do not speculate beyond the activated scope or architecture. "Directly coupled" is not permission to redesign neighboring systems. If closing the failure class requires a material intent/architecture change, route through Discovery/Definition rather than smuggling it into a correction.
+
+A correction may invalidate prior proof only where the changed source/input/behavior materially affects what that proof established. Preserve and identify unaffected proof for Evidence reuse.
 
 ## Evidence-ready completion
 
@@ -85,6 +102,14 @@ Do not list ordinary Evidence-owned execution merely to sound cautious.
 
 ### Implementation summary
 ...
+
+### Correction completeness
+- Explicit findings resolved: ...
+- Root cause / bounded failure class: ...
+- Directly coupled paths inspected: ...
+- Regression coverage added/updated: ...
+- Proof obligations affected by this correction: ...
+- Previously valid proof expected to remain reusable: ...
 
 ### Evidence-ready deliverables
 - Durable tests/fixtures/observation paths: ...

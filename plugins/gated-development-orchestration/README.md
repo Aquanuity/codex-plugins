@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.1.0
+# Gated Development Orchestration Plugin 4.2.0
 
-GDO 4.1 keeps the established v3 lifecycle protocol and bounded role-scoped package, and adds durable human actor takeover without changing checkpoint authority.
+GDO 4.2 keeps the established v3 lifecycle protocol and GDO 4.1 human actor takeover, while adding bounded defect aggregation, correction completeness, and explicit later-round Evidence economy.
 
 ## Normal loading
 
@@ -30,6 +30,14 @@ The existing `:v3` markers, thread identities, evidence outcomes, reuse rules, t
 A human may replace the normal actor in-place for Definition, Discovery, Implementation, or Evidence / Testing by posting `<!-- gated-development:actor-override:v1 -->` for one exact dispatch. TAKEOVER is non-dispatching and terminal for that dispatch; returning work to automation requires a new continuation/new dispatch ID.
 
 Takeover changes the actor, not the contract. `Contract effect: NONE` is mandatory. Original intent, ACs, architecture/source-of-truth, review base, and work-order version remain controlling until an explicit human-authorized Definition/amendment changes them. Independent Review is not actor-overridable and remains sole PASS authority.
+
+## Correction completeness and Evidence economy
+
+Evidence may continue independent useful authorized checks after a substantive failure when safe, so one round can characterize a bounded failure cluster instead of reflexively stopping at the first symptom. This expands diagnosis, not scope.
+
+A correction finding is the minimum demonstrated problem boundary. Implementation resolves explicit findings, traces the demonstrated root cause/failure class, inspects directly coupled manifestations, adds focused regression coverage where practical, and avoids unrelated cleanup/refactor.
+
+A fresh Evidence round is not a fresh campaign. Previously valid proof remains reusable unless a concrete applicability/provenance/freshness reason invalidates it; a new candidate SHA alone is not enough. Later rounds execute the smallest sufficient set: failed, blocked/missing, concretely invalidated, explicitly fresh, and directly affected regression obligations.
 
 ## Evidence-ready Implementation
 

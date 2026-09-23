@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.1.0"
+  version: "4.2.0"
   protocol: "github-gated-development-v3"
 ---
 
@@ -71,7 +71,9 @@ Automated workers must re-fetch current GitHub actor authority immediately befor
 - Human activation authorizes executable work. Material intent/scope/architecture/acceptance change -> Definition + explicit human re-authorization. Actor takeover alone never supplies that amendment authority.
 - Material architecture/product uncertainty -> Discovery; material checkpoint invalidation -> Definition.
 - Never fabricate SHAs, IDs, approvals, runtime/model identity, tests, artifacts, outcomes, or proof.
-- Fresh Evidence context does not force full reruns; apply Evidence reuse rules.
+- A fresh Evidence round is not a fresh campaign. Retain still-valid proof unless a concrete applicability/provenance/freshness reason invalidates it; a new source SHA alone is not sufficient invalidation.
+- Evidence defect aggregation may broaden useful diagnosis within the authorized campaign, but never automatically broadens rerun scope.
+- Correction scope is the bounded demonstrated defect/acceptance failure, not merely the first observed symptom; Implementation must close the directly implicated failure class without speculative scope expansion.
 - Evidence tiny repair is mechanical only; substantive repair -> Implementation.
 - Execution artifacts stay outside git unless required as a repository deliverable.
 - Publication acknowledgement is terminal for Evidence; recovery keeps the frozen publication identity.

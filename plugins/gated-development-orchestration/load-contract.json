@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,9 +54,9 @@
     }
   },
   "budgets_bytes": {
-    "core": 7000,
-    "standard_role_total": 16500,
-    "evidence_total": 23500
+    "core": 8000,
+    "standard_role_total": 20000,
+    "evidence_total": 26000
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -72,5 +72,10 @@
       "governance_triage"
     ],
     "semantics": "TAKEOVER replaces the actor for one dispatch only; contract effect is NONE; automation resumes only through a new continuation/new dispatch."
+  },
+  "correction_economy": {
+    "defect_aggregation": "Evidence may continue independent useful authorized checks after a failure when safe; aggregate related demonstrated failures without speculative expansion.",
+    "implementation_completeness": "Implementation resolves explicit findings and the directly implicated bounded failure class, while avoiding unrelated refactor/scope expansion.",
+    "later_round_evidence": "Fresh Evidence round is not a fresh campaign; retain applicable proof and execute only failed, blocked/missing, concretely invalidated, explicitly fresh, or directly affected obligations."
   }
 }
