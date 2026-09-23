@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.0.0', 'manifest version must be 4.0.0');
+ensure(manifest.version === '4.1.0', 'manifest version must be 4.0.0');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.0.0"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.1.0"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -60,7 +60,10 @@ for (const marker of [
   'gated-development:implementation-record:v3',
   'gated-development:evidence:v3',
   'status=pass',
-  '- Next round: Implementation'
+  '- Next round: Implementation',
+  'gated-development:actor-override:v1',
+  '- Contract effect: NONE',
+  'Human actor takeover'
 ]) ensure(core.includes(marker), `core missing canonical marker/token: ${marker}`);
 
 const impl=read(skills.implementation);
@@ -74,6 +77,8 @@ ensure(evidence.includes('After durable queue acknowledgement'), 'Evidence termi
 
 const review=read(skills.review);
 ensure(review.includes('Only this role may issue checkpoint PASS'), 'Review PASS authority missing');
+ensure(review.includes('cannot retroactively redefine that contract'), 'Review contract-fidelity invariant missing');
+ensure(review.includes('Contract effect: NONE'), 'Review actor-override non-amendment invariant missing');
 
 const shim=read(skills.compatibility);
 ensure(shim.includes('../gdo-workflow/SKILL.md'), 'compatibility shim does not route to v4 core');

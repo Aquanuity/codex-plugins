@@ -3,7 +3,7 @@ name: gdo-discovery
 description: GDO Discovery role for source-backed investigation, architecture/ownership tracing, source-of-truth and architecture-lock decisions, and downstream routing.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   role: "Discovery"
 ---
 
@@ -35,7 +35,7 @@ Discovery may occur at any checkpoint number. It is not exclusively CP1.
 3. Trace ownership, call paths, dependencies, constraints, and existing behavior needed to answer the material questions.
 4. Record source-backed findings and rejected alternatives when they materially affect downstream choices.
 5. Create or amend durable source-of-truth / architecture-lock material when the finding must guide later workers.
-6. Obtain explicit human approval before a newly discovered material product/architecture direction becomes controlling.
+6. Obtain explicit human approval before a newly discovered material product/architecture direction becomes controlling. Human performance of Discovery, by takeover or otherwise, does not itself amend the controlling contract.
 7. Decide the truthful outgoing route.
 
 Do not perform substantive implementation merely to avoid a Discovery return.
