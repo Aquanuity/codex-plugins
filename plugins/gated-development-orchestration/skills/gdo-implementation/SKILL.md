@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.3.0"
+  version: "4.4.0"
   role: "Implementation"
 ---
 
@@ -58,6 +58,69 @@ Do not speculate beyond the activated scope or architecture. "Directly coupled" 
 
 A correction may invalidate prior proof only where the changed source/input/behavior materially affects what that proof established. Preserve and identify unaffected proof for Evidence reuse.
 
+## Targeted development feedback loop
+
+During an active Implementation round, use targeted development checks when a correction needs a narrow runtime/native observation that Implementation cannot efficiently execute itself.
+
+The loop is intentionally asymmetric:
+
+`think -> build/commit candidate -> one targeted check -> feedback -> think/fix -> repeat`
+
+The executor may be a human, Codex, MiniMax, another testing agent, or an authorized local harness. The executor does not become the Evidence role.
+
+Requirements:
+1. keep the same active Implementation round and checkpoint authority;
+2. commit or otherwise durably identify the exact candidate before requesting the check;
+3. ask one bounded question whose answer can materially guide the current correction;
+4. provide only the setup/action needed for that question rather than the full Evidence campaign;
+5. treat PASS/FAIL/BLOCKED as development feedback only;
+6. after feedback, either continue correcting, request another bounded check, or publish the normal final Implementation record when engineering-stable;
+7. do not claim Evidence coverage, REVIEW READY, or PASS from targeted checks;
+8. if feedback exposes material architecture/product uncertainty, leave the loop and route Discovery/Definition under normal rules.
+
+A targeted check can be repeated against successive candidate SHAs inside one Implementation round. Interim candidates do not need canonical Implementation handoff records.
+
+### Canonical targeted-check request
+
+```markdown
+<!-- gated-development:targeted-check-request:v1 -->
+<!-- gated-development:governance-thread:v1 id=<UUID> -->
+<!-- gated-development:implementation-thread:v1 id=<UUID> -->
+## Targeted development check
+
+- Checkpoint: <ID>
+- Parent implementation dispatch: <dispatch id>
+- Check ID: <stable unique id within this Implementation round>
+- Candidate commit: <exact sha>
+- Branch: <branch>
+- Check: <one bounded question>
+- Expected: <specific expected observation>
+- Setup / action: <minimal steps or command>
+- Artifact requested: <none or exact screenshot/log/file>
+- Classification: DEVELOPMENT FEEDBACK ONLY
+```
+
+### Canonical targeted-check result
+
+```markdown
+<!-- gated-development:targeted-check-result:v1 -->
+<!-- gated-development:governance-thread:v1 id=<UUID> -->
+<!-- gated-development:implementation-thread:v1 id=<UUID> -->
+## Targeted development check result
+
+- Checkpoint: <ID>
+- Parent implementation dispatch: <dispatch id>
+- Check ID: <same id as request>
+- Targeted check request: <request comment URL or id>
+- Candidate tested: <exact sha>
+- Result: <PASS | FAIL | BLOCKED>
+- Observation: <concise actual observation>
+- Artifact: <none or durable reference>
+- Classification: DEVELOPMENT FEEDBACK ONLY
+```
+
+A result returns to the same persistent Implementation worker. It does not end the Implementation round. The worker should use it immediately as engineering feedback and avoid publishing `READY FOR EVIDENCE / TESTING` until the bounded correction is reasonably stabilized.
+
 ## Evidence-ready completion
 
 `READY FOR EVIDENCE / TESTING` requires:
@@ -71,7 +134,7 @@ A correction may invalidate prior proof only where the changed source/input/beha
 
 A commands-only issue comment does not replace the committed recipe.
 
-Evidence-owned build/Vitest/Playwright/live/browser execution is a normal workflow boundary, not automatically an Implementation limitation. Useful Implementation-time testing is allowed. A check expressly required during Implementation by current authority remains required or must be truthfully unresolved.
+Evidence-owned build/Vitest/Playwright/live/browser execution is a normal workflow boundary, not automatically an Implementation limitation. Useful Implementation-time testing is allowed. When only one narrow observation is needed for stabilization, prefer a targeted development check over prematurely ending the Implementation round solely to obtain formal Evidence feedback. A check expressly required during Implementation by current authority remains required or must be truthfully unresolved.
 
 ## Known implementation limitations
 

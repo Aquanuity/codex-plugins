@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.3.0
+# Gated Development Orchestration Plugin 4.4.0
 
-GDO 4.3 keeps the established v3 lifecycle, GDO 4.1 human actor takeover, and GDO 4.2 correction/evidence-economy rules, while making lifecycle comments concise and delta-oriented.
+GDO 4.4 keeps the established v3 lifecycle, Human TAKEOVER, correction/evidence-economy rules, and concise lifecycle comments while adding lightweight targeted development checks inside active Implementation rounds.
 
 ## Normal loading
 
@@ -46,6 +46,22 @@ Lifecycle comments should make the round's story obvious at a glance: **Reason �
 The rule is **compress prose, never provenance**. Keep exact identities, SHAs, machine outcomes/routes, affected AC/proof IDs, correction boundaries, proof disposition, and durable references. Reference rather than repeat unchanged AC text, architecture prose, recipe bodies, raw logs, and previously accepted evidence.
 
 Evidence → Implementation keeps the richer 4.2 correction packet. Implementation → Evidence keeps root cause/failure class, directly coupled paths inspected, focused regression coverage, and retained/affected proof. Shorter comments must never make the next worker guess.
+
+## Targeted development checks
+
+A targeted development check is a lightweight Implementation-side feedback dispatch for one exact candidate and one bounded question. Typical use is a native/runtime observation that Implementation cannot efficiently execute itself, such as a GIS restart check.
+
+The loop is:
+
+`think -> build/commit -> targeted check -> feedback -> fix/repeat`
+
+It remains the same Implementation round. Interim candidate checks are **DEVELOPMENT FEEDBACK ONLY** and may be executed by a human, Codex, MiniMax, another testing agent, or an authorized harness.
+
+The markers are:
+- `<!-- gated-development:targeted-check-request:v1 -->`
+- `<!-- gated-development:targeted-check-result:v1 -->`
+
+A targeted-check PASS is not Evidence, does not satisfy an AC/proof obligation by itself, and cannot produce REVIEW READY or PASS. After the final stabilized candidate is handed off normally, an independent formal Evidence / Testing round is still required.
 
 ## Evidence-ready Implementation
 

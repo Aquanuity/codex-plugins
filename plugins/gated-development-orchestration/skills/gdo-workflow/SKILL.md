@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.3.0"
+  version: "4.4.0"
   protocol: "github-gated-development-v3"
 ---
 
@@ -85,6 +85,26 @@ Do not write vague summaries such as "fixed it", "tests passed", or "most eviden
 
 Do not repeat unchanged AC text, architecture prose, recipe bodies, raw logs, command output, or previously accepted evidence when a precise durable reference exists. Definition/checkpoint authority remains detailed when it creates or materially amends the contract; later lifecycle comments should normally be delta-oriented.
 
+## Targeted development checks
+
+A targeted development check is a lightweight Implementation-side feedback dispatch, not a GDO round, not Evidence / Testing, and not acceptance proof.
+
+Use it only while an Implementation round remains active and a specific candidate needs one bounded observation that Implementation cannot efficiently obtain itself (for example a native GIS restart/check, one browser behavior, one hardware/runtime observation, or one narrow automated command).
+
+Canonical request marker:
+`<!-- gated-development:targeted-check-request:v1 -->`
+
+Canonical result marker:
+`<!-- gated-development:targeted-check-result:v1 -->`
+
+Both records carry the existing governance and implementation thread markers. They preserve the parent Implementation authority and do not change checkpoint scope, architecture, acceptance criteria, work-order version, or lifecycle round number.
+
+A request must bind one exact candidate/source identity and one bounded check. A result must bind the exact request/check identity, exact candidate actually tested, PASS/FAIL/BLOCKED result, concise observation, and artifact/reference when useful.
+
+Targeted-check PASS means only that the requested development observation passed. It MUST NOT be serialized or interpreted as Evidence outcome, proof-ledger closure, REVIEW READY, Independent Review, or checkpoint PASS.
+
+Implementation may issue repeated targeted checks inside the same Implementation round while stabilizing the bounded failure class. The final candidate still requires the normal Implementation handoff and an independent formal Evidence / Testing round.
+
 ## Shared rules
 
 - Human activation authorizes executable work. Material intent/scope/architecture/acceptance change -> Definition + explicit human re-authorization. Actor takeover alone never supplies that amendment authority.
@@ -126,6 +146,12 @@ Existing dispatchable first-line markers remain:
 - `<!-- gated-development:review:v3 status=definition-required -->`
 - `<!-- gated-development:review:v3 status=pass -->`
 - `<!-- gated-development:thread-rebind:v3 -->`
+
+Sub-round development-feedback markers:
+- `<!-- gated-development:targeted-check-request:v1 -->`
+- `<!-- gated-development:targeted-check-result:v1 -->`
+
+These may dispatch lightweight testing/feedback transport but are not lifecycle transitions or Evidence records.
 
 Non-dispatch authority/provenance markers:
 - `<!-- gated-development:actor-override:v1 -->`

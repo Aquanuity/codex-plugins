@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,8 +54,8 @@
     }
   },
   "budgets_bytes": {
-    "core": 9500,
-    "standard_role_total": 22000,
+    "core": 12000,
+    "standard_role_total": 26000,
     "evidence_total": 28000
   },
   "actor_override": {
@@ -104,5 +104,41 @@
       "previously accepted evidence"
     ],
     "correction_packet": "Evidence->Implementation and Implementation->Evidence must preserve the GDO 4.2 correction boundary and proof disposition."
+  },
+  "targeted_development_checks": {
+    "request_marker": "gated-development:targeted-check-request:v1",
+    "result_marker": "gated-development:targeted-check-result:v1",
+    "lifecycle_effect": "none",
+    "parent_role": "implementation",
+    "semantics": "One bounded candidate-specific check executed as development feedback inside an active Implementation round. It is not Evidence and cannot satisfy REVIEW READY or PASS.",
+    "executors": [
+      "human",
+      "codex",
+      "minimax",
+      "other authorized testing agent or harness"
+    ],
+    "request_must_bind": [
+      "checkpoint",
+      "parent implementation dispatch",
+      "check id",
+      "exact candidate commit",
+      "branch",
+      "one bounded check",
+      "expected observation",
+      "minimal setup/action",
+      "development-feedback classification"
+    ],
+    "result_must_bind": [
+      "checkpoint",
+      "parent implementation dispatch",
+      "same check id",
+      "request reference",
+      "exact candidate tested",
+      "PASS/FAIL/BLOCKED",
+      "concise observation",
+      "artifact/reference when useful",
+      "development-feedback classification"
+    ],
+    "formal_evidence_required_after_final_implementation_handoff": true
   }
 }

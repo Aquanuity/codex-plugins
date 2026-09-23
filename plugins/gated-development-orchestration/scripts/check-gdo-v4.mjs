@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.3.0', 'manifest version must be 4.3.0');
+ensure(manifest.version === '4.4.0', 'manifest version must be 4.4.0');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.3.0"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.4.0"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -65,7 +65,10 @@ for (const marker of [
   '- Contract effect: NONE',
   'Human actor takeover',
   'Compress prose, never provenance',
-  'Result / next'
+  'Result / next',
+  'gated-development:targeted-check-request:v1',
+  'gated-development:targeted-check-result:v1',
+  'Targeted development checks'
 ]) ensure(core.includes(marker), `core missing canonical marker/token: ${marker}`);
 
 const impl=read(skills.implementation);
@@ -75,6 +78,7 @@ ensure(impl.includes('Verification assigned to Evidence'), 'Implementation templ
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
+for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Candidate commit: <exact sha>','Candidate tested: <exact sha>']) ensure(impl.includes(phrase), `Implementation targeted-check contract missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
 ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
@@ -83,6 +87,7 @@ ensure(evidence.includes('A fresh Evidence round is not a fresh campaign.'), 'Ev
 ensure(evidence.includes('A newer candidate/source SHA by itself does not invalidate unrelated proof.'), 'Evidence SHA-only invalidation guard missing');
 ensure(evidence.includes('After durable queue acknowledgement'), 'Evidence terminal stop rule missing');
 for (const phrase of ['### Reason','### What ran','### Result / findings','### Correction packet','### Proof disposition']) ensure(evidence.includes(phrase), `Evidence delta-comment field missing: ${phrase}`);
+ensure(evidence.includes('Targeted development checks are not Evidence'), 'Evidence targeted-check non-proof guard missing');
 
 const review=read(skills.review);
 ensure(review.includes('Only this role may issue checkpoint PASS'), 'Review PASS authority missing');
@@ -107,6 +112,8 @@ ensure(recipe.includes('not a blanket instruction to rerun every step'), 'Verifi
 ensure(contract.lifecycle_comments?.principle?.includes('Compress prose, never provenance'), 'load-contract lifecycle comment principle missing');
 ensure(Array.isArray(contract.lifecycle_comments?.scan_order) && contract.lifecycle_comments.scan_order.length === 5, 'load-contract lifecycle comment scan order missing');
 ensure(contract.lifecycle_comments?.correction_packet?.includes('GDO 4.2'), 'load-contract correction packet preservation missing');
+ensure(contract.targeted_development_checks?.lifecycle_effect === 'none', 'targeted checks must not create lifecycle transitions');
+ensure(contract.targeted_development_checks?.formal_evidence_required_after_final_implementation_handoff === true, 'targeted checks must not replace formal Evidence');
 
 const shim=read(skills.compatibility);
 ensure(shim.includes('../gdo-workflow/SKILL.md'), 'compatibility shim does not route to v4 core');
