@@ -135,6 +135,7 @@
       "same check id",
       "request reference",
       "exact candidate tested",
+      "executor AUTO/HUMAN",
       "PASS/FAIL/BLOCKED",
       "concise observation",
       "artifact/reference when useful",

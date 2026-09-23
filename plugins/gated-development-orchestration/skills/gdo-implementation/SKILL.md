@@ -114,6 +114,7 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Check ID: <same id as request>
 - Targeted check request: <request comment URL or id>
 - Candidate tested: <exact sha>
+- Executor: <AUTO | HUMAN>
 - Result: <PASS | FAIL | BLOCKED>
 - Observation: <concise actual observation>
 - Artifact: <none or durable reference>

@@ -78,7 +78,7 @@ ensure(impl.includes('Verification assigned to Evidence'), 'Implementation templ
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
-for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>']) ensure(impl.includes(phrase), `Implementation targeted-check contract missing: ${phrase}`);
+for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>','Executor: <AUTO | HUMAN>']) ensure(impl.includes(phrase), `Implementation targeted-check contract missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
 ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
