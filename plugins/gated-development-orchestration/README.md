@@ -55,7 +55,7 @@ The loop is:
 
 `think -> build/commit -> targeted check -> feedback -> fix/repeat`
 
-It remains the same Implementation round. Interim candidate checks are **DEVELOPMENT FEEDBACK ONLY** and may be executed by a human, Codex, MiniMax, another testing agent, or an authorized harness.
+It remains the same Implementation round. Interim candidate checks are **DEVELOPMENT FEEDBACK ONLY**. Requests declare `Executor: AUTO | HUMAN`: AUTO lets transport choose the configured lightweight backend (OpenAI/MiniMax today, another authorized backend later); HUMAN launches no automated test worker and lets the human perform the bounded check directly.
 
 The markers are:
 - `<!-- gated-development:targeted-check-request:v1 -->`

@@ -123,6 +123,7 @@
       "check id",
       "exact candidate commit",
       "branch",
+      "executor AUTO/HUMAN",
       "one bounded check",
       "expected observation",
       "minimal setup/action",
@@ -139,6 +140,10 @@
       "artifact/reference when useful",
       "development-feedback classification"
     ],
-    "formal_evidence_required_after_final_implementation_handoff": true
+    "formal_evidence_required_after_final_implementation_handoff": true,
+    "executor_modes": {
+      "AUTO": "Dispatch through the configured lightweight testing backend; backend identity is transport/runtime configuration, not GDO authority.",
+      "HUMAN": "Do not launch an automated testing worker; a human performs the bounded check and posts the canonical result."
+    }
   }
 }

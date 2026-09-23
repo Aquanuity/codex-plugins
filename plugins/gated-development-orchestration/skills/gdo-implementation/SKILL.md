@@ -66,7 +66,7 @@ The loop is intentionally asymmetric:
 
 `think -> build/commit candidate -> one targeted check -> feedback -> think/fix -> repeat`
 
-The executor may be a human, Codex, MiniMax, another testing agent, or an authorized local harness. The executor does not become the Evidence role.
+The executor may be a human, Codex, MiniMax, another testing agent, or an authorized local harness. The executor does not become the Evidence role. Use `Executor: AUTO` when runner transport should choose the configured lightweight backend; use `Executor: HUMAN` when the human will perform the bounded check directly without launching an automated testing worker.
 
 Requirements:
 1. keep the same active Implementation round and checkpoint authority;
@@ -93,6 +93,7 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Check ID: <stable unique id within this Implementation round>
 - Candidate commit: <exact sha>
 - Branch: <branch>
+- Executor: <AUTO | HUMAN>
 - Check: <one bounded question>
 - Expected: <specific expected observation>
 - Setup / action: <minimal steps or command>

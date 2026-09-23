@@ -78,7 +78,7 @@ ensure(impl.includes('Verification assigned to Evidence'), 'Implementation templ
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
-for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Candidate commit: <exact sha>','Candidate tested: <exact sha>']) ensure(impl.includes(phrase), `Implementation targeted-check contract missing: ${phrase}`);
+for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>']) ensure(impl.includes(phrase), `Implementation targeted-check contract missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
 ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
@@ -113,6 +113,7 @@ ensure(contract.lifecycle_comments?.principle?.includes('Compress prose, never p
 ensure(Array.isArray(contract.lifecycle_comments?.scan_order) && contract.lifecycle_comments.scan_order.length === 5, 'load-contract lifecycle comment scan order missing');
 ensure(contract.lifecycle_comments?.correction_packet?.includes('GDO 4.2'), 'load-contract correction packet preservation missing');
 ensure(contract.targeted_development_checks?.lifecycle_effect === 'none', 'targeted checks must not create lifecycle transitions');
+ensure(contract.targeted_development_checks?.executor_modes?.AUTO && contract.targeted_development_checks?.executor_modes?.HUMAN, 'targeted checks must define AUTO/HUMAN executor modes');
 ensure(contract.targeted_development_checks?.formal_evidence_required_after_final_implementation_handoff === true, 'targeted checks must not replace formal Evidence');
 
 const shim=read(skills.compatibility);

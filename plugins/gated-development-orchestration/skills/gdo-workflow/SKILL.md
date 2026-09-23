@@ -99,7 +99,7 @@ Canonical result marker:
 
 Both records carry the existing governance and implementation thread markers. They preserve the parent Implementation authority and do not change checkpoint scope, architecture, acceptance criteria, work-order version, or lifecycle round number.
 
-A request must bind one exact candidate/source identity and one bounded check. A result must bind the exact request/check identity, exact candidate actually tested, PASS/FAIL/BLOCKED result, concise observation, and artifact/reference when useful.
+A request must bind one exact candidate/source identity, one bounded check, and `Executor: AUTO | HUMAN`. `AUTO` means the transport may choose any configured authorized lightweight testing backend; `HUMAN` means no automated check worker is required and the human may perform the bounded check directly. A result must bind the exact request/check identity, exact candidate actually tested, PASS/FAIL/BLOCKED result, concise observation, and artifact/reference when useful.
 
 Targeted-check PASS means only that the requested development observation passed. It MUST NOT be serialized or interpreted as Evidence outcome, proof-ledger closure, REVIEW READY, Independent Review, or checkpoint PASS.
 
