@@ -1,7 +1,7 @@
 {
   "name": "gated-development-orchestration",
-  "version": "4.3.0",
-  "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, human actor takeover, bounded correction, evidence economy, concise delta-oriented lifecycle records, and independent review.",
+  "version": "4.4.0",
+  "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, human actor takeover, bounded correction, lightweight targeted development checks, evidence economy, concise lifecycle records, and independent review.",
   "author": {
     "name": "Aquanuity"
   },
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Gated Development Orchestration",
     "shortDescription": "Role-scoped checkpoint development orchestration",
-    "longDescription": "GDO 4.3 preserves the v3 lifecycle, GDO 4.1 human actor takeover, and GDO 4.2 correction/evidence-economy rules while making lifecycle comments concise, delta-oriented, and easier to scan without compressing provenance, correction boundaries, or proof disposition.",
+    "longDescription": "GDO 4.4 preserves the v3 lifecycle, Human TAKEOVER, correction completeness, Evidence economy, and delta-oriented lifecycle records while adding lightweight targeted development checks inside active Implementation rounds so native/runtime feedback does not require a full Evidence round for every small correction.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
     "capabilities": [
@@ -32,6 +32,7 @@
     "defaultPrompt": [
       "Load the GDO workflow core and only the active role skill.",
       "Perform the authorized GDO round using current GitHub authority and current actor authority.",
+      "During Implementation, use targeted development checks only for one bounded candidate-specific observation; treat results as development feedback, never Evidence.",
       "Keep lifecycle comments delta-oriented: compress duplicated authority/raw detail, never provenance, correction boundary, proof disposition, or machine routing fields.",
       "Preserve v3 lifecycle markers, bounded correction scope, retained valid proof, actor-takeover semantics, and sole Independent Review PASS authority."
     ]

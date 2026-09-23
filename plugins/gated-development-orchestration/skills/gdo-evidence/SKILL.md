@@ -3,7 +3,7 @@ name: gdo-evidence
 description: GDO Evidence / Testing role for fresh independent execution, proof reuse/recovery, tiny repair, exact tested commit, outcomes, and terminal publication behavior.
 compatibility: Load with gdo-workflow from the same package commit and exactly one Evidence operator mode.
 metadata:
-  version: "4.3.0"
+  version: "4.4.0"
   role: "Evidence / Testing"
 ---
 
@@ -29,6 +29,12 @@ Can the exact implementation be demonstrated to satisfy the authorized proof obl
 Human Evidence may perform live/native testing, investigation, environment work, artifact collection, and the same bounded Evidence duties authorized for the round. Human Evidence does not gain PASS authority and cannot relax the recipe/ACs merely because automation could not execute them.
 
 If Human Evidence changes product source, disclose the change and route through the normal authority rules; proof for the old candidate does not silently transfer. Automated Evidence must re-fetch current actor authority before publication, and deterministic publication should fail closed when a later Human TAKEOVER claims the dispatch.
+
+## Targeted development checks are not Evidence
+
+Issue comments marked `targeted-check-request:v1` or `targeted-check-result:v1` are Implementation-side development feedback. They may explain how a candidate was stabilized or help focus formal verification, but they do not independently satisfy an acceptance criterion, proof obligation, Evidence freshness requirement, REVIEW READY, or PASS.
+
+A formal Evidence worker must verify the final handed-off candidate under the normal Evidence authority/reuse rules. Do not import a targeted-check PASS into the proof ledger as if it were Evidence.
 
 ## Independent coverage judgment
 
