@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   protocol: "github-gated-development-v3"
 ---
 
@@ -40,9 +40,35 @@ Hierarchy: Parent Feature -> human-verifiable Checkpoint -> optional bounded eng
 
 IDs are routing/provenance, not authority. Only Independent Review may PASS.
 
+## Human actor takeover
+
+A human may replace the normal actor **in-place** for Definition, Discovery, Implementation, or Evidence / Testing. Governance Triage and Independent Review are not actor-overridable.
+
+Takeover changes the actor, never the checkpoint contract. It does not amend intent, scope, acceptance criteria, architecture/source-of-truth, review base, or work-order version. Contradictory work remains contradictory until an explicit human-authorized Definition/amendment changes the controlling contract.
+
+Canonical non-dispatch authority record:
+
+```markdown
+<!-- gated-development:actor-override:v1 -->
+- Target dispatch: <exact dispatch id>
+- Active round: <Definition | Discovery | Implementation | Evidence / Testing>
+- Actor: Human
+- Mode: TAKEOVER
+- Contract effect: NONE
+- Source identity: <sha or N/A>
+- Reason: <bounded reason>
+- Human authorization: <reference>
+```
+
+A valid TAKEOVER terminally suppresses that exact automated dispatch. Returning the same work to automation requires Governance to issue a new continuation with a new dispatch ID; do not revive the claimed dispatch. Governance Triage may issue a planned continuation dispatch ID for the human to claim before any worker launches.
+
+When a human completes a taken-over round, use the same durable result/handoff the replaced actor would have used. Lifecycle records may add the non-dispatch provenance marker `<!-- gated-development:actor:v1 actor=human -->`.
+
+Automated workers must re-fetch current GitHub actor authority immediately before irreversible repository writes or lifecycle publication. If a later valid TAKEOVER claims their exact dispatch, stop without publishing the superseded result.
+
 ## Shared rules
 
-- Human activation authorizes executable work. Material intent/scope/architecture/acceptance change -> Definition + human re-authorization.
+- Human activation authorizes executable work. Material intent/scope/architecture/acceptance change -> Definition + explicit human re-authorization. Actor takeover alone never supplies that amendment authority.
 - Material architecture/product uncertainty -> Discovery; material checkpoint invalidation -> Definition.
 - Never fabricate SHAs, IDs, approvals, runtime/model identity, tests, artifacts, outcomes, or proof.
 - Fresh Evidence context does not force full reruns; apply Evidence reuse rules.
@@ -69,7 +95,7 @@ Dispatchable records carry exactly one governance and one implementation marker:
 `<!-- gated-development:governance-thread:v1 id=<UUID> -->`
 `<!-- gated-development:implementation-thread:v1 id=<UUID> -->`
 
-Existing first-line markers remain:
+Existing dispatchable first-line markers remain:
 - `<!-- gated-development:activation:v3 -->`
 - `<!-- gated-development:implementation-record:v3 -->`
 - `<!-- gated-development:evidence:v3 -->`
@@ -79,6 +105,10 @@ Existing first-line markers remain:
 - `<!-- gated-development:review:v3 status=definition-required -->`
 - `<!-- gated-development:review:v3 status=pass -->`
 - `<!-- gated-development:thread-rebind:v3 -->`
+
+Non-dispatch authority/provenance markers:
+- `<!-- gated-development:actor-override:v1 -->`
+- `<!-- gated-development:actor:v1 actor=human -->`
 
 Machine enum/token values are plain serialization: no emphasis/backticks/quotes or trailing punctuation. Example: `- Next round: Implementation`.
 

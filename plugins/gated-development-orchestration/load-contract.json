@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,8 +54,23 @@
     }
   },
   "budgets_bytes": {
-    "core": 5000,
-    "standard_role_total": 15000,
-    "evidence_total": 22000
+    "core": 7000,
+    "standard_role_total": 16500,
+    "evidence_total": 23500
+  },
+  "actor_override": {
+    "schema": "gated-development:actor-override:v1",
+    "provenance": "gated-development:actor:v1 actor=human",
+    "overridable_roles": [
+      "definition",
+      "discovery",
+      "implementation",
+      "evidence"
+    ],
+    "non_overridable": [
+      "independent_review",
+      "governance_triage"
+    ],
+    "semantics": "TAKEOVER replaces the actor for one dispatch only; contract effect is NONE; automation resumes only through a new continuation/new dispatch."
   }
 }

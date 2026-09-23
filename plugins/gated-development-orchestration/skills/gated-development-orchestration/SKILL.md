@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Compatibility entrypoint for GDO. Routes current work to the lean GDO workflow core plus exactly one active role skill.
 compatibility: Preserves the historical skill URL. Do not treat this shim or the old references directory as a second normative v4 workflow.
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   workflow: "github-gated-development-v3"
 ---
 
@@ -25,6 +25,6 @@ For current GDO work:
 
 Do not recursively load this directory's historical `references/` set for new v4 work. Those files remain available to interpret frozen v3-era records and provenance.
 
-Governance Triage loads the workflow core first and classifies the BLOCKED return; it is not a sixth round and cannot PASS.
+Governance Triage loads the workflow core first and classifies the BLOCKED return; it is not a sixth round and cannot PASS. GDO 4.1 also permits a non-dispatch Human TAKEOVER of Definition, Discovery, Implementation, or Evidence / Testing; load the core for its actor semantics and never treat takeover as a contract amendment.
 
 If role is unknown or contradictory, report the routing ambiguity rather than guessing.

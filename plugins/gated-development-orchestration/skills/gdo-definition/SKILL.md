@@ -3,7 +3,7 @@ name: gdo-definition
 description: GDO Definition role for product intent, human-verifiable checkpoints, acceptance criteria, activation, amendments, and thread rebind records.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   role: "Definition"
 ---
 
@@ -45,7 +45,7 @@ Discovery is not synonymous with CP1. If material behavior, ownership, architect
 
 ## Material change threshold
 
-After activation, a material change to product intent, scope, architecture, acceptance meaning, or checkpoint decomposition requires Definition return and explicit human re-authorization. Non-material clarification may be recorded without pretending it is a new product contract.
+After activation, a material change to product intent, scope, architecture, acceptance meaning, or checkpoint decomposition requires Definition return and explicit human re-authorization. A Human TAKEOVER of another round is not such authorization and has Contract effect: NONE. Non-material clarification may be recorded without pretending it is a new product contract.
 
 ## Parent/checkpoint shape
 

@@ -1,22 +1,38 @@
 {
   "name": "gated-development-orchestration",
-  "version": "4.0.0",
-  "description": "Coordinate human-verifiable checkpoint development through a lean workflow core, dedicated role skills, fresh Evidence sessions, and independent review.",
-  "author": {"name": "Aquanuity"},
-  "keywords": ["github","codex","chatgpt","orchestration","checkpoint","discovery","implementation","testing","code-review","gated-development"],
+  "version": "4.1.0",
+  "description": "Coordinate human-verifiable checkpoint development through a lean workflow core, dedicated role skills, human actor takeover, fresh Evidence sessions, and independent review.",
+  "author": {
+    "name": "Aquanuity"
+  },
+  "keywords": [
+    "github",
+    "codex",
+    "chatgpt",
+    "orchestration",
+    "checkpoint",
+    "discovery",
+    "implementation",
+    "testing",
+    "code-review",
+    "gated-development"
+  ],
   "skills": "./skills/",
   "apps": "./.app.json",
   "interface": {
     "displayName": "Gated Development Orchestration",
     "shortDescription": "Role-scoped checkpoint development orchestration",
-    "longDescription": "GDO 4 keeps the v3 lifecycle protocol while splitting worker instructions into a lean workflow core plus dedicated Definition, Discovery, Implementation, Evidence / Testing, and Independent Review skills.",
+    "longDescription": "GDO 4.1 keeps the v3 lifecycle protocol and role-scoped instruction model while adding durable human actor takeover for Definition, Discovery, Implementation, and Evidence / Testing without changing checkpoint authority.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
-    "capabilities": ["Interactive","Write"],
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
     "defaultPrompt": [
       "Load the GDO workflow core and only the active role skill.",
-      "Perform the authorized GDO round using current GitHub authority.",
-      "Preserve v3 lifecycle markers, worker separation, and sole Independent Review PASS authority."
+      "Perform the authorized GDO round using current GitHub authority and current actor authority.",
+      "Preserve v3 lifecycle markers, worker separation, actor-takeover semantics, and sole Independent Review PASS authority."
     ]
   }
 }

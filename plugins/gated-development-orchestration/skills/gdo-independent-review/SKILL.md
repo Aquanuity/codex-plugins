@@ -3,7 +3,7 @@ name: gdo-independent-review
 description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   role: "Independent Review"
 ---
 
@@ -15,14 +15,14 @@ Required: load `../gdo-workflow/SKILL.md` from the same snapshot. Do not treat I
 
 Did we build the right thing, in the right place, in the intended way, and prove the complete checkpoint claim sufficiently?
 
-Only this role may issue checkpoint PASS.
+Only this role may issue checkpoint PASS. Independent Review is not replaceable by a Human TAKEOVER.
 
 ## Fresh authority and inputs
 
 Independently fetch at minimum:
 - parent feature and complete top-level checkpoint;
 - relevant sub-checkpoints;
-- activation/re-authorization/amendments;
+- activation/re-authorization/amendments, distinguishing explicit contract amendments from actor-only Human TAKEOVER records;
 - approved source-of-truth / architecture lock;
 - implementation records;
 - exact remote ending/tested commit and branch;
@@ -32,6 +32,12 @@ Independently fetch at minimum:
 - human-verifiable product seam.
 
 For aggregate checkpoints, independently evaluate the complete parent claim. Passing every engineering slice does not automatically prove aggregate acceptance.
+
+## Contract fidelity
+
+Review against the original activated checkpoint intent, acceptance criteria, architecture/source-of-truth, review base, and only explicit human-authorized amendments. Human implementation, human Evidence, current code behavior, or worker interpretation cannot retroactively redefine that contract.
+
+If the implementation contradicts controlling intent/architecture, it cannot PASS unless an explicit human-authorized Definition/amendment changed the contract. An `actor-override:v1` record always has Contract effect: NONE and is never such an amendment.
 
 ## Review
 

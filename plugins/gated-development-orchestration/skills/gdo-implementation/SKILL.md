@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.0.0"
+  version: "4.1.0"
   role: "Implementation"
 ---
 
@@ -31,9 +31,15 @@ Missing repository-write capability and missing runtime/test execution are diffe
 - exact remotely inspectable ending commit;
 - Implementation record.
 
-Implementation does not redefine product intent/architecture, approve its own coverage, treat its own tests as independent acceptance, or issue PASS.
+Implementation does not redefine product intent/architecture, approve its own coverage, treat its own tests as independent acceptance, or issue PASS. This remains true when the actor is human: Human TAKEOVER changes the actor, not the contract.
 
 If material product/architecture meaning becomes unresolved, stop and route DISCOVERY REQUIRED.
+
+## Human actor
+
+A valid Human TAKEOVER may replace the Implementation ChatGPT for the same authorized round. The human may inspect, edit, commit/push, test, and prepare the normal Implementation handoff within existing authority. If human work changes source identity, record the exact starting/ending SHAs and changed paths. If the work contradicts the activated intent/architecture, it is not legalized by being human-authored; route to Definition/re-authorization before it can be accepted.
+
+Before any irreversible repository write or lifecycle publication, an automated Implementation worker must re-fetch the issue and stop if a later valid TAKEOVER claims its exact dispatch.
 
 ## Evidence-ready completion
 
@@ -60,6 +66,7 @@ Do not list ordinary Evidence-owned execution merely to sound cautious.
 
 ```markdown
 <!-- gated-development:implementation-record:v3 -->
+<!-- gated-development:actor:v1 actor=human --> <!-- include only for human actor -->
 <!-- gated-development:governance-thread:v1 id=<UUID> -->
 <!-- gated-development:implementation-thread:v1 id=<UUID> -->
 ## Implementation Round <n>
