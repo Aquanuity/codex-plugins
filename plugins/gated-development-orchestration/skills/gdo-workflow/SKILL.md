@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.2.0"
+  version: "4.3.0"
   protocol: "github-gated-development-v3"
 ---
 
@@ -65,6 +65,25 @@ A valid TAKEOVER terminally suppresses that exact automated dispatch. Returning 
 When a human completes a taken-over round, use the same durable result/handoff the replaced actor would have used. Lifecycle records may add the non-dispatch provenance marker `<!-- gated-development:actor:v1 actor=human -->`.
 
 Automated workers must re-fetch current GitHub actor authority immediately before irreversible repository writes or lifecycle publication. If a later valid TAKEOVER claims their exact dispatch, stop without publishing the superseded result.
+
+## Lifecycle comment discipline
+
+Lifecycle comments are control-plane delta records, not copies of the checkpoint, recipe, source-of-truth, or raw Evidence bundle.
+
+**Compress prose, never provenance.** Reference authoritative unchanged context; explicitly serialize changed state.
+
+For executable/result records, make the round's main story easy to scan:
+1. **Reason** — why this round occurred or what it needed to close.
+2. **What happened** — implementation performed, verification executed, or decision made.
+3. **Findings / correction** — what failed, what was fixed, or what was learned.
+4. **Proof impact** — affected, retained/reused, recovered, invalidated, blocked/missing proof as applicable.
+5. **Result / next** — exact Outcome/status and next round or closure.
+
+Minimum sufficient handoff still includes exact checkpoint/work-order identity, dispatch identity, relevant source/tested SHAs and branch, machine Outcome/status/next-round fields, changed or affected AC/proof IDs, durable recipe/artifact/source references, and any blocker/limitation that changes downstream work.
+
+Do not write vague summaries such as "fixed it", "tests passed", or "most evidence remains". Do not make the next worker guess which finding, proof, source identity, or authority is meant.
+
+Do not repeat unchanged AC text, architecture prose, recipe bodies, raw logs, command output, or previously accepted evidence when a precise durable reference exists. Definition/checkpoint authority remains detailed when it creates or materially amends the contract; later lifecycle comments should normally be delta-oriented.
 
 ## Shared rules
 

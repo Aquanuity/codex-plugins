@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.2.0
+# Gated Development Orchestration Plugin 4.3.0
 
-GDO 4.2 keeps the established v3 lifecycle protocol and GDO 4.1 human actor takeover, while adding bounded defect aggregation, correction completeness, and explicit later-round Evidence economy.
+GDO 4.3 keeps the established v3 lifecycle, GDO 4.1 human actor takeover, and GDO 4.2 correction/evidence-economy rules, while making lifecycle comments concise and delta-oriented.
 
 ## Normal loading
 
@@ -38,6 +38,14 @@ Evidence may continue independent useful authorized checks after a substantive f
 A correction finding is the minimum demonstrated problem boundary. Implementation resolves explicit findings, traces the demonstrated root cause/failure class, inspects directly coupled manifestations, adds focused regression coverage where practical, and avoids unrelated cleanup/refactor.
 
 A fresh Evidence round is not a fresh campaign. Previously valid proof remains reusable unless a concrete applicability/provenance/freshness reason invalidates it; a new candidate SHA alone is not enough. Later rounds execute the smallest sufficient set: failed, blocked/missing, concretely invalidated, explicitly fresh, and directly affected regression obligations.
+
+## Lifecycle comment discipline
+
+Lifecycle comments should make the round's story obvious at a glance: **Reason → What happened → Findings/fix → Proof impact → Result/next**.
+
+The rule is **compress prose, never provenance**. Keep exact identities, SHAs, machine outcomes/routes, affected AC/proof IDs, correction boundaries, proof disposition, and durable references. Reference rather than repeat unchanged AC text, architecture prose, recipe bodies, raw logs, and previously accepted evidence.
+
+Evidence → Implementation keeps the richer 4.2 correction packet. Implementation → Evidence keeps root cause/failure class, directly coupled paths inspected, focused regression coverage, and retained/affected proof. Shorter comments must never make the next worker guess.
 
 ## Evidence-ready Implementation
 

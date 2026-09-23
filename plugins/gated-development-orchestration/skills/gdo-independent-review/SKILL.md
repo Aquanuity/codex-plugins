@@ -3,7 +3,7 @@ name: gdo-independent-review
 description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.2.0"
+  version: "4.3.0"
   role: "Independent Review"
 ---
 
@@ -57,6 +57,12 @@ CI green, launcher success, artifact presence, helper validation, or worker summ
 
 Independent Review must not silently implement substantive corrections it will then accept.
 
+## Review record discipline
+
+Review comments are formal decisions, but should still be delta-oriented. State the main reason, material findings, proof basis/disposition, and route. Reference the checkpoint, full diff, Evidence record/bundle, and source-of-truth rather than reproducing them.
+
+A PASS record must make clear what complete claim was accepted and at which exact ending commit. A non-PASS record must make the actionable correction/verification/discovery/definition boundary obvious without copying the entire checkpoint history.
+
 ## Outcomes
 
 ### PASS
@@ -73,6 +79,13 @@ Use only when the complete checkpoint claim is satisfied and sufficiently proven
 - Accepted ending commit: <sha>
 - Human-verifiable product seam: <manual check>
 - Evidence summary: <concise>
+- Authority / Evidence references: <checkpoint + evidence/artifact refs>
+
+### Main reason
+<why the complete claim passes>
+
+### Material findings
+<only findings necessary to support the decision>
 ```
 
 ### correction-required
@@ -95,10 +108,12 @@ Use when checkpoint intent/scope/decomposition is fundamentally wrong or materia
 
 Always propagate both persistent thread IDs and preserve the original review base/history.
 
-- `status=correction-required`: record Checkpoint, Reviewed ending commit, next Implementation dispatch ID, findings, required correction, and required verification.
-- `status=verification-blocked`: record Checkpoint, commit requiring evidence, next fresh Evidence dispatch ID, retained proof, missing/invalid proof, execution constraints, and closure condition.
-- `status=discovery-required`: record the material unknown and bounded Discovery questions.
-- `status=definition-required`: record why current intent/scope is no longer valid and stop substantive execution pending human re-authorization.
+- `status=correction-required`: record Checkpoint, Reviewed ending commit, next Implementation dispatch ID, **Main reason**, demonstrated findings/failure class, affected proof, required correction boundary, retained proof, and required verification.
+- `status=verification-blocked`: record Checkpoint, commit requiring evidence, next fresh Evidence dispatch ID, **Main reason**, retained proof, missing/invalid proof, execution constraints, and closure condition.
+- `status=discovery-required`: record **Main reason**, the material unknown, bounded Discovery questions, and authoritative references.
+- `status=definition-required`: record **Main reason**, why current intent/scope is no longer valid, the controlling authority, and stop substantive execution pending human re-authorization.
+
+Reference unchanged checkpoint/AC/architecture text rather than repeating it.
 
 Machine fields follow the core plain-token serialization rule.
 

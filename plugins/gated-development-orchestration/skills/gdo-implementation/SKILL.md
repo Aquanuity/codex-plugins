@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.2.0"
+  version: "4.3.0"
   role: "Implementation"
 ---
 
@@ -81,6 +81,8 @@ Do not list ordinary Evidence-owned execution merely to sound cautious.
 
 ## Canonical Implementation record
 
+Keep the lifecycle comment delta-oriented. Preserve machine/provenance fields and the 4.2 correction packet; reference unchanged checkpoint authority, AC wording, recipe body, and prior Evidence rather than repeating them.
+
 ```markdown
 <!-- gated-development:implementation-record:v3 -->
 <!-- gated-development:actor:v1 actor=human --> <!-- include only for human actor -->
@@ -89,48 +91,48 @@ Do not list ordinary Evidence-owned execution merely to sound cautious.
 ## Implementation Round <n>
 
 - Checkpoint: <ID>
+- Work-order version: <n when defined>
 - Dispatch ID: <id>
 - Starting commit: <sha>
 - Ending commit: <sha>
 - Branch: <branch>
-- Changed paths: <paths>
-- Acceptance criteria implemented: <AC IDs>
+- Changed paths: <concise paths>
+- Affected ACs / proof obligations: <IDs>
 - Recipe: <repository-relative path at ending commit>
 - Known implementation limitations: <none or exact unmet obligation>
 - Outcome: READY FOR EVIDENCE / TESTING
 - Requested next round: Evidence / Testing
 
-### Implementation summary
-...
+### Reason
+<initial authorized objective or incoming Evidence/Review finding>
 
-### Correction completeness
+### What changed
+<concise implementation delta>
+
+### Correction packet
+<!-- required for correction rounds; omit only when not a correction -->
 - Explicit findings resolved: ...
 - Root cause / bounded failure class: ...
 - Directly coupled paths inspected: ...
 - Regression coverage added/updated: ...
-- Proof obligations affected by this correction: ...
-- Previously valid proof expected to remain reusable: ...
 
-### Evidence-ready deliverables
-- Durable tests/fixtures/observation paths: ...
-- AC-to-proof map: <verbatim AC -> scenario/assertion -> observable result>
-- Execution inputs: ...
-- Required artifacts: ...
+### Proof disposition
+- Rerun / newly affected: ...
+- Retain/reuse: ...
+- Invalidated + concrete reason: <none or ...>
 
-### Checks actually performed during Implementation
-<supporting checks and observed results only>
+### Checks performed
+<actual Implementation-time checks and observed results only>
 
-### Verification assigned to Evidence
-- <fresh/reused/recovered obligation and required proof>
-
-### Retain/reuse
-- <specific still-valid prior proof and why>
-
-### Closure condition
-REVIEW READY only after Evidence satisfies the authorized proof obligations and original AC mapping.
+### References
+- Checkpoint authority: <issue/comment>
+- Recipe: <path@ending SHA>
+- Incoming finding/evidence: <comment/artifact when applicable>
 ```
 
-For DISCOVERY REQUIRED, DEFINITION REQUIRED, or BLOCKED, serialize the exact allowed Outcome plainly and explain the unresolved fact. Do not pretend READY if evidence-ready deliverables are missing.
+Do not paste verbatim AC text unless wording itself changed or is disputed. Do not paste recipe commands or raw test logs into the lifecycle comment when the referenced durable source/artifact is sufficient.
+
+For DISCOVERY REQUIRED, DEFINITION REQUIRED, or BLOCKED, serialize the exact allowed Outcome plainly and make Reason, unresolved finding, authority/provenance, and next route explicit. Do not pretend READY if evidence-ready deliverables are missing.
 
 ## Strict execution
 

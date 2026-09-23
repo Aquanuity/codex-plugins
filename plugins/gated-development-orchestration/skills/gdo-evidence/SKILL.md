@@ -3,7 +3,7 @@ name: gdo-evidence
 description: GDO Evidence / Testing role for fresh independent execution, proof reuse/recovery, tiny repair, exact tested commit, outcomes, and terminal publication behavior.
 compatibility: Load with gdo-workflow from the same package commit and exactly one Evidence operator mode.
 metadata:
-  version: "4.2.0"
+  version: "4.3.0"
   role: "Evidence / Testing"
 ---
 
@@ -85,7 +85,7 @@ Allowed plain-token outcomes:
 
 ## Evidence record
 
-The publisher may generate transport headers; do not hand-edit generated metadata after deterministic preparation.
+The publisher may generate transport headers; do not hand-edit generated metadata after deterministic preparation. Keep the lifecycle comment concise and put raw detail in the review bundle/artifact.
 
 ```markdown
 <!-- gated-development:evidence:v3 -->
@@ -95,29 +95,48 @@ The publisher may generate transport headers; do not hand-edit generated metadat
 ## Evidence / Testing Round <n>
 
 - Checkpoint: <ID>
+- Work-order version: <n when defined>
 - Dispatch ID: <id>
 - Fresh Codex session/run: <id when exposed>
 - Implementation commit received: <sha>
 - Final tested commit: <sha>
 - Tiny repair: <none or exact repair>
-- Outcome: REVIEW READY
+- Affected ACs / proof obligations: <IDs>
+- Outcome: <REVIEW READY | IMPLEMENTATION REQUIRED | DISCOVERY REQUIRED | BLOCKED>
 
-### Coverage assessment
-...
+### Reason
+<what this Evidence round needed to prove or close>
 
-### Verification
-- <AC>: <reused/recovered/fresh proof>
-
-### Evidence
+### What ran
 - Retained/reused: ...
 - Recovered without re-execution: ...
 - Fresh/re-executed: ...
-- Invalidated prior proof + concrete reason: ...
 - Previously blocked/missing now executed: ...
+
+### Result / findings
+<concise outcomes; identify failures and dependent blocked checks>
+
+### Correction packet
+<!-- required for IMPLEMENTATION REQUIRED -->
+- Demonstrated findings / failure cluster: ...
+- Affected ACs / proof obligations: ...
+- Dependent checks blocked by findings: ...
+- Bounded correction boundary: ...
+- Implicated path/cause only when directly supported by evidence; otherwise leave root-cause determination to Implementation.
+
+### Proof disposition
+- Retain/reuse: ...
+- Invalidated prior proof + concrete reason: <none or ...>
 - Rejected/stale/unbound: ...
-- Unresolved: ...
-- Operator mode and provenance: ...
+- Unresolved / blocked: ...
+
+### Evidence references
+- Review bundle/artifact: <reference>
+- Recipe: <path@tested SHA>
+- Prior proof reused/recovered: <references as needed>
 ```
+
+Do not paste raw logs, screenshots, command output, recipe bodies, or unchanged AC text into the issue comment when durable referenced artifacts/sources contain them. The comment must still be sufficient to identify the failure/correction boundary and proof disposition without guesswork.
 
 ## Publication stop
 
