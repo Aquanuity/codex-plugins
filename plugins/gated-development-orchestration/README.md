@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.0.0
+# Gated Development Orchestration Plugin 4.1.0
 
-GDO 4 keeps the established v3 lifecycle protocol but replaces the monolithic worker instruction set with a bounded role-scoped package.
+GDO 4.1 keeps the established v3 lifecycle protocol and bounded role-scoped package, and adds durable human actor takeover without changing checkpoint authority.
 
 ## Normal loading
 
@@ -24,6 +24,12 @@ The historical `skills/gated-development-orchestration/SKILL.md` path is a thin 
 GDO 4 does not add a round or change the durable lifecycle markers. Governance still owns Definition, Discovery and Independent Review; Implementation uses its separate persistent ChatGPT thread; each Evidence round uses a fresh session. Only Independent Review may PASS.
 
 The existing `:v3` markers, thread identities, evidence outcomes, reuse rules, tiny-repair boundary, human activation, and `execution-contract:v1` strict schema remain compatible.
+
+## Human actor takeover
+
+A human may replace the normal actor in-place for Definition, Discovery, Implementation, or Evidence / Testing by posting `<!-- gated-development:actor-override:v1 -->` for one exact dispatch. TAKEOVER is non-dispatching and terminal for that dispatch; returning work to automation requires a new continuation/new dispatch ID.
+
+Takeover changes the actor, not the contract. `Contract effect: NONE` is mandatory. Original intent, ACs, architecture/source-of-truth, review base, and work-order version remain controlling until an explicit human-authorized Definition/amendment changes them. Independent Review is not actor-overridable and remains sole PASS authority.
 
 ## Evidence-ready Implementation
 
