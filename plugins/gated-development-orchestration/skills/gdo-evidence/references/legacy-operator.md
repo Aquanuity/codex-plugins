@@ -15,6 +15,8 @@ For every mandatory obligation record:
 
 Attempted is not satisfied.
 
+For a later Evidence round, seed this ledger from prior inspectable proof instead of rebuilding every obligation as EXECUTE. Record retained/recovered/invalidated state and the concrete reason for any invalidation. A new round/session or source SHA alone does not reset satisfied unrelated proof.
+
 ## Execute one obligation at a time
 
 Before each expensive command, identify which obligation it closes. After the action:
@@ -25,6 +27,8 @@ Before each expensive command, identify which obligation it closes. After the ac
 - mark SATISFIED only when the named proof exists and is usable.
 
 Use unique output/report paths for repeated runs.
+
+After a substantive failure, preserve it and continue only independent authorized obligations whose result remains meaningful and safe. Skip/mark blocked any obligation that depends on the failed behavior or invalid state. Aggregate related demonstrated failures when useful; do not continue merely to search speculatively outside the campaign.
 
 ## Preserve the contract
 
@@ -52,7 +56,7 @@ REVIEW READY is forbidden while a mandatory item is pending, attempted-but-unpro
 
 ## Reuse
 
-Retain prior proof only under the Evidence role's applicability rules. Identify reused source/round/artifact and why relevant inputs remain valid. Identify rejected stale/unbound proof separately.
+Retain prior proof under the Evidence role's applicability rules. Identify reused source/round/artifact and why relevant inputs remain valid. A changed candidate SHA is not by itself an invalidation reason. Identify rejected/invalidated stale or unbound proof separately with the concrete reason, and execute only the smallest sufficient affected set.
 
 ## Publication
 

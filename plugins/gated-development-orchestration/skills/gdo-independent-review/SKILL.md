@@ -3,7 +3,7 @@ name: gdo-independent-review
 description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.1.0"
+  version: "4.2.0"
   role: "Independent Review"
 ---
 
@@ -48,7 +48,8 @@ Check:
 - regression/compatibility risks material to the checkpoint;
 - tests/fixtures/recipe adequacy, not only their existence;
 - evidence binding to the exact source/runtime/fixtures;
-- whether reused proof remains applicable;
+- whether reused proof remains applicable and whether any invalidation/rerun expansion has a concrete reason;
+- whether correction rounds coherently addressed the demonstrated root cause/failure class rather than only the first literal symptom, without unrelated scope expansion;
 - whether required artifacts/observations were actually inspected;
 - whether the product state is human-verifiable as intended.
 
@@ -76,11 +77,11 @@ Use only when the complete checkpoint claim is satisfied and sufficiently proven
 
 ### correction-required
 
-Use when product intent/architecture remain valid but substantive implementation correction is required. Route to Implementation and specify the bounded correction plus verification affected.
+Use when product intent/architecture remain valid but substantive implementation correction is required. Route to Implementation and specify the bounded demonstrated defect/acceptance failure plus verification affected. Do not overconstrain the fix to one literal symptom when the directly implicated failure class is broader, and do not authorize unrelated speculative cleanup.
 
 ### verification-blocked
 
-Use when implementation may be acceptable but required proof is missing, invalid, stale, ambiguous, or inconclusive. Route to a fresh Evidence session. Identify proof to retain, exact missing/invalid proof, whether recovery or execution is needed, constraints, and closure condition. Do not request a full rerun merely because the next session is fresh.
+Use when implementation may be acceptable but required proof is missing, invalid, stale, ambiguous, or inconclusive. Route to a fresh Evidence session. Identify proof to retain, exact missing/invalid proof, whether recovery or execution is needed, constraints, and closure condition. A fresh round is not a fresh campaign: do not request a full rerun merely because the session or candidate SHA is new, and require concrete invalidation reasons for any previously valid proof that must be rerun.
 
 ### discovery-required
 

@@ -3,7 +3,7 @@ name: gdo-discovery
 description: GDO Discovery role for source-backed investigation, architecture/ownership tracing, source-of-truth and architecture-lock decisions, and downstream routing.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.1.0"
+  version: "4.2.0"
   role: "Discovery"
 ---
 

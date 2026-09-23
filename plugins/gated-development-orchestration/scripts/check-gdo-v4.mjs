@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.1.0', 'manifest version must be 4.0.0');
+ensure(manifest.version === '4.2.0', 'manifest version must be 4.2.0');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.1.0"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.2.0"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -70,15 +70,33 @@ const impl=read(skills.implementation);
 ensure(impl.includes('Recipe: <repository-relative path at ending commit>'), 'Implementation template missing committed recipe');
 ensure(impl.includes('Checks actually performed during Implementation'), 'Implementation template conflates checks');
 ensure(impl.includes('Verification assigned to Evidence'), 'Implementation template conflates Evidence work');
+ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
+ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 
 const evidence=read(skills.evidence);
-ensure(evidence.includes('Every Evidence round uses a fresh session'), 'Evidence fresh-session rule missing');
+ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
+ensure(evidence.includes('Defect aggregation expands diagnosis, not automatic rerun scope.'), 'Evidence defect-aggregation boundary missing');
+ensure(evidence.includes('A fresh Evidence round is not a fresh campaign.'), 'Evidence later-round economy invariant missing');
+ensure(evidence.includes('A newer candidate/source SHA by itself does not invalidate unrelated proof.'), 'Evidence SHA-only invalidation guard missing');
 ensure(evidence.includes('After durable queue acknowledgement'), 'Evidence terminal stop rule missing');
 
 const review=read(skills.review);
 ensure(review.includes('Only this role may issue checkpoint PASS'), 'Review PASS authority missing');
 ensure(review.includes('cannot retroactively redefine that contract'), 'Review contract-fidelity invariant missing');
 ensure(review.includes('Contract effect: NONE'), 'Review actor-override non-amendment invariant missing');
+ensure(review.includes('fresh round is not a fresh campaign'), 'Review Evidence-economy invariant missing');
+ensure(review.includes('demonstrated root cause/failure class'), 'Review correction-completeness invariant missing');
+
+const legacy=read('skills/gdo-evidence/references/legacy-operator.md');
+ensure(legacy.includes('source SHA alone does not reset satisfied unrelated proof'), 'Legacy Evidence reuse guard missing');
+ensure(legacy.includes('continue only independent authorized obligations'), 'Legacy Evidence defect aggregation missing');
+
+const strict=read('skills/gdo-evidence/references/strict-operator.md');
+ensure(strict.includes('changed candidate SHA alone does not require re-execution'), 'Strict Evidence SHA-only invalidation guard missing');
+ensure(strict.includes('Related demonstrated failures may be aggregated'), 'Strict Evidence defect aggregation missing');
+
+const recipe=read('skills/gdo-workflow/references/verification-recipe.md');
+ensure(recipe.includes('not a blanket instruction to rerun every step'), 'Verification recipe later-round economy rule missing');
 
 const shim=read(skills.compatibility);
 ensure(shim.includes('../gdo-workflow/SKILL.md'), 'compatibility shim does not route to v4 core');

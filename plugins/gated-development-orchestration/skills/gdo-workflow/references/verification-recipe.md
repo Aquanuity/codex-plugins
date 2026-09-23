@@ -20,6 +20,8 @@ A legacy/manual recipe may be a committed repository script/config/instruction f
 
 Evidence must be able to execute the intended campaign without inventing substantive tests or acceptance meaning.
 
+The recipe describes the authorized proof surface; it is not a blanket instruction to rerun every step in every later Evidence round. Current GDO reuse/recovery rules govern later-round economy. A correction should update recipe/tests only where the proof surface actually changed, while preserving inspectable unchanged obligations for reuse.
+
 ## Strict execution-contract v1
 
 Strict mode additionally requires the existing post-commit marker:
@@ -39,7 +41,7 @@ Real marker values are computed only after implementation/recipe commit. Package
 
 ## Separation of responsibilities
 
-Implementation authors the proof surface and recipe. Evidence independently judges coverage and executes/reuses/recovers proof. Independent Review judges acceptance.
+Implementation authors the proof surface and recipe. During correction rounds, Implementation also identifies the bounded failure class, directly affected proof obligations, and unaffected proof expected to remain reusable. Evidence independently judges that applicability and executes/reuses/recovers the smallest sufficient proof set. Independent Review judges acceptance.
 
 A recipe cannot weaken current checkpoint authority, remove a required green validation, silently change assertions/timeouts/retries/fixtures, or grant PASS.
 

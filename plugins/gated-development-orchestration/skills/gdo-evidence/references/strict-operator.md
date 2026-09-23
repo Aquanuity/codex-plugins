@@ -16,6 +16,8 @@ Missing prerequisites or malformed/unsupported contract are blockers, not permis
 
 The helper-generated plan/attempt receipts are the mechanical ledger. Keep only a short worker ACTIVE TASK for semantic coverage/reuse decisions; do not duplicate attempt state by hand.
 
+For later rounds, reconstruct applicability from prior proof before choosing new execution. Where helper-supported recovery/import can preserve exact proof identity and relevant inputs, use it rather than mechanically rerunning an unchanged obligation. A fresh session or changed candidate SHA alone does not require re-execution; explicit freshness, concrete invalidation, or affected behavior does.
+
 ## Run / recover
 
 For each authorized step, use the helper-owned process/attempt lifecycle. It owns cwd/environment, terminal process state, logs and unique attempt identity.
@@ -27,6 +29,8 @@ Do not:
 - alter recipe assertions/selectors/timeouts/retries via ephemeral configuration.
 
 Recovery/import must preserve original proof identity and identical relevant contract/source inputs. Legacy evidence without original helper receipts is not relabeled as fresh strict proof.
+
+After a substantive failure, the Evidence worker may continue other independent authorized steps only when their results remain meaningful and safe. Dependent steps stay blocked rather than being forced through invalid state. Related demonstrated failures may be aggregated into one Implementation-required packet; this does not authorize speculative campaign expansion.
 
 ## Collection and validation
 
@@ -42,7 +46,9 @@ The Evidence worker owns semantic coverage assessment, redaction, narrative, and
 
 REVIEW READY requires both:
 - independent semantic coverage judgment; and
-- successful deterministic validation of every mandatory contract obligation.
+- successful deterministic validation of every mandatory contract obligation through applicable fresh, recovered, or retained proof under the current contract.
+
+A later round does not require every recipe step to be freshly executed when unchanged proof is valid and current GDO reuse/recovery rules permit retention. If the frozen strict contract explicitly requires fresh execution for an obligation, that freshness remains controlling.
 
 A blocked/implementation-required/discovery-required report may preserve failed attempts and unresolved items truthfully.
 
