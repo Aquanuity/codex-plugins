@@ -3,7 +3,7 @@ name: gdo-evidence
 description: GDO Evidence / Testing role for fresh independent execution, proof reuse/recovery, tiny repair, exact tested commit, outcomes, and terminal publication behavior.
 compatibility: Load with gdo-workflow from the same package commit and exactly one Evidence operator mode.
 metadata:
-  version: "4.4.0"
+  version: "4.5.0"
   role: "Evidence / Testing"
 ---
 
@@ -29,6 +29,12 @@ Can the exact implementation be demonstrated to satisfy the authorized proof obl
 Human Evidence may perform live/native testing, investigation, environment work, artifact collection, and the same bounded Evidence duties authorized for the round. Human Evidence does not gain PASS authority and cannot relax the recipe/ACs merely because automation could not execute them.
 
 If Human Evidence changes product source, disclose the change and route through the normal authority rules; proof for the old candidate does not silently transfer. Automated Evidence must re-fetch current actor authority before publication, and deterministic publication should fail closed when a later Human TAKEOVER claims the dispatch.
+
+## Discovery probes and targeted development checks are not Evidence
+
+Issue comments marked `discovery-probe-request:v1` or `discovery-probe-result:v1` are Discovery-side source/architecture feedback. They may explain how an architecture/source-of-truth decision was reached, but they do not independently satisfy an acceptance criterion, proof obligation, Evidence freshness requirement, REVIEW READY, or PASS.
+
+A Discovery Probe result may inform what the authorized contract becomes only through the normal Discovery recommendation plus any required explicit human approval/amendment. Never import a probe observation into the Evidence ledger as acceptance proof.
 
 ## Targeted development checks are not Evidence
 
