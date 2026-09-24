@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.4.0
+# Gated Development Orchestration Plugin 4.5.0
 
-GDO 4.4 keeps the established v3 lifecycle, Human TAKEOVER, correction/evidence-economy rules, and concise lifecycle comments while adding lightweight targeted development checks inside active Implementation rounds.
+GDO 4.5 keeps the established v3 lifecycle, Human TAKEOVER, correction/evidence-economy rules, and concise lifecycle comments while adding lightweight targeted development checks inside active Implementation rounds.
 
 ## Normal loading
 
@@ -46,6 +46,20 @@ Lifecycle comments should make the round's story obvious at a glance: **Reason �
 The rule is **compress prose, never provenance**. Keep exact identities, SHAs, machine outcomes/routes, affected AC/proof IDs, correction boundaries, proof disposition, and durable references. Reference rather than repeat unchanged AC text, architecture prose, recipe bodies, raw logs, and previously accepted evidence.
 
 Evidence → Implementation keeps the richer 4.2 correction packet. Implementation → Evidence keeps root cause/failure class, directly coupled paths inspected, focused regression coverage, and retained/affected proof. Shorter comments must never make the next worker guess.
+
+## Discovery probes
+
+A Discovery Probe is a lightweight executable experiment inside an active Discovery round. It exists for the narrow case where source/document/native inspection cannot confidently answer a material question that must be resolved before Governance can recommend an architecture/product direction.
+
+The markers are:
+- `<!-- gated-development:discovery-probe-request:v1 -->`
+- `<!-- gated-development:discovery-probe-result:v1 -->`
+
+A probe owns one bounded uncertainty, although its minimal experiment may include several tightly coupled observations needed to distinguish the alternatives. Requests bind source identity separately from the required execution surface/runtime. Results use `COMPLETED | BLOCKED | INCONCLUSIVE`, never PASS/FAIL.
+
+Probe code is normally disposable/ephemeral and must not silently become production implementation. Probe observations are **DISCOVERY FEEDBACK ONLY**: they can inform source-of-truth/architecture recommendations but cannot amend the checkpoint contract, satisfy acceptance criteria, replace formal Evidence, or PASS.
+
+Governance Triage does not own probes. Triage may identify that an executable observation is required, but it must first route to Discovery; only the active Discovery worker may issue the probe. A Human-owned Discovery may still use an AUTO subordinate probe, while result delivery must not revive the superseded automated Governance worker.
 
 ## Targeted development checks
 

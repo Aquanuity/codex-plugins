@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.4.0"
+  version: "4.5.0"
   role: "Implementation"
 ---
 

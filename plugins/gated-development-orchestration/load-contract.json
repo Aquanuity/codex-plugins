@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.4.0",
+  "version": "4.5.0",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -49,14 +49,14 @@
       "path": null,
       "required": [],
       "conditional": [
-        "load the selected role only after blocker classification"
+        "classify the blocker using workflow core only; if executable observation is needed, route to Discovery first; Governance Triage never owns a Discovery Probe"
       ]
     }
   },
   "budgets_bytes": {
-    "core": 12000,
-    "standard_role_total": 26000,
-    "evidence_total": 28000
+    "core": 15000,
+    "standard_role_total": 32000,
+    "evidence_total": 34000
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -146,5 +146,66 @@
       "AUTO": "Dispatch through the configured lightweight testing backend; backend identity is transport/runtime configuration, not GDO authority.",
       "HUMAN": "Do not launch an automated testing worker; a human performs the bounded check and posts the canonical result."
     }
+  },
+  "discovery_probes": {
+    "request_marker": "gated-development:discovery-probe-request:v1",
+    "result_marker": "gated-development:discovery-probe-result:v1",
+    "lifecycle_effect": "none",
+    "parent_role": "discovery",
+    "governance_triage_ownership": "forbidden",
+    "semantics": "One bounded executable experiment used as discovery feedback when source/document/native inspection cannot confidently resolve a material uncertainty. It is source/architecture evidence only, not product authority or acceptance Evidence.",
+    "executors": [
+      "human",
+      "codex",
+      "minimax",
+      "other authorized lightweight executor or harness"
+    ],
+    "request_must_bind": [
+      "checkpoint",
+      "parent discovery dispatch",
+      "probe id",
+      "source identity",
+      "execution surface",
+      "runtime identity requirement",
+      "executor AUTO/HUMAN",
+      "one bounded uncertainty",
+      "why inspection is insufficient",
+      "minimal experiment",
+      "expected useful outcomes",
+      "artifact request",
+      "probe implementation disposition",
+      "discovery-feedback classification"
+    ],
+    "result_must_bind": [
+      "checkpoint",
+      "parent discovery dispatch",
+      "same probe id",
+      "request reference",
+      "source identity tested",
+      "execution surface",
+      "actual runtime identity when meaningful",
+      "executor AUTO/HUMAN",
+      "COMPLETED/BLOCKED/INCONCLUSIVE",
+      "factual observation",
+      "artifact/reference",
+      "final probe implementation disposition",
+      "discovery-feedback classification"
+    ],
+    "probe_implementation_disposition": {
+      "request": [
+        "NONE",
+        "EPHEMERAL",
+        "AUTHORIZED_RESEARCH_ARTIFACT"
+      ],
+      "result": [
+        "NONE",
+        "DISCARDED",
+        "PRESERVED_RESEARCH_ARTIFACT:<ref>"
+      ]
+    },
+    "multi_observation_rule": "One probe owns one bounded Discovery uncertainty, but its minimal experiment may contain multiple tightly coupled observations needed to distinguish the alternatives.",
+    "product_branch_rule": "Probe code is normally outside the product branch or removed before Discovery completion. Durable research code is allowed only when the active Discovery contract explicitly authorizes it as a deliverable.",
+    "human_takeover_rule": "A Human-owned Discovery may launch an AUTO subordinate probe; the result is durable GitHub feedback but must not resurrect the superseded automated Governance worker.",
+    "formal_evidence_rule": "Probe observations may inform architecture/source truth but cannot satisfy acceptance criteria, REVIEW READY, Independent Review, or PASS."
   }
 }

@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.4.0"
+  version: "4.5.0"
   protocol: "github-gated-development-v3"
 ---
 
@@ -85,6 +85,32 @@ Do not write vague summaries such as "fixed it", "tests passed", or "most eviden
 
 Do not repeat unchanged AC text, architecture prose, recipe bodies, raw logs, command output, or previously accepted evidence when a precise durable reference exists. Definition/checkpoint authority remains detailed when it creates or materially amends the contract; later lifecycle comments should normally be delta-oriented.
 
+## Discovery probes
+
+A Discovery Probe is a lightweight Discovery-side feedback dispatch, not a GDO round, not Implementation, not Evidence / Testing, and not acceptance proof.
+
+Use it only while a Discovery round is active and one material uncertainty cannot be answered confidently from source/document/native inspection alone. The observation must materially affect the Discovery recommendation. Do not use a probe to move ordinary implementation work into Governance.
+
+Canonical request marker:
+`<!-- gated-development:discovery-probe-request:v1 -->`
+
+Canonical result marker:
+`<!-- gated-development:discovery-probe-result:v1 -->`
+
+Both records carry the existing governance and implementation thread markers. They preserve the parent Discovery authority and do not change checkpoint scope, architecture, acceptance criteria, work-order version, or lifecycle round number.
+
+A request binds one bounded uncertainty, a stable Probe ID, source identity, required execution surface, whether exact runtime identity is required, `Executor: AUTO | HUMAN`, why inspection is insufficient, the minimal experiment, expected useful outcomes, requested artifact, and probe-implementation disposition. One bounded uncertainty may require multiple tightly coupled observations when all are necessary to distinguish the alternatives.
+
+A result records the exact request/probe identity, source identity actually tested, actual execution surface/runtime, `COMPLETED | BLOCKED | INCONCLUSIVE`, factual observations, artifacts, and final probe-code disposition. It returns to the same persistent Governance Discovery worker.
+
+Probe observations are source/architecture evidence only. They do not amend intent/ACs/architecture by themselves, cannot satisfy an acceptance criterion, cannot become REVIEW READY, and cannot PASS. If a probe happens to demonstrate a plausible implementation, normal Implementation must adopt/recreate/review it under an authorized Implementation round.
+
+Probe code is normally EPHEMERAL and outside the product branch or removed before Discovery completion. `AUTHORIZED_RESEARCH_ARTIFACT` is allowed only when the active Discovery contract explicitly authorizes a durable research artifact as a deliverable.
+
+A Human TAKEOVER of Discovery may issue an AUTO subordinate probe. That does not revive the automated Governance worker: the result remains durable GitHub feedback for the human-owned Discovery unless a new continuation is explicitly issued.
+
+Governance Triage may identify that a bounded executable observation is needed, but Triage never owns or dispatches the probe. It must route to Discovery first; only an active Discovery round may issue a Discovery Probe.
+
 ## Targeted development checks
 
 A targeted development check is a lightweight Implementation-side feedback dispatch, not a GDO round, not Evidence / Testing, and not acceptance proof.
@@ -128,7 +154,7 @@ Implementation -> Discovery | Evidence / Testing.
 Evidence / Testing -> Implementation | Discovery | Independent Review.
 Independent Review -> Definition | Discovery | Implementation | Evidence / Testing | PASS.
 
-BLOCKED from Implementation/Evidence -> Governance Triage. Triage is not a round and cannot PASS; classify first, then load only the selected continuation role.
+BLOCKED from Implementation/Evidence -> Governance Triage. Triage is not a round and cannot PASS; classify first, then load only the selected continuation role. Triage may record that Discovery likely needs an executable probe, but it cannot own/dispatch that probe; route to Discovery first.
 
 ## Shared record envelope
 
@@ -147,7 +173,9 @@ Existing dispatchable first-line markers remain:
 - `<!-- gated-development:review:v3 status=pass -->`
 - `<!-- gated-development:thread-rebind:v3 -->`
 
-Sub-round development-feedback markers:
+Sub-round discovery/engineering feedback markers:
+- `<!-- gated-development:discovery-probe-request:v1 -->`
+- `<!-- gated-development:discovery-probe-result:v1 -->`
 - `<!-- gated-development:targeted-check-request:v1 -->`
 - `<!-- gated-development:targeted-check-result:v1 -->`
 
