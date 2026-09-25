@@ -3,7 +3,7 @@ name: gdo-evidence
 description: GDO Evidence / Testing role for fresh independent execution, proof reuse/recovery, tiny repair, exact tested commit, outcomes, and terminal publication behavior.
 compatibility: Load with gdo-workflow from the same package commit and exactly one Evidence operator mode.
 metadata:
-  version: "4.5.0"
+  version: "4.6.0"
   role: "Evidence / Testing"
 ---
 
@@ -41,6 +41,14 @@ A Discovery Probe result may inform what the authorized contract becomes only th
 Issue comments marked `targeted-check-request:v1` or `targeted-check-result:v1` are Implementation-side development feedback. They may explain how a candidate was stabilized or help focus formal verification, but they do not independently satisfy an acceptance criterion, proof obligation, Evidence freshness requirement, REVIEW READY, or PASS.
 
 A formal Evidence worker must verify the final handed-off candidate under the normal Evidence authority/reuse rules. Do not import a targeted-check PASS into the proof ledger as if it were Evidence.
+
+## Admission provenance and stable proof IDs
+
+When the triggering Implementation record opted into `evidence-admission:v1`, fetch the committed `gdo-proof-ledger/v1` at the exact admitted candidate before execution. Admission is readiness only; independently judge whether the proof plan is semantically adequate against current authority.
+
+Use the ledger's stable proof IDs in the Evidence proof disposition. Later rounds may RETAIN/RECOVER/EXECUTE/INVALIDATE individual proof IDs, but a mandatory proof ID may not silently disappear because a correction round is narrower. `REVIEW READY` is forbidden while any mandatory current proof ID is unresolved, blocked, invalid without replacement proof, or lacks an inspectable evidence reference.
+
+Legacy/frozen triggers without the admission marker keep their existing evidence process; do not manufacture a proof ledger after the fact merely to opt them into the new transport.
 
 ## Independent coverage judgment
 
@@ -93,7 +101,7 @@ Allowed plain-token outcomes:
 - DISCOVERY REQUIRED
 - BLOCKED
 
-`REVIEW READY` means every mandatory current proof obligation is satisfied and inspectable, the original ACs remain mapped, and strict mechanical closure is satisfied when strict mode applies. It is not PASS.
+`REVIEW READY` means every mandatory current proof obligation is satisfied and inspectable, the original ACs remain mapped, every mandatory current stable proof ID is closed when an admission ledger exists, and strict mechanical closure is satisfied when strict mode applies. It is not PASS.
 
 ## Evidence record
 
@@ -114,6 +122,7 @@ The publisher may generate transport headers; do not hand-edit generated metadat
 - Final tested commit: <sha>
 - Tiny repair: <none or exact repair>
 - Affected ACs / proof obligations: <IDs>
+- Proof ledger: <path@tested SHA or legacy/not-applicable>
 - Outcome: <REVIEW READY | IMPLEMENTATION REQUIRED | DISCOVERY REQUIRED | BLOCKED>
 
 ### Reason
