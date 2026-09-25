@@ -133,11 +133,9 @@ Implementation may issue repeated targeted checks inside the same Implementation
 
 ## Evidence Admission
 
-For new opt-in Implementation handoffs, `<!-- gated-development:evidence-admission:v1 -->` inserts a **non-round** runner readiness gate before fresh Evidence. The handoff binds the exact candidate/branch, committed recipe, and `gdo-proof-ledger/v1`.
+New opt-in READY handoffs marked `gated-development:evidence-admission:v1` bind candidate/branch, recipe and `gdo-proof-ledger/v1`, then pass a **non-round** runner gate. Results: `ADMITTED | NOT_READY | TRIAGE_REQUIRED`; only ADMITTED launches fresh Evidence, and deterministic failure cannot be overridden by optional AI. Admission is never proof/REVIEW READY/PASS; unmarked handoffs keep legacy routing.
 
-Admission results are `ADMITTED | NOT_READY | TRIAGE_REQUIRED`. Deterministic failures outrank any optional short-lived AI check. Only `ADMITTED` may launch the normal fresh Evidence worker; the other results launch no Evidence round. Admission is readiness only: it cannot close proof, become REVIEW READY, or PASS. Handoffs without the marker keep legacy routing.
-
-Admission-enabled Implementation publication uses `<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->` plus one `gdo-lifecycle-implementation/v1` JSON object. Runner code validates/renders the canonical `implementation-record:v3` with stable request identity; do not also hand-author that record. Detailed proof-ledger/publication requirements live in the Implementation role and verification-recipe contract.
+Admission-enabled Implementation uses `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner code renders the canonical record with stable identity. Details: Implementation role + verification-recipe contract.
 
 ## Shared rules
 
