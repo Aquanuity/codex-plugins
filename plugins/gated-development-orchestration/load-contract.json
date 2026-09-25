@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -207,5 +207,25 @@
     "product_branch_rule": "Probe code is normally outside the product branch or removed before Discovery completion. Durable research code is allowed only when the active Discovery contract explicitly authorizes it as a deliverable.",
     "human_takeover_rule": "A Human-owned Discovery may launch an AUTO subordinate probe; the result is durable GitHub feedback but must not resurrect the superseded automated Governance worker.",
     "formal_evidence_rule": "Probe observations may inform architecture/source truth but cannot satisfy acceptance criteria, REVIEW READY, Independent Review, or PASS."
+  },
+  "evidence_admission": {
+    "marker": "gated-development:evidence-admission:v1",
+    "lifecycle_effect": "none",
+    "scope": "new opt-in Implementation READY FOR EVIDENCE / TESTING handoffs only",
+    "proof_ledger_schema": "gdo-proof-ledger/v1",
+    "results": [
+      "ADMITTED",
+      "NOT_READY",
+      "TRIAGE_REQUIRED"
+    ],
+    "semantics": "Runner control-plane readiness only. ADMITTED may launch the normal fresh Evidence worker; NOT_READY/TRIAGE_REQUIRED launch no Evidence round. Admission never closes proof, REVIEW READY, or PASS.",
+    "deterministic_failure_precedence": true,
+    "frozen_request_rule": "Handoffs without the explicit admission marker retain legacy direct-Evidence routing; package/version changes never opt frozen work in."
+  },
+  "lifecycle_publication": {
+    "request_marker": "gated-development:lifecycle-publication-request:v1 type=implementation",
+    "lifecycle_effect": "none until canonical publication",
+    "input_schema": "gdo-lifecycle-implementation/v1",
+    "semantics": "New admission-enabled Implementation handoffs submit structured fields; runner publication renders and validates the canonical implementation-record:v3 and preserves request identity."
   }
 }
