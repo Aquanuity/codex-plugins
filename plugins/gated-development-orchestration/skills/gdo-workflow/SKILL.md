@@ -149,6 +149,16 @@ Admission proves only that the campaign is executable. It never proves product a
 
 Frozen/legacy handoffs without the opt-in marker retain their existing routing and are never silently upgraded because the package/runner version changed.
 
+## Schema-aware lifecycle publication
+
+For new admission-enabled Implementation handoffs, the worker submits structured lifecycle data through the non-lifecycle publication request marker:
+
+`<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->`
+
+The request body after the first line is one JSON object using `gdo-lifecycle-implementation/v1`. It is control-plane publication input, not a lifecycle transition. Runner publisher code validates/renders the canonical `implementation-record:v3` comment, injects the stable publication request identity, and only that generated canonical record may route to Evidence Admission.
+
+Do not hand-author a second canonical Implementation record after submitting a structured publication request. Frozen/legacy handoffs without Evidence Admission keep their existing publication behavior.
+
 ## Shared rules
 
 - Human activation authorizes executable work. Material intent/scope/architecture/acceptance change -> Definition + explicit human re-authorization. Actor takeover alone never supplies that amendment authority.
@@ -191,6 +201,9 @@ Existing dispatchable first-line markers remain:
 - `<!-- gated-development:review:v3 status=definition-required -->`
 - `<!-- gated-development:review:v3 status=pass -->`
 - `<!-- gated-development:thread-rebind:v3 -->`
+
+Control-plane publication request marker (not a lifecycle transition):
+- `<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->`
 
 Sub-round discovery/engineering feedback markers:
 - `<!-- gated-development:discovery-probe-request:v1 -->`
