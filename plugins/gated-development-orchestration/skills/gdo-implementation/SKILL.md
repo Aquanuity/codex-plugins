@@ -150,9 +150,7 @@ Do not list ordinary Evidence-owned execution merely to sound cautious.
 
 ## Admission-enabled structured publication
 
-For a new Evidence Admission handoff, commit the proof ledger required by the verification-recipe contract, then submit one comment beginning `<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->` followed by one `gdo-lifecycle-implementation/v1` JSON object. It carries the canonical Implementation facts plus the bound proof-ledger reference, exact `READY FOR EVIDENCE / TESTING` outcome, and `admission_enabled: true`.
-
-Runner code injects the publication request identity and renders/validates the canonical `implementation-record:v3`. Do not invent that request ID, add v3 thread markers to the request, or post a second handwritten canonical record. On schema rejection, issue a new corrected publication request. Legacy/frozen non-admission handoffs keep the canonical format below.
+For a new Evidence Admission handoff, commit the proof ledger per verification-recipe, then submit `<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->` plus one `gdo-lifecycle-implementation/v1` JSON object carrying the canonical facts, bound ledger, exact READY outcome, and `admission_enabled: true`. Runner injects request identity and renders the canonical record. Do not add v3 markers/request ID or post a second canonical record. Legacy handoffs are unchanged.
 
 ## Canonical Implementation record
 
