@@ -56,8 +56,8 @@
   "budgets_bytes": {
     "core": 15000,
     "standard_role_total": 34000,
-    "evidence_total": 34000,
-    "rationale": "Reviewable anti-bloat ceiling for complete standard-role required loads. GDO 4.6 raises the prior 32,000-byte working ceiling to 34,000 to accommodate Evidence Admission/proof-ledger publication contracts without compressing or deleting safeguards; this is not a runtime correctness limit."
+    "evidence_total": 36000,
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.6 uses <=15,000 bytes for core, <=34,000 for standard-role required loads, and <=36,000 for Evidence including one selected operator mode. The increases preserve explicit Evidence Admission/proof-ledger/publication safeguards rather than compressing away contract detail; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
