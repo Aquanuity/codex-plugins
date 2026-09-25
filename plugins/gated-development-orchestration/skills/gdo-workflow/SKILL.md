@@ -133,9 +133,9 @@ Implementation may issue repeated targeted checks inside the same Implementation
 
 ## Evidence Admission
 
-Opt-in READY handoffs marked `gated-development:evidence-admission:v1` bind candidate/branch, recipe and `gdo-proof-ledger/v1`, then pass a non-round runner gate. `ADMITTED` alone launches fresh Evidence; `NOT_READY | TRIAGE_REQUIRED` do not. Deterministic failure beats optional AI. Admission is never acceptance proof; unmarked handoffs remain legacy.
+Opt-in READY handoffs marked `gated-development:evidence-admission:v1` bind candidate/branch, recipe and `gdo-proof-ledger/v1`, then pass a non-round runner gate. Only `ADMITTED` launches fresh Evidence; `NOT_READY | TRIAGE_REQUIRED` do not. Deterministic failure beats optional AI. Admission is never acceptance proof; unmarked handoffs stay legacy.
 
-Admission-enabled Implementation submits `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner code renders the canonical record. Details: Implementation role + verification-recipe.
+Admission-enabled Implementation submits `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner renders the canonical record. Details: Implementation + verification-recipe.
 
 ## Shared rules
 
