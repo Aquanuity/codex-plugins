@@ -3,7 +3,7 @@ name: gdo-definition
 description: GDO Definition role for product intent, human-verifiable checkpoints, acceptance criteria, activation, amendments, and thread rebind records.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.5.0"
+  version: "4.6.0"
   role: "Definition"
 ---
 
