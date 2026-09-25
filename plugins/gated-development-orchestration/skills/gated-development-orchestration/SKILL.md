@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Compatibility entrypoint for GDO. Routes current work to the lean GDO workflow core plus exactly one active role skill.
 compatibility: Preserves the historical skill URL. Do not treat this shim or the old references directory as a second normative v4 workflow.
 metadata:
-  version: "4.5.0"
+  version: "4.6.0"
   workflow: "github-gated-development-v3"
 ---
 
@@ -25,6 +25,6 @@ For current GDO work:
 
 Do not recursively load this directory's historical `references/` set for new v4 work. Those files remain available to interpret frozen v3-era records and provenance.
 
-Governance Triage loads the workflow core first and classifies the BLOCKED return; it is not a sixth round and cannot PASS. GDO 4.5 preserves Human TAKEOVER, correction/evidence economy, delta-oriented lifecycle comments, and targeted development checks, and adds Discovery Probe semantics inside active Discovery. Triage may identify that a probe is needed but cannot own/issue it; route to Discovery first. Probe and targeted-check results are feedback only and never Evidence.
+Governance Triage loads the workflow core first and classifies the BLOCKED return; it is not a sixth round and cannot PASS. GDO 4.6 preserves Human TAKEOVER, correction/evidence economy, delta-oriented lifecycle comments, targeted development checks, and Discovery Probe semantics, and adds opt-in Evidence Admission plus stable proof-ledger contracts before fresh Evidence dispatch. Triage may identify that a probe is needed but cannot own/issue it; route to Discovery first. Probe and targeted-check results are feedback only and never Evidence.
 
 If role is unknown or contradictory, report the routing ambiguity rather than guessing.
