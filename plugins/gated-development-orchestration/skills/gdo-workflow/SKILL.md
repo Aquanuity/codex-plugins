@@ -133,31 +133,11 @@ Implementation may issue repeated targeted checks inside the same Implementation
 
 ## Evidence Admission
 
-Evidence Admission is optional control-plane readiness for **new compatible Implementation handoffs**. It is not a GDO round, worker role, acceptance result, or replacement for fresh Evidence.
+For new opt-in Implementation handoffs, `<!-- gated-development:evidence-admission:v1 -->` inserts a **non-round** runner readiness gate before fresh Evidence. The handoff binds the exact candidate/branch, committed recipe, and `gdo-proof-ledger/v1`.
 
-Opt-in marker inside a canonical Implementation record:
-`<!-- gated-development:evidence-admission:v1 -->`
+Admission results are `ADMITTED | NOT_READY | TRIAGE_REQUIRED`. Deterministic failures outrank any optional short-lived AI check. Only `ADMITTED` may launch the normal fresh Evidence worker; the other results launch no Evidence round. Admission is readiness only: it cannot close proof, become REVIEW READY, or PASS. Handoffs without the marker keep legacy routing.
 
-An admission-enabled `READY FOR EVIDENCE / TESTING` handoff must bind the exact ending candidate, branch, committed verification recipe, and committed `gdo-proof-ledger/v1` reference. The runner may perform deterministic admission checks and, when explicitly configured, one bounded short-lived semantic admission check. Deterministic failure cannot be overridden by AI.
-
-Admission results are control-plane values only:
-- `ADMITTED` — the existing fresh Evidence dispatch may start;
-- `NOT_READY` — an objective readiness prerequisite failed; no Evidence round starts;
-- `TRIAGE_REQUIRED` — the verification plan/readiness meaning is materially ambiguous; no Evidence round starts.
-
-Admission proves only that the campaign is executable. It never proves product acceptance, closes a proof ID, becomes REVIEW READY, or PASSes a checkpoint. A rejected admission does **not** increment the Evidence round number.
-
-Frozen/legacy handoffs without the opt-in marker retain their existing routing and are never silently upgraded because the package/runner version changed.
-
-## Schema-aware lifecycle publication
-
-For new admission-enabled Implementation handoffs, the worker submits structured lifecycle data through the non-lifecycle publication request marker:
-
-`<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->`
-
-The request body after the first line is one JSON object using `gdo-lifecycle-implementation/v1`. It is control-plane publication input, not a lifecycle transition. Runner publisher code validates/renders the canonical `implementation-record:v3` comment, injects the stable publication request identity, and only that generated canonical record may route to Evidence Admission.
-
-Do not hand-author a second canonical Implementation record after submitting a structured publication request. Frozen/legacy handoffs without Evidence Admission keep their existing publication behavior.
+Admission-enabled Implementation publication uses `<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->` plus one `gdo-lifecycle-implementation/v1` JSON object. Runner code validates/renders the canonical `implementation-record:v3` with stable request identity; do not also hand-author that record. Detailed proof-ledger/publication requirements live in the Implementation role and verification-recipe contract.
 
 ## Shared rules
 
