@@ -24,31 +24,13 @@ The recipe describes the authorized proof surface; it is not a blanket instructi
 
 ## Evidence Admission and Proof Ledger v1
 
-For a new product-code handoff that opts into Evidence Admission, the Implementation record carries `<!-- gated-development:evidence-admission:v1 -->` and references one committed JSON proof ledger at the exact ending commit. Frozen or legacy requests without the marker are unchanged.
+New opt-in handoffs reference one committed `gdo-proof-ledger/v1` at the exact ending commit; frozen/unmarked work is unchanged. The ledger binds repository/checkpoint/work-order, candidate/branch, recipe path + lowercase SHA-256, stable proofs, readiness checks, and `semanticAdmission`.
 
-The ledger schema identifier is exactly `gdo-proof-ledger/v1`. It binds repository, checkpoint, work-order version, exact candidate, branch, recipe path/hash, stable proof IDs, fixtures/runtime prerequisites, freshness/reuse policy, and any admission-only readiness checks.
+Each proof declares unique `id`, `criteria`, boolean `required` (plus a condition when false), `mode`, executable `method {type,ref}`, nonsecret `fixtures`, and `freshness`. The ledger cannot make an authority-required proof optional.
 
-Minimum proof item fields:
-- `id`: stable and unique inside the checkpoint;
-- `criteria`: one or more AC/claim IDs;
-- `required`: boolean, with a concrete condition when false;
-- `mode`: automated, live, source, integration, or another explicit verification mode;
-- `method`: executable recipe step/hook reference, not vague prose;
-- `fixtures`: declared nonsecret prerequisite identifiers;
-- `freshness`: fresh, reusable, or an explicit conditional policy.
+Admission checks are readiness only: `command`, `source-path-exists`, `filesystem-path-exists`, `env-present`, or `numeric-bound`; `onFailure` is `NOT_READY` or `TRIAGE_REQUIRED`. Deterministic failure cannot be overridden by AI. `semanticAdmission` is `none | optional | required` and is never acceptance proof.
 
-The ledger also carries `recipePath` and lowercase SHA-256 of the exact recipe bytes at the candidate. A mandatory proof may not be made optional by the ledger when checkpoint authority requires it.
-
-Admission-only checks are generic runner-readiness checks, not acceptance tests. Supported v1 check types are:
-- `command`: exact argv + cwd + positive timeout; exit 0 means ready;
-- `source-path-exists`: repository-relative path must exist in the candidate tree;
-- `filesystem-path-exists`: declared runner/fixture prerequisite path exists;
-- `env-present`: named environment prerequisite exists; never serialize its value;
-- `numeric-bound`: compare a declared numeric actual to a limit using `<=`, `<`, `>=`, `>`, `==`, or `!=`.
-
-Each admission check may use `onFailure: NOT_READY` (default) or `TRIAGE_REQUIRED`. A deterministic failed check cannot be overridden by AI. `semanticAdmission` is `none`, `optional`, or `required`; any semantic admission remains non-accepting and cannot execute or close proof obligations.
-
-The proof ledger is static proof-plan authority. Runtime Evidence records bind the same proof IDs to RETAIN/RECOVER/EXECUTE/INVALIDATED plus durable evidence references; they do not rewrite the committed plan.
+Evidence keeps the same proof IDs across RETAIN/RECOVER/EXECUTE/INVALIDATED dispositions. Admission-enabled publication uses `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner code renders the canonical Implementation record.
 
 ## Strict execution-contract v1
 
