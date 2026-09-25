@@ -150,28 +150,9 @@ Do not list ordinary Evidence-owned execution merely to sound cautious.
 
 ## Admission-enabled structured publication
 
-For a new handoff carrying Evidence Admission, do **not** hand-author the canonical lifecycle comment. Submit one issue comment whose first line is:
+For a new Evidence Admission handoff, commit the proof ledger required by the verification-recipe contract, then submit one comment beginning `<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->` followed by one `gdo-lifecycle-implementation/v1` JSON object. It carries the canonical Implementation facts plus the bound proof-ledger reference, exact `READY FOR EVIDENCE / TESTING` outcome, and `admission_enabled: true`.
 
-`<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->`
-
-and whose remaining body is one JSON object with schema `gdo-lifecycle-implementation/v1`.
-
-Required JSON fields are the same implementation facts the canonical record would carry, using these machine names:
-- `governance_thread_id`, `implementation_thread_id`;
-- `round`, `checkpoint`, `work_order_version`, `dispatch_id`;
-- `starting_commit`, `ending_commit`, `branch`;
-- `changed_paths`, `affected_proofs`;
-- `recipe_reference`, `proof_ledger_reference` as repository-path@ending-SHA;
-- `known_implementation_limitations`;
-- `outcome` exactly `READY FOR EVIDENCE / TESTING`;
-- `reason`, `what_changed`, `proof_disposition`, `checks_performed`;
-- `admission_enabled: true`.
-
-Do not include or invent a publication request ID; the runner injects the authoritative request identity from the GitHub comment. The request itself is not the Implementation lifecycle result and must not contain v3 thread markers or an Evidence Outcome. The schema-aware publisher renders/validates the canonical `implementation-record:v3` and that generated record is the only admission-enabled lifecycle handoff.
-
-After durable creation of the structured request, stop. Do not also post a handwritten canonical Implementation record. If the publication job reports an explicit schema rejection, correct the structured request through a new authorized publication request rather than editing a generated lifecycle record.
-
-Legacy/frozen non-admission handoffs continue to use the canonical record format below.
+Runner code injects the publication request identity and renders/validates the canonical `implementation-record:v3`. Do not invent that request ID, add v3 thread markers to the request, or post a second handwritten canonical record. On schema rejection, issue a new corrected publication request. Legacy/frozen non-admission handoffs keep the canonical format below.
 
 ## Canonical Implementation record
 
