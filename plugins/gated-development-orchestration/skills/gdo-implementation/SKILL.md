@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.5.0"
+  version: "4.6.0"
   role: "Implementation"
 ---
 
@@ -125,6 +125,8 @@ A result returns to the same persistent Implementation worker. It does not end t
 
 ## Evidence-ready completion
 
+For new admission-enabled product-code handoffs, include `<!-- gated-development:evidence-admission:v1 -->` and commit a `gdo-proof-ledger/v1` file beside or referenced by the verification recipe. The marker is explicit opt-in; never add it retroactively to a frozen request.
+
 `READY FOR EVIDENCE / TESTING` requires:
 1. authorized implementation is committed;
 2. necessary durable tests/fixtures/observation hooks are committed or adequate existing ones are identified;
@@ -132,9 +134,11 @@ A result returns to the same persistent Implementation worker. It does not end t
 4. a runnable recipe is committed/identified under the verification-recipe contract;
 5. exact ending commit and branch are remotely verified;
 6. actual Implementation limitations are disclosed;
-7. checks actually performed are separated from verification assigned to Evidence.
+7. checks actually performed are separated from verification assigned to Evidence;
+8. when admission-enabled, the proof ledger maps every mandatory current proof obligation to a stable proof ID, executable verification method, required fixture/runtime inputs, and material freshness/reuse policy;
+9. when admission-enabled, declared admission-only checks are safe readiness checks and do not substitute for acceptance testing.
 
-A commands-only issue comment does not replace the committed recipe.
+A commands-only issue comment does not replace the committed recipe. For admission-enabled handoffs, prose AC mapping does not replace the committed proof ledger.
 
 Evidence-owned build/Vitest/Playwright/live/browser execution is a normal workflow boundary, not automatically an Implementation limitation. Useful Implementation-time testing is allowed. When only one narrow observation is needed for stabilization, prefer a targeted development check over prematurely ending the Implementation round solely to obtain formal Evidence feedback. A check expressly required during Implementation by current authority remains required or must be truthfully unresolved.
 
@@ -150,6 +154,7 @@ Keep the lifecycle comment delta-oriented. Preserve machine/provenance fields an
 
 ```markdown
 <!-- gated-development:implementation-record:v3 -->
+<!-- gated-development:evidence-admission:v1 --> <!-- include for new admission-enabled handoffs only -->
 <!-- gated-development:actor:v1 actor=human --> <!-- include only for human actor -->
 <!-- gated-development:governance-thread:v1 id=<UUID> -->
 <!-- gated-development:implementation-thread:v1 id=<UUID> -->
@@ -163,7 +168,8 @@ Keep the lifecycle comment delta-oriented. Preserve machine/provenance fields an
 - Branch: <branch>
 - Changed paths: <concise paths>
 - Affected ACs / proof obligations: <IDs>
-- Recipe: <repository-relative path at ending commit>
+- Recipe: <repository-relative path@ending-sha>
+- Proof ledger: <repository-relative gdo-proof-ledger/v1 path@ending-sha> <!-- admission-enabled only -->
 - Known implementation limitations: <none or exact unmet obligation>
 - Outcome: READY FOR EVIDENCE / TESTING
 - Requested next round: Evidence / Testing
