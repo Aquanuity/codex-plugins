@@ -86,7 +86,7 @@ const discovery=read(skills.discovery);
 for (const phrase of ['Discovery probes','discovery-probe-request:v1','discovery-probe-result:v1','DISCOVERY FEEDBACK ONLY','Execution surface: <required client/runtime/surface | ANY>','Probe status: <COMPLETED | BLOCKED | INCONCLUSIVE>','AUTHORIZED_RESEARCH_ARTIFACT']) ensure(discovery.includes(phrase), `Discovery probe contract missing: ${phrase}`);
 
 const impl=read(skills.implementation);
-ensure(impl.includes('Recipe: <repository-relative path at ending commit>'), 'Implementation template missing committed recipe');
+ensure(impl.includes('Recipe: <repository-relative path@ending-sha>'), 'Implementation template missing committed recipe binding');
 ensure(impl.includes('Checks actually performed during Implementation'), 'Implementation template conflates checks');
 ensure(impl.includes('Verification assigned to Evidence'), 'Implementation template conflates Evidence work');
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
