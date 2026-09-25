@@ -93,7 +93,7 @@ ensure(impl.includes('Correction-round completeness'), 'Implementation correctio
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
 for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>','Executor: <AUTO | HUMAN>']) ensure(impl.includes(phrase), `Implementation targeted-check contract missing: ${phrase}`);
-for (const phrase of ['Evidence Admission handoff','gdo-proof-ledger/v1','gated-development:lifecycle-publication-request:v1 type=implementation','admission_enabled: true','Proof ledger: <repository-relative gdo-proof-ledger/v1 path@ending-sha>']) ensure(impl.includes(phrase), `Implementation admission contract missing: ${phrase}`);
+for (const phrase of ['Admission-enabled structured publication','gdo-proof-ledger/v1','gated-development:lifecycle-publication-request:v1 type=implementation','admission_enabled: true','Proof ledger: <repository-relative gdo-proof-ledger/v1 path@ending-sha>']) ensure(impl.includes(phrase), `Implementation admission contract missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
 ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
@@ -103,7 +103,7 @@ ensure(evidence.includes('A newer candidate/source SHA by itself does not invali
 ensure(evidence.includes('After durable queue acknowledgement'), 'Evidence terminal stop rule missing');
 for (const phrase of ['### Reason','### What ran','### Result / findings','### Correction packet','### Proof disposition']) ensure(evidence.includes(phrase), `Evidence delta-comment field missing: ${phrase}`);
 ensure(evidence.includes('Targeted development checks are not Evidence'), 'Evidence targeted-check non-proof guard missing');
-for (const phrase of ['Admission provenance and stable proof IDs','gdo-proof-ledger/v1','REVIEW READY is forbidden while any mandatory current proof ID']) ensure(evidence.includes(phrase), `Evidence admission/proof-ledger rule missing: ${phrase}`);
+for (const phrase of ['Admission provenance and stable proof IDs','gdo-proof-ledger/v1','mandatory current proof ID is unresolved']) ensure(evidence.includes(phrase), `Evidence admission/proof-ledger rule missing: ${phrase}`);
 
 const review=read(skills.review);
 ensure(review.includes('Only this role may issue checkpoint PASS'), 'Review PASS authority missing');
