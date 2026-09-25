@@ -22,6 +22,34 @@ Evidence must be able to execute the intended campaign without inventing substan
 
 The recipe describes the authorized proof surface; it is not a blanket instruction to rerun every step in every later Evidence round. Current GDO reuse/recovery rules govern later-round economy. A correction should update recipe/tests only where the proof surface actually changed, while preserving inspectable unchanged obligations for reuse.
 
+## Evidence Admission and Proof Ledger v1
+
+For a new product-code handoff that opts into Evidence Admission, the Implementation record carries `<!-- gated-development:evidence-admission:v1 -->` and references one committed JSON proof ledger at the exact ending commit. Frozen or legacy requests without the marker are unchanged.
+
+The ledger schema identifier is exactly `gdo-proof-ledger/v1`. It binds repository, checkpoint, work-order version, exact candidate, branch, recipe path/hash, stable proof IDs, fixtures/runtime prerequisites, freshness/reuse policy, and any admission-only readiness checks.
+
+Minimum proof item fields:
+- `id`: stable and unique inside the checkpoint;
+- `criteria`: one or more AC/claim IDs;
+- `required`: boolean, with a concrete condition when false;
+- `mode`: automated, live, source, integration, or another explicit verification mode;
+- `method`: executable recipe step/hook reference, not vague prose;
+- `fixtures`: declared nonsecret prerequisite identifiers;
+- `freshness`: fresh, reusable, or an explicit conditional policy.
+
+The ledger also carries `recipePath` and lowercase SHA-256 of the exact recipe bytes at the candidate. A mandatory proof may not be made optional by the ledger when checkpoint authority requires it.
+
+Admission-only checks are generic runner-readiness checks, not acceptance tests. Supported v1 check types are:
+- `command`: exact argv + cwd + positive timeout; exit 0 means ready;
+- `source-path-exists`: repository-relative path must exist in the candidate tree;
+- `filesystem-path-exists`: declared runner/fixture prerequisite path exists;
+- `env-present`: named environment prerequisite exists; never serialize its value;
+- `numeric-bound`: compare a declared numeric actual to a limit using `<=`, `<`, `>=`, `>`, `==`, or `!=`.
+
+Each admission check may use `onFailure: NOT_READY` (default) or `TRIAGE_REQUIRED`. A deterministic failed check cannot be overridden by AI. `semanticAdmission` is `none`, `optional`, or `required`; any semantic admission remains non-accepting and cannot execute or close proof obligations.
+
+The proof ledger is static proof-plan authority. Runtime Evidence records bind the same proof IDs to RETAIN/RECOVER/EXECUTE/INVALIDATED plus durable evidence references; they do not rewrite the committed plan.
+
 ## Strict execution-contract v1
 
 Strict mode additionally requires the existing post-commit marker:
