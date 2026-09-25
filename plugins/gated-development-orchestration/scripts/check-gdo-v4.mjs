@@ -87,8 +87,7 @@ for (const phrase of ['Discovery probes','discovery-probe-request:v1','discovery
 
 const impl=read(skills.implementation);
 ensure(impl.includes('Recipe: <repository-relative path@ending-sha>'), 'Implementation template missing committed recipe binding');
-ensure(impl.includes('Checks actually performed during Implementation'), 'Implementation template conflates checks');
-ensure(impl.includes('Verification assigned to Evidence'), 'Implementation template conflates Evidence work');
+ensure(impl.includes('checks actually performed are separated from verification assigned to Evidence'), 'Implementation role must separate performed checks from Evidence-assigned verification');
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
