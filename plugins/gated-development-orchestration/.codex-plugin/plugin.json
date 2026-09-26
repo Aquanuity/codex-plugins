@@ -1,7 +1,7 @@
 {
   "name": "gated-development-orchestration",
-  "version": "4.5.0",
-  "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, human actor takeover, Discovery probes, bounded correction, lightweight targeted development checks, evidence economy, concise lifecycle records, and independent review.",
+  "version": "4.6.0",
+  "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, Evidence Admission, machine-readable proof ledgers, bounded correction, evidence economy, and independent review.",
   "author": {
     "name": "Aquanuity"
   },
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Gated Development Orchestration",
     "shortDescription": "Role-scoped checkpoint development orchestration",
-    "longDescription": "GDO 4.5 preserves the v3 lifecycle and GDO 4.1–4.4 semantics while adding lightweight Discovery probes so material architecture/runtime uncertainty may be resolved experimentally before Implementation begins.",
+    "longDescription": "GDO 4.6 preserves the v3 lifecycle and GDO 4.5 role/probe semantics while adding opt-in Evidence Admission and stable proof-ledger contracts so non-executable campaigns can be stopped before a formal Evidence round begins.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
     "capabilities": [
@@ -32,6 +32,7 @@
     "defaultPrompt": [
       "Load the GDO workflow core and only the active role skill.",
       "Perform the authorized GDO round using current GitHub authority and current actor authority.",
+      "For new product-code Evidence handoffs, use the opt-in Evidence Admission marker and committed gdo-proof-ledger/v1 contract; admission is control-plane readiness, never acceptance proof.",
       "During Discovery, use a Discovery Probe only when inspection cannot confidently resolve one bounded material uncertainty; treat the result as discovery feedback, never product authority or Evidence.",
       "During Implementation, use targeted development checks only for one bounded candidate-specific observation; treat results as development feedback, never Evidence.",
       "Keep lifecycle comments delta-oriented: compress duplicated authority/raw detail, never provenance, correction boundary, proof disposition, or machine routing fields.",
