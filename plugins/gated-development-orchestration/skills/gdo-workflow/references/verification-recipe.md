@@ -24,7 +24,7 @@ The recipe describes the authorized proof surface; it is not a blanket instructi
 
 ## Evidence Admission and Proof Ledger v1
 
-New opt-in handoffs reference one committed `gdo-proof-ledger/v1` at the exact ending commit; frozen/unmarked work is unchanged. The ledger binds repository/checkpoint/work-order, candidate/branch, recipe path + lowercase SHA-256, stable proofs, readiness checks, and `semanticAdmission`.
+New opt-in handoffs reference one committed `gdo-proof-ledger/v1` at the exact ending commit; frozen/unmarked work is unchanged. Candidate identity is bound by the Implementation record's proof-ledger `path@ending-sha` reference and by reading that ledger from the exact ending commit; the ledger declares `candidateBinding: "containing-commit"` rather than embedding its own impossible self-referential Git SHA. The ledger also binds repository/checkpoint/work-order, branch, recipe path + lowercase SHA-256, stable proofs, readiness checks, and `semanticAdmission`.
 
 Each proof declares unique `id`, `criteria`, boolean `required` (plus a condition when false), `mode`, executable `method {type,ref}`, nonsecret `fixtures`, and `freshness`. The ledger cannot make an authority-required proof optional.
 
