@@ -123,7 +123,7 @@ ensure(strict.includes('Related demonstrated failures may be aggregated'), 'Stri
 
 const recipe=read('skills/gdo-workflow/references/verification-recipe.md');
 ensure(recipe.includes('not a blanket instruction to rerun every step'), 'Verification recipe later-round economy rule missing');
-for (const phrase of ['Evidence Admission and Proof Ledger v1','gdo-proof-ledger/v1','numeric-bound','semanticAdmission']) ensure(recipe.includes(phrase), `Verification recipe admission contract missing: ${phrase}`);
+for (const phrase of ['Evidence Admission and Proof Ledger v1','gdo-proof-ledger/v1','candidateBinding: "containing-commit"','numeric-bound','semanticAdmission']) ensure(recipe.includes(phrase), `Verification recipe admission contract missing: ${phrase}`);
 
 ensure(contract.lifecycle_comments?.principle?.includes('Compress prose, never provenance'), 'load-contract lifecycle comment principle missing');
 ensure(Array.isArray(contract.lifecycle_comments?.scan_order) && contract.lifecycle_comments.scan_order.length === 5, 'load-contract lifecycle comment scan order missing');
