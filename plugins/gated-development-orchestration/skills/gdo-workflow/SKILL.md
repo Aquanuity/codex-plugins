@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.6.0"
+  version: "4.7.0"
   protocol: "github-gated-development-v3"
 ---
 
@@ -105,6 +105,8 @@ A result records the exact request/probe identity, source identity actually test
 
 Probe observations are source/architecture evidence only. They do not amend intent/ACs/architecture by themselves, cannot satisfy an acceptance criterion, cannot become REVIEW READY, and cannot PASS. If a probe happens to demonstrate a plausible implementation, normal Implementation must adopt/recreate/review it under an authorized Implementation round.
 
+When Discovery is developing a CP2 verification method for material native/runtime uncertainty, the probe request/result may additionally bind a stable Proof ID plus canonical Method descriptor/fingerprint; the result records `Method readiness: READY | NOT_READY | INCONCLUSIVE`. This is additive Discovery feedback only. READY permits the control plane to consider one fresh Evidence round; it is not acceptance proof.
+
 Probe code is normally EPHEMERAL and outside the product branch or removed before Discovery completion. `AUTHORIZED_RESEARCH_ARTIFACT` is allowed only when the active Discovery contract explicitly authorizes a durable research artifact as a deliverable.
 
 A Human TAKEOVER of Discovery may issue an AUTO subordinate probe. That does not revive the automated Governance worker: the result remains durable GitHub feedback for the human-owned Discovery unless a new continuation is explicitly issued.
@@ -131,11 +133,25 @@ Targeted-check PASS means only that the requested development observation passed
 
 Implementation may issue repeated targeted checks inside the same Implementation round while stabilizing the bounded failure class. The final candidate still requires the normal Implementation handoff and an independent formal Evidence / Testing round.
 
+For a CP2 verification-method-development check only, the request/result may additionally bind a stable Proof ID plus a canonical Method descriptor and lowercase SHA-256 Method fingerprint. The result then also records `Method readiness: READY | NOT_READY | INCONCLUSIVE`. These fields are additive: ordinary targeted checks remain unchanged. READY means the method is executable/deterministic enough to return to a fresh formal Evidence session; it is still DEVELOPMENT FEEDBACK ONLY and cannot satisfy the proof.
+
 ## Evidence Admission
 
 Opt-in READY handoffs marked `gated-development:evidence-admission:v1` bind candidate, recipe and `gdo-proof-ledger/v1`, then pass a non-round gate. Only `ADMITTED` launches Evidence; `NOT_READY | TRIAGE_REQUIRED` do not. Admission is not proof; deterministic failure beats AI; unmarked handoffs stay legacy.
 
 Admission-enabled Implementation submits `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner renders the canonical record.
+
+## CP2 Evidence economy
+
+CP2 is additive and opt-in through an optional `gdo-proof-ledger/v1` `proofHistory` policy using `gdo-proof-history-policy/v1`. Absence preserves GDO 4.6/pre-CP2 behavior; never synthesize or rewrite history for a frozen campaign.
+
+For enabled campaigns, formal Evidence publication appends durable `gdo-evidence-proof-history/v1` machine state keyed by the existing stable proof IDs. A deterministic non-round re-entry guard reconstructs that GitHub state before another formal Evidence launch. Its only results are `ALLOW | METHOD_DEVELOPMENT_REQUIRED | TRIAGE_REQUIRED`; it cannot issue an Evidence outcome, REVIEW READY, Independent Review, or PASS.
+
+The default threshold is two consecutive formal BLOCKED attempts on the same mandatory proof when relevant product source is `RELEVANT_UNCHANGED` and the blocker remains `VERIFICATION_METHOD` or `FIXTURE_RUNTIME`. After threshold, a different/unproven method fingerprint is insufficient. Another formal Evidence session requires a newer durable `Method readiness: READY` result for a genuinely different method or an explicit bounded human `gated-development:evidence-reentry-override:v1` covering the current blocked attempts.
+
+Method development creates no sixth round or persistent worker: deterministic fixture/harness/invocation work stays in Implementation + targeted development checks; native/runtime uncertainty routes Discovery + optional probe; contract contradiction routes Definition; infrastructure prerequisites route infrastructure/control-plane repair; ambiguity fails closed to Governance Triage.
+
+Inside one active Evidence session, a mechanical verification invocation correction is allowed only when frozen authority explicitly permits that non-semantic correction and product source, proof/claim, assertions/bounds, fixture meaning, expected behavior, acceptance criteria, and material runtime interpretation remain unchanged. Preserve the original attempt, link the corrected attempt, and allow at most one correction—never retry until green. Ambiguity or semantic change routes out under normal GDO authority.
 
 ## Shared rules
 
@@ -197,6 +213,8 @@ Admission control marker carried inside an Implementation record:
 Non-dispatch authority/provenance markers:
 - `<!-- gated-development:actor-override:v1 -->`
 - `<!-- gated-development:actor:v1 actor=human -->`
+- `<!-- gated-development:evidence-proof-history:v1 -->` <!-- CP2-enabled Evidence publication state -->
+- `<!-- gated-development:evidence-reentry-override:v1 -->` <!-- bounded human guard override only -->
 
 Machine enum/token values are plain serialization: no emphasis/backticks/quotes or trailing punctuation. Example: `- Next round: Implementation`.
 
