@@ -3,7 +3,7 @@ name: gated-development-orchestration
 description: Compatibility entrypoint for GDO. Routes current work to the lean GDO workflow core plus exactly one active role skill.
 compatibility: Preserves the historical skill URL. Do not treat this shim or the old references directory as a second normative v4 workflow.
 metadata:
-  version: "4.6.0"
+  version: "4.7.0"
   workflow: "github-gated-development-v3"
 ---
 

@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.5.0
+# Gated Development Orchestration Plugin 4.7.0
 
-GDO 4.5 keeps the established v3 lifecycle, Human TAKEOVER, correction/evidence-economy rules, and concise lifecycle comments while adding lightweight targeted development checks inside active Implementation rounds.
+GDO 4.7 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while adding opt-in repeated same-proof blocker control, durable verification-method readiness, and narrowly bounded mechanical Evidence invocation correction.
 
 ## Normal loading
 
@@ -77,6 +77,8 @@ The markers are:
 
 A targeted-check PASS is not Evidence, does not satisfy an AC/proof obligation by itself, and cannot produce REVIEW READY or PASS. After the final stabilized candidate is handed off normally, an independent formal Evidence / Testing round is still required.
 
+For CP2 method development only, targeted checks or Discovery Probes may also bind a stable proof ID, canonical method descriptor/fingerprint, and `Method readiness: READY | NOT_READY | INCONCLUSIVE`. READY means the method is executable enough to return to formal Evidence; it is not acceptance proof.
+
 ## Evidence-ready Implementation
 
 For product-code work continuing to Evidence, Implementation owns:
@@ -87,6 +89,12 @@ For product-code work continuing to Evidence, Implementation owns:
 - exact ending commit and handoff.
 
 Checks actually performed during Implementation are recorded separately from verification assigned to Evidence. Evidence-owned runtime execution is not automatically an Implementation limitation.
+
+## CP2 repeated-blocker economy
+
+A new proof ledger opts in with `proofHistory.schema = gdo-proof-history-policy/v1`. The runner then reconstructs durable per-proof Evidence history from GitHub, and after two consecutive same-proof method/fixture BLOCKED attempts with relevant source unchanged it suppresses another unproven formal Evidence launch. A new method fingerprint by itself is insufficient; a durable READY result or bounded human re-entry override is required.
+
+This is a non-round control mechanism. It adds no sixth GDO round or persistent worker and has no PASS authority. Method development uses existing Implementation targeted checks or Discovery Probes. Mechanical invocation correction inside active Evidence is limited to one frozen-allowlist non-semantic correction with the original attempt preserved; no retry-until-green.
 
 ## Evidence modes
 

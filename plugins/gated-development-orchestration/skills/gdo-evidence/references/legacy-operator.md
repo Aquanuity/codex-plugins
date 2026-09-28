@@ -43,6 +43,14 @@ If a deviation is required, cite explicit authority and identify the proof as di
 
 Distinguish preflight/startup failure, nonzero test result, timeout, incomplete artifacts, and environment blocker. Do not infer an environment is impossible from one setup attempt; after repeated materially equivalent failures, use an authorized different path or report BLOCKED rather than looping.
 
+## CP2 proof history and verification-method blockers
+
+Only when the admitted proof ledger opted into `gdo-proof-history-policy/v1`, prepare the required per-proof machine sidecar for deterministic publication. For each affected proof, classify the actual disposition and, when blocked, use the small CP2 blocker enum and explicit route. Do not silently turn a demonstrated product defect into a verification-method blocker.
+
+After two consecutive same-proof `VERIFICATION_METHOD` / `FIXTURE_RUNTIME` blockers with relevant source unchanged, formal Evidence is not the place to invent a third method. Report the blocker truthfully; method development returns to Implementation targeted checks or Discovery probes as appropriate. A different method idea/fingerprint without durable READY is not sufficient.
+
+If a purely mechanical invocation mistake is corrected manually inside this active Evidence round, preserve the original attempt and record the correction/linkage explicitly. Apply the same semantic boundary as strict mode: unchanged product source, proof/claim, assertions/bounds, fixture meaning, expected behavior and acceptance criteria; at most one correction and no retry-until-green. Legacy mode does not fabricate a strict helper receipt.
+
 ## Closure audit
 
 Before selecting Outcome:

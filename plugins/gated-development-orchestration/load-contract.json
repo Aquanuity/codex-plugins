@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,10 +54,10 @@
     }
   },
   "budgets_bytes": {
-    "core": 15000,
-    "standard_role_total": 34000,
-    "evidence_total": 36000,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.6 uses <=15,000 bytes for core, <=34,000 for standard-role required loads, and <=36,000 for Evidence including one selected operator mode. The increases preserve explicit Evidence Admission/proof-ledger/publication safeguards rather than compressing away contract detail; future increases require explicit design disposition."
+    "core": 18500,
+    "standard_role_total": 39000,
+    "evidence_total": 44000,
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7 measures 18,243 bytes for core, 38,158 bytes for the largest standard Implementation+recipe load, and 43,536 bytes for strict Evidence at this candidate. Ceilings of 18,500 / 39,000 / 44,000 leave only bounded review margin while preserving explicit CP2 repeated-blocker, method-readiness and mechanical-correction safeguards; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -146,6 +146,20 @@
     "executor_modes": {
       "AUTO": "Dispatch through the configured lightweight testing backend; backend identity is transport/runtime configuration, not GDO authority.",
       "HUMAN": "Do not launch an automated testing worker; a human performs the bounded check and posts the canonical result."
+    },
+    "cp2_method_readiness": {
+      "opt_in": "Only requests that explicitly carry CP2 proof/method fields use this extension; legacy targeted checks are unchanged.",
+      "request_fields": [
+        "stable proof ID",
+        "canonical method descriptor",
+        "lowercase SHA-256 method fingerprint"
+      ],
+      "result_fields": [
+        "same stable proof ID",
+        "same canonical method descriptor/fingerprint",
+        "method readiness READY | NOT_READY | INCONCLUSIVE"
+      ],
+      "semantics": "Method readiness answers whether the proposed verification method is executable/deterministic enough to return to fresh formal Evidence. It is DEVELOPMENT FEEDBACK ONLY and cannot close a proof ID."
     }
   },
   "discovery_probes": {
@@ -207,7 +221,21 @@
     "multi_observation_rule": "One probe owns one bounded Discovery uncertainty, but its minimal experiment may contain multiple tightly coupled observations needed to distinguish the alternatives.",
     "product_branch_rule": "Probe code is normally outside the product branch or removed before Discovery completion. Durable research code is allowed only when the active Discovery contract explicitly authorizes it as a deliverable.",
     "human_takeover_rule": "A Human-owned Discovery may launch an AUTO subordinate probe; the result is durable GitHub feedback but must not resurrect the superseded automated Governance worker.",
-    "formal_evidence_rule": "Probe observations may inform architecture/source truth but cannot satisfy acceptance criteria, REVIEW READY, Independent Review, or PASS."
+    "formal_evidence_rule": "Probe observations may inform architecture/source truth but cannot satisfy acceptance criteria, REVIEW READY, Independent Review, or PASS.",
+    "cp2_method_readiness": {
+      "opt_in": "Only probes explicitly developing a CP2 verification method carry these fields; ordinary Discovery Probes are unchanged.",
+      "request_fields": [
+        "stable proof ID",
+        "canonical method descriptor",
+        "lowercase SHA-256 method fingerprint"
+      ],
+      "result_fields": [
+        "same stable proof ID",
+        "same canonical method descriptor/fingerprint",
+        "method readiness READY | NOT_READY | INCONCLUSIVE"
+      ],
+      "semantics": "Runtime/native method readiness is Discovery feedback only. READY permits consideration of one fresh formal Evidence round; it is not acceptance proof."
+    }
   },
   "evidence_admission": {
     "marker": "gated-development:evidence-admission:v1",
@@ -228,5 +256,43 @@
     "lifecycle_effect": "none until canonical publication",
     "input_schema": "gdo-lifecycle-implementation/v1",
     "semantics": "New admission-enabled Implementation handoffs submit structured fields; runner publication renders and validates the canonical implementation-record:v3 and preserves request identity."
+  },
+  "evidence_economy": {
+    "opt_in": "gdo-proof-ledger/v1 proofHistory policy only; absence preserves GDO 4.6 / pre-CP2 behavior.",
+    "policy_schema": "gdo-proof-history-policy/v1",
+    "proof_history_schema": "gdo-evidence-proof-history/v1",
+    "proof_history_marker": "gated-development:evidence-proof-history:v1",
+    "repeated_blocked_threshold": 2,
+    "guard_results": [
+      "ALLOW",
+      "METHOD_DEVELOPMENT_REQUIRED",
+      "TRIAGE_REQUIRED"
+    ],
+    "method_readiness": [
+      "READY",
+      "NOT_READY",
+      "INCONCLUSIVE"
+    ],
+    "blocker_classes": [
+      "VERIFICATION_METHOD",
+      "FIXTURE_RUNTIME",
+      "INFRASTRUCTURE",
+      "PRODUCT_DEFECT",
+      "BEHAVIOR_UNKNOWN",
+      "CONTRACT_CONTRADICTION",
+      "AMBIGUOUS"
+    ],
+    "method_development_routes": {
+      "deterministic_fixture_harness_invocation": "Implementation + targeted development check",
+      "native_runtime_uncertainty": "Discovery + optional Discovery Probe",
+      "contract_contradiction": "Definition",
+      "infrastructure_prerequisite": "infrastructure/control-plane repair",
+      "ambiguous": "Governance Triage"
+    },
+    "changed_fingerprint_rule": "A changed method fingerprint alone never bypasses a reached repeated-BLOCKED threshold; a newer durable READY result or explicit bounded human override is required.",
+    "human_override_marker": "gated-development:evidence-reentry-override:v1",
+    "mechanical_correction_schema": "gdo-evidence-mechanical-correction/v1",
+    "mechanical_correction_rule": "At most one frozen-allowlist non-semantic invocation correction inside the active Evidence session; preserve the original attempt and fail closed on source/assertion/bound/fixture/acceptance/runtime-meaning change.",
+    "acceptance_authority": "none; the guard and METHOD READY feedback cannot issue Evidence outcomes, REVIEW READY, Independent Review, or PASS."
   }
 }

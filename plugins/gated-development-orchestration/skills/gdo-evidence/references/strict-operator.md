@@ -30,6 +30,12 @@ Do not:
 
 Recovery/import must preserve original proof identity and identical relevant contract/source inputs. Legacy evidence without original helper receipts is not relabeled as fresh strict proof.
 
+### Mechanical invocation correction
+
+When the frozen recipe declares an allowed mechanical correction and the failure is strictly non-semantic, use the helper's `run --mechanical-correction <receipt.json>` path rather than legacy recovery. The receipt must identify the original failed attempt, one allowed correction class/reason, and the exact token replacement(s). The helper preserves the original attempt and validates source fingerprint, proof/claim identity, assertion/contract fingerprint, and original/corrected method fingerprints.
+
+Only one corrected attempt is permitted for the obligation. Never use mechanical correction to change product source, expected behavior, assertion/bound, fixture meaning, acceptance criteria, or material runtime interpretation, and never retry until green. If the helper rejects the correction or meaning is ambiguous, route out under normal GDO authority.
+
 After a substantive failure, the Evidence worker may continue other independent authorized steps only when their results remain meaningful and safe. Dependent steps stay blocked rather than being forced through invalid state. Related demonstrated failures may be aggregated into one Implementation-required packet; this does not authorize speculative campaign expansion.
 
 ## Collection and validation
@@ -52,9 +58,13 @@ A later round does not require every recipe step to be freshly executed when unc
 
 A blocked/implementation-required/discovery-required report may preserve failed attempts and unresolved items truthfully.
 
+## CP2 proof-history publication
+
+For a request whose admitted proof ledger enabled `gdo-proof-history-policy/v1`, also create the runner-required `publication/proof-history.json` sidecar using the durable proof IDs and actual round dispositions. The deterministic publisher validates it and owns the issue-level `gated-development:evidence-proof-history:v1` marker. METHOD READY references may explain why this round was allowed but do not count as proof.
+
 ## Publication
 
-Author only the worker-controlled evidence body. Use the existing strict publication preparation adapter; do not hand-edit generated `evidence.md`, `ready.json`, attempt receipts, or inventory after preparation.
+Author only the worker-controlled evidence body. Use the existing strict publication preparation adapter; do not hand-edit generated `evidence.md`, `ready.json`, attempt receipts, proof-history marker, or inventory after preparation.
 
 The publisher independently revalidates staged bytes. A worker-written boolean never replaces raw validation.
 

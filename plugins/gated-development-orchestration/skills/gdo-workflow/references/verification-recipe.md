@@ -32,6 +32,25 @@ Admission checks are readiness only: `command`, `source-path-exists`, `filesyste
 
 Evidence keeps the same proof IDs across RETAIN/RECOVER/EXECUTE/INVALIDATED dispositions. Admission-enabled publication uses `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner code renders the canonical Implementation record.
 
+### Optional CP2 proof-history policy
+
+New campaigns that explicitly opt into repeated-blocker economy add this field to the existing `gdo-proof-ledger/v1` object:
+
+```json
+{
+  "proofHistory": {
+    "schema": "gdo-proof-history-policy/v1",
+    "repeatedBlockedThreshold": 2
+  }
+}
+```
+
+Absence means legacy/GDO 4.6 behavior. Never add the policy retroactively to a frozen campaign or rewrite historical Evidence records.
+
+For CP2 method development, verification-method identity is explicit, not model-inferred: use a canonical stable descriptor containing only proof/method ID, execution surface, fixture/harness identity, normalized invocation/bounds shape, relevant runtime identity class, and assertion/claim identity. Exclude timestamps, temp paths and secrets. Its lowercase SHA-256 is the method fingerprint. Fingerprint inequality proves only that the descriptor changed; it does not prove the new method is ready.
+
+Targeted-check/Discovery-Probe METHOD READY feedback is development/readiness evidence only. It never satisfies the proof ledger's acceptance obligation; a fresh formal Evidence worker must execute the method against the bound candidate.
+
 ## Strict execution-contract v1
 
 Strict mode additionally requires the existing post-commit marker:
