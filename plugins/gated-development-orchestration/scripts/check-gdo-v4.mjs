@@ -110,7 +110,7 @@ ensure(evidence.includes('A newer candidate/source SHA by itself does not invali
 ensure(evidence.includes('After durable queue acknowledgement'), 'Evidence terminal stop rule missing');
 for (const phrase of ['### Reason','### What ran','### Result / findings','### Correction packet','### Proof disposition']) ensure(evidence.includes(phrase), `Evidence delta-comment field missing: ${phrase}`);
 ensure(evidence.includes('Targeted development checks are not Evidence'), 'Evidence targeted-check non-proof guard missing');
-for (const phrase of ['Admission provenance and stable proof IDs','gdo-proof-ledger/v1','mandatory current proof ID is unresolved','Mechanical verification invocation correction','gdo-evidence-proof-history:v1','CONTRACT_CONTRADICTION','retry-until-green']) ensure(evidence.includes(phrase), `Evidence admission/economy rule missing: ${phrase}`);
+for (const phrase of ['Admission provenance and stable proof IDs','gdo-proof-ledger/v1','mandatory current proof ID is unresolved','Mechanical verification invocation correction','gdo-evidence-proof-history/v1','CONTRACT_CONTRADICTION','retry-until-green']) ensure(evidence.includes(phrase), `Evidence admission/economy rule missing: ${phrase}`);
 
 const review=read(skills.review);
 ensure(review.includes('Only this role may issue checkpoint PASS'), 'Review PASS authority missing');
