@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.6.0"
+  version: "4.7.0"
   role: "Implementation"
 ---
 
@@ -98,6 +98,9 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Expected: <specific expected observation>
 - Setup / action: <minimal steps or command>
 - Artifact requested: <none or exact screenshot/log/file>
+- Proof ID: <stable proof ID> <!-- CP2 method-development only -->
+- Method descriptor: <canonical stable JSON descriptor> <!-- CP2 method-development only -->
+- Method fingerprint: <lowercase SHA-256 of descriptor> <!-- CP2 method-development only -->
 - Classification: DEVELOPMENT FEEDBACK ONLY
 ```
 
@@ -118,10 +121,16 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Result: <PASS | FAIL | BLOCKED>
 - Observation: <concise actual observation>
 - Artifact: <none or durable reference>
+- Proof ID: <same stable proof ID> <!-- CP2 method-development only -->
+- Method descriptor: <same canonical stable JSON descriptor> <!-- CP2 method-development only -->
+- Method fingerprint: <same lowercase SHA-256> <!-- CP2 method-development only -->
+- Method readiness: <READY | NOT_READY | INCONCLUSIVE> <!-- CP2 method-development only -->
 - Classification: DEVELOPMENT FEEDBACK ONLY
 ```
 
 A result returns to the same persistent Implementation worker. It does not end the Implementation round. The worker should use it immediately as engineering feedback and avoid publishing `READY FOR EVIDENCE / TESTING` until the bounded correction is reasonably stabilized.
+
+When a repeated CP2 Evidence blocker has routed verification-method development here, use the additive Proof ID / Method descriptor / Method fingerprint fields. The result must state `Method readiness: READY | NOT_READY | INCONCLUSIVE`. A changed fingerprint without durable READY does not justify another formal Evidence round. READY closes only the method-development question; fresh Evidence must still execute the acceptance proof independently.
 
 ## Evidence-ready completion
 
@@ -136,7 +145,8 @@ For new admission-enabled product-code handoffs, include `<!-- gated-development
 6. actual Implementation limitations are disclosed;
 7. checks actually performed are separated from verification assigned to Evidence;
 8. when admission-enabled, the proof ledger maps every mandatory current proof obligation to a stable proof ID, executable verification method, required fixture/runtime inputs, and material freshness/reuse policy;
-9. when admission-enabled, declared admission-only checks are safe readiness checks and do not substitute for acceptance testing.
+9. when admission-enabled, declared admission-only checks are safe readiness checks and do not substitute for acceptance testing;
+10. when CP2 proof history is enabled, the proof ledger carries `proofHistory: { "schema": "gdo-proof-history-policy/v1", "repeatedBlockedThreshold": 2 }` (or another explicitly authorized bounded threshold) and preserves the existing stable proof IDs rather than inventing a parallel blocker identity.
 
 A commands-only issue comment does not replace the committed recipe. For admission-enabled handoffs, prose AC mapping does not replace the committed proof ledger.
 
