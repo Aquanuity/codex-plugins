@@ -54,10 +54,10 @@
     }
   },
   "budgets_bytes": {
-    "core": 18000,
+    "core": 18500,
     "standard_role_total": 39000,
     "evidence_total": 44000,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7 adds explicit CP2 repeated-blocker, method-readiness and mechanical-correction contracts. The bounded increase from 4.6 preserves these safety rules without splitting them into hidden routine dependencies; future increases still require explicit design disposition."
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7 measures 18,243 bytes for core, 38,158 bytes for the largest standard Implementation+recipe load, and 43,536 bytes for strict Evidence at this candidate. Ceilings of 18,500 / 39,000 / 44,000 leave only bounded review margin while preserving explicit CP2 repeated-blocker, method-readiness and mechanical-correction safeguards; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
