@@ -1,7 +1,7 @@
 {
   "name": "gated-development-orchestration",
-  "version": "4.6.0",
-  "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, Evidence Admission, machine-readable proof ledgers, bounded correction, evidence economy, and independent review.",
+  "version": "4.7.0",
+  "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, Evidence Admission, durable proof history, repeated-blocker economy, bounded method development, mechanical correction, and independent review.",
   "author": {
     "name": "Aquanuity"
   },
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Gated Development Orchestration",
     "shortDescription": "Role-scoped checkpoint development orchestration",
-    "longDescription": "GDO 4.6 preserves the v3 lifecycle and GDO 4.5 role/probe semantics while adding opt-in Evidence Admission and stable proof-ledger contracts so non-executable campaigns can be stopped before a formal Evidence round begins.",
+    "longDescription": "GDO 4.7 preserves the v3 lifecycle and GDO 4.6 Evidence Admission while adding opt-in same-proof repeated-blocker control, durable verification-method readiness, and narrowly bounded in-round mechanical Evidence invocation correction.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
     "capabilities": [
@@ -33,8 +33,9 @@
       "Load the GDO workflow core and only the active role skill.",
       "Perform the authorized GDO round using current GitHub authority and current actor authority.",
       "For new product-code Evidence handoffs, use the opt-in Evidence Admission marker and committed gdo-proof-ledger/v1 contract; admission is control-plane readiness, never acceptance proof.",
-      "During Discovery, use a Discovery Probe only when inspection cannot confidently resolve one bounded material uncertainty; treat the result as discovery feedback, never product authority or Evidence.",
-      "During Implementation, use targeted development checks only for one bounded candidate-specific observation; treat results as development feedback, never Evidence.",
+      "For CP2 proof-history-enabled campaigns, respect the deterministic Evidence re-entry guard: repeated same-proof verification-method blockers require durable METHOD READY feedback or an explicit bounded human override before another formal Evidence round.",
+      "Use targeted development checks or Discovery Probes for bounded verification-method development; method readiness is development feedback only and cannot satisfy Evidence proof.",
+      "Inside active Evidence, correct only frozen-allowlist mechanical invocation mistakes with original-attempt preservation; never weaken acceptance or retry until green.",
       "Keep lifecycle comments delta-oriented: compress duplicated authority/raw detail, never provenance, correction boundary, proof disposition, or machine routing fields.",
       "Preserve v3 lifecycle markers, worker separation, actor-takeover semantics, and sole Independent Review PASS authority."
     ]
