@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.5.0', 'manifest version must be 4.4.0');
+ensure(manifest.version === '4.6.0', 'manifest version must be 4.6.0');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.5.0"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.6.0"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -72,20 +72,27 @@ for (const marker of [
   'gated-development:discovery-probe-request:v1',
   'gated-development:discovery-probe-result:v1',
   'Discovery probes',
-  'Triage never owns or dispatches the probe'
+  'Triage never owns or dispatches the probe',
+  'Evidence Admission',
+  'gated-development:evidence-admission:v1',
+  'ADMITTED',
+  'NOT_READY',
+  'TRIAGE_REQUIRED',
+  'gated-development:lifecycle-publication-request:v1 type=implementation',
+  'gdo-proof-ledger/v1'
 ]) ensure(core.includes(marker), `core missing canonical marker/token: ${marker}`);
 
 const discovery=read(skills.discovery);
 for (const phrase of ['Discovery probes','discovery-probe-request:v1','discovery-probe-result:v1','DISCOVERY FEEDBACK ONLY','Execution surface: <required client/runtime/surface | ANY>','Probe status: <COMPLETED | BLOCKED | INCONCLUSIVE>','AUTHORIZED_RESEARCH_ARTIFACT']) ensure(discovery.includes(phrase), `Discovery probe contract missing: ${phrase}`);
 
 const impl=read(skills.implementation);
-ensure(impl.includes('Recipe: <repository-relative path at ending commit>'), 'Implementation template missing committed recipe');
-ensure(impl.includes('Checks actually performed during Implementation'), 'Implementation template conflates checks');
-ensure(impl.includes('Verification assigned to Evidence'), 'Implementation template conflates Evidence work');
+ensure(impl.includes('Recipe: <repository-relative path@ending-sha>'), 'Implementation template missing committed recipe binding');
+ensure(impl.includes('checks actually performed are separated from verification assigned to Evidence'), 'Implementation role must separate performed checks from Evidence-assigned verification');
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
 for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>','Executor: <AUTO | HUMAN>']) ensure(impl.includes(phrase), `Implementation targeted-check contract missing: ${phrase}`);
+for (const phrase of ['Admission-enabled structured publication','gdo-proof-ledger/v1','gated-development:lifecycle-publication-request:v1 type=implementation','admission_enabled: true','Proof ledger: <repository-relative gdo-proof-ledger/v1 path@ending-sha>']) ensure(impl.includes(phrase), `Implementation admission contract missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
 ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
@@ -95,6 +102,7 @@ ensure(evidence.includes('A newer candidate/source SHA by itself does not invali
 ensure(evidence.includes('After durable queue acknowledgement'), 'Evidence terminal stop rule missing');
 for (const phrase of ['### Reason','### What ran','### Result / findings','### Correction packet','### Proof disposition']) ensure(evidence.includes(phrase), `Evidence delta-comment field missing: ${phrase}`);
 ensure(evidence.includes('Targeted development checks are not Evidence'), 'Evidence targeted-check non-proof guard missing');
+for (const phrase of ['Admission provenance and stable proof IDs','gdo-proof-ledger/v1','mandatory current proof ID is unresolved']) ensure(evidence.includes(phrase), `Evidence admission/proof-ledger rule missing: ${phrase}`);
 
 const review=read(skills.review);
 ensure(review.includes('Only this role may issue checkpoint PASS'), 'Review PASS authority missing');
@@ -115,6 +123,7 @@ ensure(strict.includes('Related demonstrated failures may be aggregated'), 'Stri
 
 const recipe=read('skills/gdo-workflow/references/verification-recipe.md');
 ensure(recipe.includes('not a blanket instruction to rerun every step'), 'Verification recipe later-round economy rule missing');
+for (const phrase of ['Evidence Admission and Proof Ledger v1','gdo-proof-ledger/v1','candidateBinding: "containing-commit"','numeric-bound','semanticAdmission']) ensure(recipe.includes(phrase), `Verification recipe admission contract missing: ${phrase}`);
 
 ensure(contract.lifecycle_comments?.principle?.includes('Compress prose, never provenance'), 'load-contract lifecycle comment principle missing');
 ensure(Array.isArray(contract.lifecycle_comments?.scan_order) && contract.lifecycle_comments.scan_order.length === 5, 'load-contract lifecycle comment scan order missing');
@@ -127,6 +136,12 @@ ensure(contract.discovery_probes?.formal_evidence_rule?.includes('cannot satisfy
 ensure(contract.targeted_development_checks?.lifecycle_effect === 'none', 'targeted checks must not create lifecycle transitions');
 ensure(contract.targeted_development_checks?.executor_modes?.AUTO && contract.targeted_development_checks?.executor_modes?.HUMAN, 'targeted checks must define AUTO/HUMAN executor modes');
 ensure(contract.targeted_development_checks?.formal_evidence_required_after_final_implementation_handoff === true, 'targeted checks must not replace formal Evidence');
+ensure(contract.evidence_admission?.marker === 'gated-development:evidence-admission:v1', 'Evidence Admission marker missing from load contract');
+ensure(contract.evidence_admission?.lifecycle_effect === 'none', 'Evidence Admission must not become a lifecycle round');
+ensure(contract.evidence_admission?.proof_ledger_schema === 'gdo-proof-ledger/v1', 'Proof ledger schema missing from load contract');
+ensure(contract.evidence_admission?.deterministic_failure_precedence === true, 'Deterministic Admission failure must have precedence');
+ensure(Array.isArray(contract.evidence_admission?.results) && contract.evidence_admission.results.join('|') === 'ADMITTED|NOT_READY|TRIAGE_REQUIRED', 'Evidence Admission result set mismatch');
+ensure(contract.lifecycle_publication?.input_schema === 'gdo-lifecycle-implementation/v1', 'Structured lifecycle publication schema mismatch');
 
 const shim=read(skills.compatibility);
 ensure(shim.includes('../gdo-workflow/SKILL.md'), 'compatibility shim does not route to v4 core');

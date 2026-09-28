@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.5.0"
+  version: "4.6.0"
   protocol: "github-gated-development-v3"
 ---
 
@@ -131,6 +131,12 @@ Targeted-check PASS means only that the requested development observation passed
 
 Implementation may issue repeated targeted checks inside the same Implementation round while stabilizing the bounded failure class. The final candidate still requires the normal Implementation handoff and an independent formal Evidence / Testing round.
 
+## Evidence Admission
+
+Opt-in READY handoffs marked `gated-development:evidence-admission:v1` bind candidate, recipe and `gdo-proof-ledger/v1`, then pass a non-round gate. Only `ADMITTED` launches Evidence; `NOT_READY | TRIAGE_REQUIRED` do not. Admission is not proof; deterministic failure beats AI; unmarked handoffs stay legacy.
+
+Admission-enabled Implementation submits `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner renders the canonical record.
+
 ## Shared rules
 
 - Human activation authorizes executable work. Material intent/scope/architecture/acceptance change -> Definition + explicit human re-authorization. Actor takeover alone never supplies that amendment authority.
@@ -145,12 +151,13 @@ Implementation may issue repeated targeted checks inside the same Implementation
 - Check capability before declaring an authorized operation unavailable; capability does not create authority.
 - Frozen requests keep their original contract/mode unless explicitly amended.
 - Human-selected model/reasoning may be used when supported; it never expands authority. Record actual runtime identity only when reliably exposed.
+- Evidence Admission receipts and proof-ledger readiness are not acceptance Evidence. A fresh admitted Evidence worker still owns independent execution/proof.
 
 ## Transitions
 
 Definition -> Discovery | Implementation after activation.
 Discovery -> Definition | Implementation | Independent Review when Discovery is the deliverable.
-Implementation -> Discovery | Evidence / Testing.
+Implementation -> Discovery | Evidence / Testing. An admission-enabled READY handoff reaches Evidence / Testing only after the non-round Admission step returns ADMITTED.
 Evidence / Testing -> Implementation | Discovery | Independent Review.
 Independent Review -> Definition | Discovery | Implementation | Evidence / Testing | PASS.
 
@@ -173,6 +180,9 @@ Existing dispatchable first-line markers remain:
 - `<!-- gated-development:review:v3 status=pass -->`
 - `<!-- gated-development:thread-rebind:v3 -->`
 
+Control-plane publication request marker (not a lifecycle transition):
+- `<!-- gated-development:lifecycle-publication-request:v1 type=implementation -->`
+
 Sub-round discovery/engineering feedback markers:
 - `<!-- gated-development:discovery-probe-request:v1 -->`
 - `<!-- gated-development:discovery-probe-result:v1 -->`
@@ -180,6 +190,9 @@ Sub-round discovery/engineering feedback markers:
 - `<!-- gated-development:targeted-check-result:v1 -->`
 
 These may dispatch lightweight testing/feedback transport but are not lifecycle transitions or Evidence records.
+
+Admission control marker carried inside an Implementation record:
+- `<!-- gated-development:evidence-admission:v1 -->`
 
 Non-dispatch authority/provenance markers:
 - `<!-- gated-development:actor-override:v1 -->`

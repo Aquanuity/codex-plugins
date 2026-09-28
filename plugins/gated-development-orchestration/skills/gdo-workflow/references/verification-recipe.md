@@ -22,6 +22,16 @@ Evidence must be able to execute the intended campaign without inventing substan
 
 The recipe describes the authorized proof surface; it is not a blanket instruction to rerun every step in every later Evidence round. Current GDO reuse/recovery rules govern later-round economy. A correction should update recipe/tests only where the proof surface actually changed, while preserving inspectable unchanged obligations for reuse.
 
+## Evidence Admission and Proof Ledger v1
+
+New opt-in handoffs reference one committed `gdo-proof-ledger/v1` at the exact ending commit; frozen/unmarked work is unchanged. Candidate identity is bound by the Implementation record's proof-ledger `path@ending-sha` reference and by reading that ledger from the exact ending commit; the ledger declares `candidateBinding: "containing-commit"` rather than embedding its own impossible self-referential Git SHA. The ledger also binds repository/checkpoint/work-order, branch, recipe path + lowercase SHA-256, stable proofs, readiness checks, and `semanticAdmission`.
+
+Each proof declares unique `id`, `criteria`, boolean `required` (plus a condition when false), `mode`, executable `method {type,ref}`, nonsecret `fixtures`, and `freshness`. The ledger cannot make an authority-required proof optional.
+
+Admission checks are readiness only: `command`, `source-path-exists`, `filesystem-path-exists`, `env-present`, or `numeric-bound`; `onFailure` is `NOT_READY` or `TRIAGE_REQUIRED`. Deterministic failure cannot be overridden by AI. `semanticAdmission` is `none | optional | required` and is never acceptance proof.
+
+Evidence keeps the same proof IDs across RETAIN/RECOVER/EXECUTE/INVALIDATED dispositions. Admission-enabled publication uses `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner code renders the canonical Implementation record.
+
 ## Strict execution-contract v1
 
 Strict mode additionally requires the existing post-commit marker:

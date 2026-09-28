@@ -3,7 +3,7 @@ name: gdo-independent-review
 description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.5.0"
+  version: "4.6.0"
   role: "Independent Review"
 ---
 
@@ -51,6 +51,7 @@ Check:
 - whether reused proof remains applicable and whether any invalidation/rerun expansion has a concrete reason;
 - whether correction rounds coherently addressed the demonstrated root cause/failure class rather than only the first literal symptom, without unrelated scope expansion;
 - whether required artifacts/observations were actually inspected;
+- for admission-enabled handoffs, whether every mandatory stable proof ID from the committed proof ledger has an inspectable closing Evidence reference and none disappeared during narrower correction rounds;
 - whether any Discovery Probe observation or targeted development-check result was incorrectly substituted for independent Evidence;
 - whether the product state is human-verifiable as intended.
 
