@@ -3,7 +3,7 @@ name: gdo-independent-review
 description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.6.0"
+  version: "4.7.0"
   role: "Independent Review"
 ---
 
@@ -59,6 +59,14 @@ CI green, launcher success, artifact presence, helper validation, or worker summ
 
 Independent Review must not silently implement substantive corrections it will then accept.
 
+## CP2 proof-history inspection
+
+When the campaign opted into `gdo-proof-history-policy/v1`, inspect the durable proof-attempt history when it is material to the acceptance decision. Confirm that repeated same-proof method/fixture BLOCKED attempts were not bypassed by a changed fingerprint alone; any post-threshold fresh Evidence launch must be supported by a newer durable METHOD READY result or an explicit bounded human re-entry override.
+
+METHOD READY feedback is not acceptance Evidence. Likewise, an in-round mechanical correction is acceptable only when the original attempt is preserved and the correction receipt demonstrates unchanged source, proof/claim, assertions/bounds and fixture/acceptance meaning. A correction or override never grants PASS authority.
+
+Do not require synthetic CP2 history from pre-CP2/frozen campaigns.
+
 ## Review record discipline
 
 Review comments are formal decisions, but should still be delta-oriented. State the main reason, material findings, proof basis/disposition, and route. Reference the checkpoint, full diff, Evidence record/bundle, and source-of-truth rather than reproducing them.
@@ -96,7 +104,9 @@ Use when product intent/architecture remain valid but substantive implementation
 
 ### verification-blocked
 
-Use when implementation may be acceptable but required proof is missing, invalid, stale, ambiguous, or inconclusive. Route to a fresh Evidence session. Identify proof to retain, exact missing/invalid proof, whether recovery or execution is needed, constraints, and closure condition. A fresh round is not a fresh campaign: do not request a full rerun merely because the session or candidate SHA is new, and require concrete invalidation reasons for any previously valid proof that must be rerun.
+Use when implementation may be acceptable but required proof is missing, invalid, stale, ambiguous, or inconclusive. Identify proof to retain, exact missing/invalid proof, whether recovery or execution is needed, constraints, and closure condition. A fresh round is not a fresh campaign: do not request a full rerun merely because the session or candidate SHA is new, and require concrete invalidation reasons for any previously valid proof that must be rerun.
+
+For a CP2-enabled proof that has reached the repeated method/fixture blocker threshold, do not use Review authority to bypass the re-entry guard. Route the unresolved method through the appropriate existing owner/feedback path; after durable METHOD READY (or bounded human override), the control plane may allow one fresh Evidence round.
 
 ### discovery-required
 
