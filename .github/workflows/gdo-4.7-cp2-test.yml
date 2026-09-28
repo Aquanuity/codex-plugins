@@ -1,0 +1,40 @@
+name: GDO 4.7 CP2 Package Tests
+
+on:
+  push:
+    branches:
+      - feature/gdo-4.7-evidence-economy
+  pull_request:
+    paths:
+      - 'plugins/gated-development-orchestration/**'
+      - '.github/workflows/gdo-4.7-cp2-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax and package contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check plugins/gated-development-orchestration/scripts/check-gdo-v4.mjs
+          node plugins/gated-development-orchestration/scripts/check-gdo-v4.mjs
+      - name: Machine contract JSON
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs=require('fs');
+          const root='plugins/gated-development-orchestration/';
+          const manifest=JSON.parse(fs.readFileSync(root+'.codex-plugin/plugin.json','utf8'));
+          const load=JSON.parse(fs.readFileSync(root+'load-contract.json','utf8'));
+          if(manifest.version!=='4.7.0'||load.version!=='4.7.0') throw new Error('GDO 4.7 version mismatch');
+          if(load.evidence_economy.repeated_blocked_threshold!==2) throw new Error('CP2 threshold mismatch');
+          if(load.evidence_economy.guard_results.join('|')!=='ALLOW|METHOD_DEVELOPMENT_REQUIRED|TRIAGE_REQUIRED') throw new Error('guard result mismatch');
+          NODE
