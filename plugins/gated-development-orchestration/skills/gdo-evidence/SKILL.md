@@ -3,7 +3,7 @@ name: gdo-evidence
 description: GDO Evidence / Testing role for fresh independent execution, proof reuse/recovery, tiny repair, exact tested commit, outcomes, and terminal publication behavior.
 compatibility: Load with gdo-workflow from the same package commit and exactly one Evidence operator mode.
 metadata:
-  version: "4.6.0"
+  version: "4.7.0"
   role: "Evidence / Testing"
 ---
 
@@ -42,6 +42,8 @@ Issue comments marked `targeted-check-request:v1` or `targeted-check-result:v1` 
 
 A formal Evidence worker must verify the final handed-off candidate under the normal Evidence authority/reuse rules. Do not import a targeted-check PASS into the proof ledger as if it were Evidence.
 
+For CP2 verification-method development, targeted-check or Discovery-Probe feedback may additionally carry stable Proof ID, canonical Method descriptor/fingerprint and `Method readiness: READY | NOT_READY | INCONCLUSIVE`. READY establishes executability/readiness only. It cannot satisfy the proof, establish product correctness, become REVIEW READY, or PASS; Evidence must independently execute the acceptance method against the bound candidate.
+
 ## Admission provenance and stable proof IDs
 
 When the triggering Implementation record opted into `evidence-admission:v1`, fetch the committed `gdo-proof-ledger/v1` at the exact admitted candidate before execution. Admission is readiness only; independently judge whether the proof plan is semantically adequate against current authority.
@@ -50,13 +52,20 @@ Use the ledger's stable proof IDs in the Evidence proof disposition. Later round
 
 Legacy/frozen triggers without the admission marker keep their existing evidence process; do not manufacture a proof ledger after the fact merely to opt them into the new transport.
 
+When the admitted ledger additionally opts into `gdo-proof-history-policy/v1`, this Evidence round is CP2 proof-history enabled. Preserve stable proof IDs and publish the deterministic per-proof sidecar required by the runner. For each affected mandatory proof record at least: disposition; blocker class when blocked; relevant source disposition; method fingerprint; METHOD READY reference when applicable; Evidence request/dispatch identity; and route recommendation. Do not hand-author the durable issue marker; the deterministic publisher validates the sidecar and appends `gated-development:evidence-proof-history:v1`.
+
+A formal launch reaching this worker after a repeated-blocker threshold must have passed the deterministic re-entry guard. Do not reinterpret or model-override its state. A changed method fingerprint alone is not evidence that a suppressed method is ready.
+
 ## Independent coverage judgment
 
 Implementation's AC map and recipe are inputs, not proof. Compare them to current authority before execution.
 
 - materially missing/inadequate durable acceptance coverage -> IMPLEMENTATION REQUIRED;
 - unresolved expected product/architecture meaning -> DISCOVERY REQUIRED;
-- execution/provenance/environment gap -> BLOCKED;
+- demonstrated product defect -> IMPLEMENTATION REQUIRED;
+- unresolved product/native behavior -> DISCOVERY REQUIRED;
+- verification-method / fixture / infrastructure execution gap -> BLOCKED with the CP2 blocker classification/route when enabled;
+- contract contradiction/impossible frozen proof -> BLOCKED with `CONTRACT_CONTRADICTION` and route recommendation Definition through Governance;
 - complete proof surface -> execute/reuse/recover according to the selected operator mode.
 
 Mechanical helper success never establishes semantic adequacy and never issues PASS.
@@ -84,6 +93,16 @@ A newer candidate/source SHA by itself does not invalidate unrelated proof. In l
 Later rounds execute the smallest sufficient set: previously failed proof, previously blocked/missing proof, concretely invalidated proof, explicitly fresh obligations, and regressions directly made necessary by the correction or observed risk. Do not mechanically rerun the original campaign because the round/session or SHA changed.
 
 If a broader rerun is required, state the concrete invalidation reason for the affected retained proof.
+
+## Mechanical verification invocation correction
+
+This is separate from product-source tiny repair. Inside the same active Evidence session, one mechanical verification invocation mistake may be corrected only when the frozen recipe/helper explicitly allows that correction class and all acceptance meaning remains unchanged.
+
+Allowed classes are bounded invocation mistakes such as arithmetic request correction within the same frozen legal bounds, quoting/path typo, harness serialization error, or deterministic fixture locator typo. Preserve the original failed attempt and use the deterministic correction receipt to link original/corrected attempts, correction class/reason, source fingerprint, proof/claim identity, assertion/contract fingerprint, and original/corrected method fingerprints.
+
+Fail closed and route out normally if the proposed correction changes product source, expected behavior, assertion/bound, fixture meaning, acceptance criteria, or material runtime interpretation, or if classification is ambiguous. At most one mechanical correction is allowed for an obligation; there is no retry-until-green.
+
+Legacy/manual Evidence follows the same semantic policy but does not fabricate strict helper receipts retroactively.
 
 ## Tiny repair
 
