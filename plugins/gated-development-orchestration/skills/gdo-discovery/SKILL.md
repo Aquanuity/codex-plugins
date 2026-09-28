@@ -3,7 +3,7 @@ name: gdo-discovery
 description: GDO Discovery role for source-backed investigation, architecture/ownership tracing, source-of-truth and architecture-lock decisions, and downstream routing.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.6.0"
+  version: "4.7.0"
   role: "Discovery"
 ---
 
@@ -76,6 +76,9 @@ Allowed probe work may include a disposable harness, temporary instrumentation, 
 - Expected useful outcomes: <observations that distinguish the alternatives>
 - Artifact requested: <none or exact screenshot/log/result>
 - Probe implementation disposition: <NONE | EPHEMERAL | AUTHORIZED_RESEARCH_ARTIFACT>
+- Proof ID: <stable proof ID> <!-- CP2 verification-method development only -->
+- Method descriptor: <canonical stable JSON descriptor> <!-- CP2 only -->
+- Method fingerprint: <lowercase SHA-256 of descriptor> <!-- CP2 only -->
 - Classification: DISCOVERY FEEDBACK ONLY
 ```
 
@@ -105,10 +108,16 @@ Allowed probe work may include a disposable harness, temporary instrumentation, 
 - Observation: <concise factual result; structured sub-observations allowed>
 - Artifact: <durable reference or none>
 - Final probe implementation disposition: <NONE | DISCARDED | PRESERVED_RESEARCH_ARTIFACT:<ref>>
+- Proof ID: <same stable proof ID> <!-- CP2 verification-method development only -->
+- Method descriptor: <same canonical stable JSON descriptor> <!-- CP2 only -->
+- Method fingerprint: <same lowercase SHA-256> <!-- CP2 only -->
+- Method readiness: <READY | NOT_READY | INCONCLUSIVE> <!-- CP2 only -->
 - Classification: DISCOVERY FEEDBACK ONLY
 ```
 
 Do not use PASS/FAIL or an Evidence `Outcome:` field. `COMPLETED` means the requested observation was obtained; Governance still interprets what it means.
+
+For CP2 verification-method development, use the additive proof/method fields only when the bounded uncertainty is whether a native/runtime method is executable. `Method readiness: READY` means executable enough to return to one fresh formal Evidence round; it remains DISCOVERY FEEDBACK ONLY and cannot satisfy the proof. Fingerprint change without READY is not sufficient.
 
 The result returns to the **same persistent Governance Discovery worker** and Discovery continues. A Human TAKEOVER of Discovery may issue an AUTO subordinate probe, but the result must not revive or dispatch the superseded automated Governance worker; it remains durable GitHub feedback for the human-owned round.
 
