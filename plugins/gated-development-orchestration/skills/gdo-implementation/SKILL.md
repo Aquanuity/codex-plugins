@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.7.1"
+  version: "4.7.2"
   role: "Implementation"
 ---
 
@@ -60,7 +60,7 @@ A correction may invalidate prior proof only where the changed source/input/beha
 
 ## Targeted development feedback loop
 
-During an active Implementation round, use targeted development checks when a correction needs a narrow runtime/native observation that Implementation cannot efficiently execute itself.
+During an active Implementation round, use targeted development checks when a correction needs a narrow runtime/native observation that Implementation cannot efficiently execute itself. Before dispatch, separate the candidate behavior being checked from the apparatus used to reach it. There must be no known unrelated harness, transport, fixture, environment, or setup blocker preventing the intended observation. When build/compile/test execution itself is the bounded question, that execution is the observation and need not be pre-proven.
 
 The loop is intentionally asymmetric:
 
@@ -76,9 +76,11 @@ Requirements:
 5. treat PASS/FAIL/BLOCKED as development feedback only;
 6. after feedback, either continue correcting, request another bounded check, or publish the normal final Implementation record when engineering-stable;
 7. do not claim Evidence coverage, REVIEW READY, or PASS from targeted checks;
-8. if feedback exposes material architecture/product uncertainty, leave the loop and route Discovery/Definition under normal rules.
+8. if feedback exposes material architecture/product uncertainty, leave the loop and route Discovery/Definition under normal rules;
+9. if the check stops before the intended candidate observation because of apparatus/setup failure, repair that apparatus inside the active Implementation round and re-establish readiness before another check;
+10. do not use successive targeted checks as a harness/transport/debug loop.
 
-A targeted check can be repeated against successive candidate SHAs inside one Implementation round. Interim candidates do not need canonical Implementation handoff records.
+A targeted check can be repeated against successive candidate SHAs inside one Implementation round after a materially relevant candidate correction or when a newly exposed bounded candidate question requires external observation. An unchanged or unfixed apparatus failure alone is not sufficient reason for another dispatch. Interim candidates do not need canonical Implementation handoff records.
 
 ### Canonical targeted-check request
 
