@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.7.1"
+  version: "4.7.2"
   protocol: "github-gated-development-v3"
 ---
 
@@ -117,7 +117,7 @@ Governance Triage may identify that a bounded executable observation is needed, 
 
 A targeted development check is a lightweight Implementation-side feedback dispatch, not a GDO round, not Evidence / Testing, and not acceptance proof.
 
-Use it only while an Implementation round remains active and a specific candidate needs one bounded observation that Implementation cannot efficiently obtain itself (for example a native GIS restart/check, one browser behavior, one hardware/runtime observation, or one narrow automated command).
+Use it only while an Implementation round remains active and a specific candidate needs one bounded observation that Implementation cannot efficiently obtain itself (for example a native GIS restart/check, one browser behavior, one hardware/runtime observation, or one narrow automated command). Before dispatch, distinguish the intended candidate observation from the apparatus used to reach it and ensure no known unrelated harness, transport, fixture, environment, or setup blocker prevents that observation. When build/compile/test execution itself is the bounded question, that execution is the observation and need not be pre-proven. If a check stops before the intended candidate observation because of apparatus/setup failure, repair the apparatus inside Implementation and re-establish readiness before another check; do not use targeted-check dispatches as a harness/transport/debug loop.
 
 Canonical request marker:
 `<!-- gated-development:targeted-check-request:v1 -->`
@@ -131,7 +131,7 @@ A request must bind one exact candidate/source identity, one bounded check, and 
 
 Targeted-check PASS means only that the requested development observation passed. It MUST NOT be serialized or interpreted as Evidence outcome, proof-ledger closure, REVIEW READY, Independent Review, or checkpoint PASS.
 
-Implementation may issue repeated targeted checks inside the same Implementation round while stabilizing the bounded failure class. The final candidate still requires the normal Implementation handoff and an independent formal Evidence / Testing round.
+Implementation may issue repeated targeted checks inside the same Implementation round after a materially relevant candidate correction or when a newly exposed bounded candidate question requires external observation. An unchanged or unfixed apparatus failure alone is not sufficient reason for another dispatch. The final candidate still requires the normal Implementation handoff and an independent formal Evidence / Testing round.
 
 For a CP2 verification-method-development check only, the request/result may additionally bind a stable Proof ID plus a canonical Method descriptor and lowercase SHA-256 Method fingerprint. The result then also records `Method readiness: READY | NOT_READY | INCONCLUSIVE`. These fields are additive: ordinary targeted checks remain unchanged. READY means the method is executable/deterministic enough to return to a fresh formal Evidence session; it is still DEVELOPMENT FEEDBACK ONLY and cannot satisfy the proof.
 
@@ -157,6 +157,7 @@ Inside one active Evidence session, a mechanical verification invocation correct
 
 - Human activation authorizes executable work. Material intent/scope/architecture/acceptance change -> Definition + explicit human re-authorization. Actor takeover alone never supplies that amendment authority.
 - Material architecture/product uncertainty -> Discovery; material checkpoint invalidation -> Definition.
+- If Implementation reveals that the activated checkpoint actually contains multiple independently reviewable product claims or substantial separately ownable verification/runtime infrastructure, route to Definition for decomposition rather than carrying an oversized round indefinitely. Large diff/file/test count, required multi-layer changes for one coherent claim, or a broad formal Evidence campaign alone do not trigger a split.
 - Never fabricate SHAs, IDs, approvals, runtime/model identity, tests, artifacts, outcomes, or proof.
 - A fresh Evidence round is not a fresh campaign. Retain still-valid proof unless a concrete applicability/provenance/freshness reason invalidates it; a new source SHA alone is not sufficient invalidation.
 - Evidence defect aggregation may broaden useful diagnosis within the authorized campaign, but never automatically broadens rerun scope.
