@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.7.1",
+  "version": "4.7.2",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,10 +54,10 @@
     }
   },
   "budgets_bytes": {
-    "core": 19000,
-    "standard_role_total": 39000,
-    "evidence_total": 44500,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.1 allows <=19,000 bytes for core, <=39,000 bytes for standard-role required loads, and <=44,500 bytes for Evidence including one selected operator mode. The bounded increases preserve explicit Discovery Probe readiness and anti-debug-loop guidance without compressing existing Evidence safeguards; future increases require explicit design disposition."
+    "core": 20000,
+    "standard_role_total": 40000,
+    "evidence_total": 45500,
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.2 allows <=20,000 bytes for core, <=40,000 bytes for standard-role required loads, and <=45,500 bytes for Evidence including one selected operator mode. The bounded increases preserve checkpoint-sizing and targeted-check readiness rules without compressing existing safeguards; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -160,7 +160,10 @@
         "method readiness READY | NOT_READY | INCONCLUSIVE"
       ],
       "semantics": "Method readiness answers whether the proposed verification method is executable/deterministic enough to return to fresh formal Evidence. It is DEVELOPMENT FEEDBACK ONLY and cannot close a proof ID."
-    }
+    },
+    "readiness_rule": "Before dispatch, Implementation must distinguish the intended candidate observation from the apparatus used to reach it and ensure no known unrelated harness, transport, fixture, environment, or setup blocker prevents that observation. When build/compile/test execution itself is the bounded question, it is the observation and need not be pre-proven.",
+    "apparatus_failure_rule": "If a targeted check stops before the intended candidate observation because of an apparatus/setup defect, repair the apparatus inside the active Implementation round and re-establish readiness before another check; do not use successive targeted checks as a harness/transport/debug loop.",
+    "repeat_rule": "Repeat checks after a materially relevant candidate correction or when a newly exposed bounded candidate question requires external observation. An unchanged or unfixed apparatus failure alone is not sufficient reason for another dispatch."
   },
   "discovery_probes": {
     "request_marker": "gated-development:discovery-probe-request:v1",
@@ -297,5 +300,12 @@
     "mechanical_correction_schema": "gdo-evidence-mechanical-correction/v1",
     "mechanical_correction_rule": "At most one frozen-allowlist non-semantic invocation correction inside the active Evidence session; preserve the original attempt and fail closed on source/assertion/bound/fixture/acceptance/runtime-meaning change.",
     "acceptance_authority": "none; the guard and METHOD READY feedback cannot issue Evidence outcomes, REVIEW READY, Independent Review, or PASS."
+  },
+  "checkpoint_sizing": {
+    "owner": "definition",
+    "activation_rule": "Before Implementation activation, confirm the checkpoint is one coherent engineering/product claim with a clear primary ownership path and a reasonable route to one evidence-ready candidate in one persistent Implementation round.",
+    "split_signal": "Split when the checkpoint contains multiple meaningful independently reviewable product states/claims or requires substantial separately ownable verification/runtime infrastructure in addition to the product change.",
+    "non_signals": "Large diff/file/test count, multi-layer changes required by one coherent claim, or a broad formal Evidence campaign alone are not sufficient reasons to split.",
+    "implementation_escape_hatch": "If Implementation later reveals multiple independently reviewable claims or substantial separately ownable verification infrastructure, route to Definition for decomposition rather than carrying an oversized round indefinitely."
   }
 }
