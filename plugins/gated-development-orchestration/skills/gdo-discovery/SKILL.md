@@ -3,7 +3,7 @@ name: gdo-discovery
 description: GDO Discovery role for source-backed investigation, architecture/ownership tracing, source-of-truth and architecture-lock decisions, and downstream routing.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.7.0"
+  version: "4.7.1"
   role: "Discovery"
 ---
 
@@ -33,7 +33,7 @@ Discovery may occur at any checkpoint number. It is not exclusively CP1.
 1. Re-fetch the current checkpoint, activation/amendments, source-of-truth, repository/native behavior, and relevant predecessor authority.
 2. Separate observed facts from hypotheses.
 3. Trace ownership, call paths, dependencies, constraints, and existing behavior needed to answer the material questions.
-4. If a material question still cannot be answered confidently by inspection and an executable observation would materially distinguish the alternatives, issue one bounded Discovery Probe under the contract below and continue Discovery from the result.
+4. If a material question still cannot be answered confidently by inspection and an executable observation would materially distinguish the alternatives, first prepare the bounded experiment until it is runnable to the material observation with no known apparatus blocker; then issue one Discovery Probe and continue from the result.
 5. Record source-backed findings and rejected alternatives when they materially affect downstream choices.
 6. Create or amend durable source-of-truth / architecture-lock material when the finding must guide later workers.
 7. Obtain explicit human approval before a newly discovered material product/architecture direction becomes controlling. Human performance of Discovery, by takeover or otherwise, does not itself amend the controlling contract.
@@ -49,9 +49,16 @@ Use a probe only when:
 - the unresolved fact materially affects the architecture/product recommendation;
 - source/document/native inspection is insufficient;
 - the minimal experiment can be bounded;
+- the apparatus, fixtures, build/package path, execution entrypoint, runtime/deployment prerequisites, and cleanup path have no known blocker to reaching the material observation;
 - the observation is more useful than further speculation.
 
 A single probe may include multiple tightly coupled observations when all are necessary to distinguish the same alternatives. Do not split one coherent experiment merely to force one observation per dispatch.
+
+### Probe readiness
+
+Readiness is operational, not evidentiary: it does not require knowing the native/runtime behavior in advance. Build, packaging, deployment setup, fixture/catalog recovery, disposable branch/harness repair, and transport/setup fixes stay inside the active Discovery round and are not probes. Establish those prerequisites before dispatch so the experiment can reach the material observation with no known blocker.
+
+If a dispatched probe stops before the material observation because of an apparatus defect, repair the apparatus and re-establish readiness before another probe. Do not use successive probe dispatches as a build/debug loop. A genuinely new material uncertainty may justify a new probe; an unfixed or newly exposed setup defect does not by itself.
 
 Allowed probe work may include a disposable harness, temporary instrumentation, isolated prototype, native/runtime/MCP/browser observation, hardware experiment, or equivalent bounded mechanism. It must not become an excuse to implement the checkpoint in Governance.
 
@@ -72,6 +79,7 @@ Allowed probe work may include a disposable harness, temporary instrumentation, 
 - Executor: <AUTO | HUMAN>
 - Question: <one bounded uncertainty>
 - Why source inspection is insufficient: <concise reason>
+- Readiness: <why apparatus can reach the material observation; no known setup blocker>
 - Experiment: <minimal experiment; may include tightly coupled observations>
 - Expected useful outcomes: <observations that distinguish the alternatives>
 - Artifact requested: <none or exact screenshot/log/result>

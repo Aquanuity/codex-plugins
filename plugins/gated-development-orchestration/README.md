@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.7.0
+# Gated Development Orchestration Plugin 4.7.1
 
-GDO 4.7 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while adding opt-in repeated same-proof blocker control, durable verification-method readiness, and narrowly bounded mechanical Evidence invocation correction.
+GDO 4.7.1 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while retaining GDO 4.7 evidence-economy controls and hardening Discovery Probe readiness.
 
 ## Normal loading
 
@@ -55,7 +55,7 @@ The markers are:
 - `<!-- gated-development:discovery-probe-request:v1 -->`
 - `<!-- gated-development:discovery-probe-result:v1 -->`
 
-A probe owns one bounded uncertainty, although its minimal experiment may include several tightly coupled observations needed to distinguish the alternatives. Requests bind source identity separately from the required execution surface/runtime. Results use `COMPLETED | BLOCKED | INCONCLUSIVE`, never PASS/FAIL.
+A probe owns one bounded uncertainty, although its minimal experiment may include several tightly coupled observations needed to distinguish the alternatives. Before dispatch, Discovery must establish that apparatus, fixtures, build/package steps, execution entrypoint, runtime/deployment prerequisites, and cleanup path have no known blocker to reaching the material observation. Preparing or repairing those prerequisites remains Discovery work, not a probe, and readiness does not require knowing the behavior under investigation. If a probe stops before the material observation because of apparatus failure, repair and re-establish readiness before another probe; never use successive probe dispatches as a build/debug loop. Requests bind source identity separately from the required execution surface/runtime. Results use `COMPLETED | BLOCKED | INCONCLUSIVE`, never PASS/FAIL.
 
 Probe code is normally disposable/ephemeral and must not silently become production implementation. Probe observations are **DISCOVERY FEEDBACK ONLY**: they can inform source-of-truth/architecture recommendations but cannot amend the checkpoint contract, satisfy acceptance criteria, replace formal Evidence, or PASS.
 
