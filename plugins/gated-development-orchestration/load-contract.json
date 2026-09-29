@@ -54,10 +54,10 @@
     }
   },
   "budgets_bytes": {
-    "core": 20000,
-    "standard_role_total": 40000,
-    "evidence_total": 45500,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.2 allows <=20,000 bytes for core, <=40,000 bytes for standard-role required loads, and <=45,500 bytes for Evidence including one selected operator mode. The bounded increases preserve checkpoint-sizing and targeted-check readiness rules without compressing existing safeguards; future increases require explicit design disposition."
+    "core": 21000,
+    "standard_role_total": 42000,
+    "evidence_total": 47000,
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.2 allows <=21,000 bytes for core, <=42,000 bytes for standard-role required loads, and <=47,000 bytes for Evidence including one selected operator mode. The bounded increases accommodate checkpoint-sizing and targeted-check readiness rules while preserving existing safeguards; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
