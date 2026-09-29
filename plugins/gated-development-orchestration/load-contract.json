@@ -56,8 +56,8 @@
   "budgets_bytes": {
     "core": 19000,
     "standard_role_total": 39000,
-    "evidence_total": 44000,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.1 allows <=19,000 bytes for core, <=39,000 bytes for standard-role required loads, and <=44,000 bytes for Evidence including one selected operator mode. The bounded core increase preserves explicit Discovery Probe readiness and anti-debug-loop guidance; future increases require explicit design disposition."
+    "evidence_total": 44500,
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.1 allows <=19,000 bytes for core, <=39,000 bytes for standard-role required loads, and <=44,500 bytes for Evidence including one selected operator mode. The bounded increases preserve explicit Discovery Probe readiness and anti-debug-loop guidance without compressing existing Evidence safeguards; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
