@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.7.0",
+  "version": "4.7.1",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,10 +54,10 @@
     }
   },
   "budgets_bytes": {
-    "core": 18500,
+    "core": 19000,
     "standard_role_total": 39000,
-    "evidence_total": 44000,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7 measures 18,243 bytes for core, 38,158 bytes for the largest standard Implementation+recipe load, and 43,536 bytes for strict Evidence at this candidate. Ceilings of 18,500 / 39,000 / 44,000 leave only bounded review margin while preserving explicit CP2 repeated-blocker, method-readiness and mechanical-correction safeguards; future increases require explicit design disposition."
+    "evidence_total": 44500,
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.1 allows <=19,000 bytes for core, <=39,000 bytes for standard-role required loads, and <=44,500 bytes for Evidence including one selected operator mode. The bounded increases preserve explicit Discovery Probe readiness and anti-debug-loop guidance without compressing existing Evidence safeguards; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -185,6 +185,7 @@
       "executor AUTO/HUMAN",
       "one bounded uncertainty",
       "why inspection is insufficient",
+      "readiness basis showing no known apparatus blocker prevents reaching the material observation",
       "minimal experiment",
       "expected useful outcomes",
       "artifact request",
@@ -235,7 +236,9 @@
         "method readiness READY | NOT_READY | INCONCLUSIVE"
       ],
       "semantics": "Runtime/native method readiness is Discovery feedback only. READY permits consideration of one fresh formal Evidence round; it is not acceptance proof."
-    }
+    },
+    "readiness_rule": "Before dispatch, Discovery must establish that required apparatus, fixtures, build/package steps, execution entrypoint, runtime/deployment prerequisites, and cleanup path have no known blocker to reaching the material observation. Readiness does not require knowing the native/runtime behavior under investigation.",
+    "apparatus_failure_rule": "Apparatus preparation and repair remain ordinary work inside the active Discovery round and are not probes. If a probe stops before the material observation because of apparatus failure, repair and re-establish readiness before another probe; do not use successive probe dispatches as a build/debug loop."
   },
   "evidence_admission": {
     "marker": "gated-development:evidence-admission:v1",

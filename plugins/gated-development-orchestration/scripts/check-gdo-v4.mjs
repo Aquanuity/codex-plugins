@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.7.0', 'manifest version must be 4.7.0');
+ensure(manifest.version === '4.7.1', 'manifest version must be 4.7.1');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.7.0"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.7.1"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -87,11 +87,12 @@ for (const marker of [
   'gated-development:evidence-reentry-override:v1',
   'READY | NOT_READY | INCONCLUSIVE',
   'no sixth round',
-  'never retry until green'
+  'never retry until green',
+  'do not use probe dispatches as a build/debug loop'
 ]) ensure(core.includes(marker), `core missing canonical marker/token: ${marker}`);
 
 const discovery=read(skills.discovery);
-for (const phrase of ['Discovery probes','discovery-probe-request:v1','discovery-probe-result:v1','DISCOVERY FEEDBACK ONLY','Execution surface: <required client/runtime/surface | ANY>','Probe status: <COMPLETED | BLOCKED | INCONCLUSIVE>','AUTHORIZED_RESEARCH_ARTIFACT','Method readiness: <READY | NOT_READY | INCONCLUSIVE>','Method fingerprint: <same lowercase SHA-256>']) ensure(discovery.includes(phrase), `Discovery probe contract missing: ${phrase}`);
+for (const phrase of ['Discovery probes','discovery-probe-request:v1','discovery-probe-result:v1','DISCOVERY FEEDBACK ONLY','Execution surface: <required client/runtime/surface | ANY>','Readiness: <why apparatus can reach the material observation; no known setup blocker>','Probe status: <COMPLETED | BLOCKED | INCONCLUSIVE>','AUTHORIZED_RESEARCH_ARTIFACT','Method readiness: <READY | NOT_READY | INCONCLUSIVE>','Method fingerprint: <same lowercase SHA-256>','Probe readiness','build/debug loop']) ensure(discovery.includes(phrase), `Discovery probe contract missing: ${phrase}`);
 
 const impl=read(skills.implementation);
 ensure(impl.includes('Recipe: <repository-relative path@ending-sha>'), 'Implementation template missing committed recipe binding');
@@ -143,6 +144,9 @@ ensure(contract.discovery_probes?.parent_role === 'discovery', 'Discovery probes
 ensure(contract.discovery_probes?.governance_triage_ownership === 'forbidden', 'Governance Triage must not own Discovery probes');
 ensure(contract.discovery_probes?.human_takeover_rule?.includes('must not resurrect'), 'Discovery probe Human TAKEOVER return rule missing');
 ensure(contract.discovery_probes?.formal_evidence_rule?.includes('cannot satisfy'), 'Discovery probe non-Evidence rule missing');
+ensure(contract.discovery_probes?.readiness_rule?.includes('no known blocker'), 'Discovery probe readiness rule missing');
+ensure(contract.discovery_probes?.apparatus_failure_rule?.includes('build/debug loop'), 'Discovery probe apparatus-repair rule missing');
+ensure(contract.discovery_probes?.request_must_bind?.some(x=>x.includes('readiness basis')), 'Discovery probe readiness binding missing');
 ensure(contract.targeted_development_checks?.lifecycle_effect === 'none', 'targeted checks must not create lifecycle transitions');
 ensure(contract.targeted_development_checks?.executor_modes?.AUTO && contract.targeted_development_checks?.executor_modes?.HUMAN, 'targeted checks must define AUTO/HUMAN executor modes');
 ensure(contract.targeted_development_checks?.formal_evidence_required_after_final_implementation_handoff === true, 'targeted checks must not replace formal Evidence');

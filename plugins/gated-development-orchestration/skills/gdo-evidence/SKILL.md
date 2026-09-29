@@ -3,7 +3,7 @@ name: gdo-evidence
 description: GDO Evidence / Testing role for fresh independent execution, proof reuse/recovery, tiny repair, exact tested commit, outcomes, and terminal publication behavior.
 compatibility: Load with gdo-workflow from the same package commit and exactly one Evidence operator mode.
 metadata:
-  version: "4.7.0"
+  version: "4.7.1"
   role: "Evidence / Testing"
 ---
 

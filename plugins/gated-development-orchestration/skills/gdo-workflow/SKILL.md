@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.7.0"
+  version: "4.7.1"
   protocol: "github-gated-development-v3"
 ---
 
@@ -89,7 +89,7 @@ Do not repeat unchanged AC text, architecture prose, recipe bodies, raw logs, co
 
 A Discovery Probe is a lightweight Discovery-side feedback dispatch, not a GDO round, not Implementation, not Evidence / Testing, and not acceptance proof.
 
-Use it only while a Discovery round is active and one material uncertainty cannot be answered confidently from source/document/native inspection alone. The observation must materially affect the Discovery recommendation. Do not use a probe to move ordinary implementation work into Governance.
+Use it only while a Discovery round is active and one material uncertainty cannot be answered confidently from source/document/native inspection alone. The observation must materially affect the Discovery recommendation. Before dispatch, Discovery must establish that the bounded experiment is runnable to the material observation: required apparatus, fixtures, build/package, entrypoint, runtime/deployment prerequisites, and cleanup path have no known blocker. Preparation/repair stays inside Discovery and is not itself a probe; readiness does not require knowing the behavior being investigated. If a probe stops before the material observation because of apparatus failure, repair and re-establish readiness before another probe; do not use probe dispatches as a build/debug loop. Do not use a probe to move ordinary implementation work into Governance.
 
 Canonical request marker:
 `<!-- gated-development:discovery-probe-request:v1 -->`
@@ -99,7 +99,7 @@ Canonical result marker:
 
 Both records carry the existing governance and implementation thread markers. They preserve the parent Discovery authority and do not change checkpoint scope, architecture, acceptance criteria, work-order version, or lifecycle round number.
 
-A request binds one bounded uncertainty, a stable Probe ID, source identity, required execution surface, whether exact runtime identity is required, `Executor: AUTO | HUMAN`, why inspection is insufficient, the minimal experiment, expected useful outcomes, requested artifact, and probe-implementation disposition. One bounded uncertainty may require multiple tightly coupled observations when all are necessary to distinguish the alternatives.
+A request binds one bounded uncertainty, a stable Probe ID, source identity, required execution surface, whether exact runtime identity is required, `Executor: AUTO | HUMAN`, why inspection is insufficient, a readiness basis, the minimal experiment, expected useful outcomes, requested artifact, and probe-implementation disposition. One bounded uncertainty may require multiple tightly coupled observations when all are necessary to distinguish the alternatives.
 
 A result records the exact request/probe identity, source identity actually tested, actual execution surface/runtime, `COMPLETED | BLOCKED | INCONCLUSIVE`, factual observations, artifacts, and final probe-code disposition. It returns to the same persistent Governance Discovery worker.
 

@@ -3,7 +3,7 @@ name: gdo-independent-review
 description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.7.0"
+  version: "4.7.1"
   role: "Independent Review"
 ---
 
