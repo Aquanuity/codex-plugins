@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.7.1', 'manifest version must be 4.7.1');
+ensure(manifest.version === '4.7.2', 'manifest version must be 4.7.2');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.7.1"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.7.2"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -88,8 +88,13 @@ for (const marker of [
   'READY | NOT_READY | INCONCLUSIVE',
   'no sixth round',
   'never retry until green',
-  'do not use probe dispatches as a build/debug loop'
+  'do not use probe dispatches as a build/debug loop',
+  'do not use targeted-check dispatches as a harness/transport/debug loop',
+  'route to Definition for decomposition rather than carrying an oversized round indefinitely'
 ]) ensure(core.includes(marker), `core missing canonical marker/token: ${marker}`);
+
+const definition=read(skills.definition);
+for (const phrase of ['Pre-Implementation sizing','one coherent engineering/product claim','independently reviewable product states/claims','Do not split merely because the diff is large']) ensure(definition.includes(phrase), `Definition sizing contract missing: ${phrase}`);
 
 const discovery=read(skills.discovery);
 for (const phrase of ['Discovery probes','discovery-probe-request:v1','discovery-probe-result:v1','DISCOVERY FEEDBACK ONLY','Execution surface: <required client/runtime/surface | ANY>','Readiness: <why apparatus can reach the material observation; no known setup blocker>','Probe status: <COMPLETED | BLOCKED | INCONCLUSIVE>','AUTHORIZED_RESEARCH_ARTIFACT','Method readiness: <READY | NOT_READY | INCONCLUSIVE>','Method fingerprint: <same lowercase SHA-256>','Probe readiness','build/debug loop']) ensure(discovery.includes(phrase), `Discovery probe contract missing: ${phrase}`);
@@ -100,7 +105,7 @@ ensure(impl.includes('checks actually performed are separated from verification 
 ensure(impl.includes('Correction-round completeness'), 'Implementation correction-completeness rule missing');
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
-for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>','Method readiness: <READY | NOT_READY | INCONCLUSIVE>','gdo-proof-history-policy/v1']) ensure(impl.includes(phrase), `Implementation targeted-check/CP2 contract missing: ${phrase}`);
+for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>','Method readiness: <READY | NOT_READY | INCONCLUSIVE>','gdo-proof-history-policy/v1','harness/transport/debug loop','build/compile/test execution itself is the bounded question']) ensure(impl.includes(phrase), `Implementation targeted-check/CP2 contract missing: ${phrase}`);
 for (const phrase of ['Admission-enabled structured publication','gdo-proof-ledger/v1','gated-development:lifecycle-publication-request:v1 type=implementation','admission_enabled: true','Proof ledger: <repository-relative gdo-proof-ledger/v1 path@ending-sha>']) ensure(impl.includes(phrase), `Implementation admission contract missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
@@ -150,6 +155,13 @@ ensure(contract.discovery_probes?.request_must_bind?.some(x=>x.includes('readine
 ensure(contract.targeted_development_checks?.lifecycle_effect === 'none', 'targeted checks must not create lifecycle transitions');
 ensure(contract.targeted_development_checks?.executor_modes?.AUTO && contract.targeted_development_checks?.executor_modes?.HUMAN, 'targeted checks must define AUTO/HUMAN executor modes');
 ensure(contract.targeted_development_checks?.formal_evidence_required_after_final_implementation_handoff === true, 'targeted checks must not replace formal Evidence');
+ensure(contract.targeted_development_checks?.readiness_rule?.includes('need not be pre-proven'), 'targeted-check readiness rule missing');
+ensure(contract.targeted_development_checks?.apparatus_failure_rule?.includes('harness/transport/debug loop'), 'targeted-check apparatus repair rule missing');
+ensure(contract.targeted_development_checks?.repeat_rule?.includes('not sufficient reason'), 'targeted-check repeat discipline missing');
+ensure(contract.checkpoint_sizing?.owner === 'definition', 'checkpoint sizing owner must be Definition');
+ensure(contract.checkpoint_sizing?.split_signal?.includes('independently reviewable'), 'checkpoint sizing split signal missing');
+ensure(contract.checkpoint_sizing?.non_signals?.includes('broad formal Evidence'), 'checkpoint sizing non-signal guard missing');
+ensure(contract.checkpoint_sizing?.implementation_escape_hatch?.includes('route to Definition'), 'checkpoint sizing Implementation escape hatch missing');
 ensure(contract.evidence_admission?.marker === 'gated-development:evidence-admission:v1', 'Evidence Admission marker missing from load contract');
 ensure(contract.evidence_admission?.lifecycle_effect === 'none', 'Evidence Admission must not become a lifecycle round');
 ensure(contract.evidence_admission?.proof_ledger_schema === 'gdo-proof-ledger/v1', 'Proof ledger schema missing from load contract');

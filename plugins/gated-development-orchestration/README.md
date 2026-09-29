@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.7.1
+# Gated Development Orchestration Plugin 4.7.2
 
-GDO 4.7.1 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while retaining GDO 4.7 evidence-economy controls and hardening Discovery Probe readiness.
+GDO 4.7.2 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while retaining prior evidence/probe safeguards and adding checkpoint-sizing plus targeted-check apparatus discipline.
 
 ## Normal loading
 
@@ -47,6 +47,12 @@ The rule is **compress prose, never provenance**. Keep exact identities, SHAs, m
 
 Evidence → Implementation keeps the richer 4.2 correction packet. Implementation → Evidence keeps root cause/failure class, directly coupled paths inspected, focused regression coverage, and retained/affected proof. Shorter comments must never make the next worker guess.
 
+## Pre-Implementation sizing
+
+Before activating Implementation, Definition should confirm the checkpoint is one coherent engineering/product claim with a clear primary ownership path and a reasonable route to one evidence-ready candidate in one persistent Implementation round. Split when there are multiple meaningful independently reviewable product states/claims or substantial separately ownable verification/runtime infrastructure in addition to the product change.
+
+Do not split merely because the diff is large, one coherent claim spans several layers/files, tests are numerous, or formal Evidence will be broad. If Implementation later reveals that the activated checkpoint was materially oversized in this sense, return to Definition for decomposition rather than carrying the round indefinitely.
+
 ## Discovery probes
 
 A Discovery Probe is a lightweight executable experiment inside an active Discovery round. It exists for the narrow case where source/document/native inspection cannot confidently answer a material question that must be resolved before Governance can recommend an architecture/product direction.
@@ -63,7 +69,7 @@ Governance Triage does not own probes. Triage may identify that an executable ob
 
 ## Targeted development checks
 
-A targeted development check is a lightweight Implementation-side feedback dispatch for one exact candidate and one bounded question. Typical use is a native/runtime observation that Implementation cannot efficiently execute itself, such as a GIS restart check.
+A targeted development check is a lightweight Implementation-side feedback dispatch for one exact candidate and one bounded question. Typical use is a native/runtime observation that Implementation cannot efficiently execute itself, such as a GIS restart check. Before dispatch, Implementation separates the candidate behavior being checked from the apparatus used to reach it and ensures no known unrelated harness, transport, fixture, environment, or setup blocker prevents the intended observation. Build/compile/test execution may itself be the bounded observation and need not be pre-proven.
 
 The loop is:
 
@@ -75,7 +81,7 @@ The markers are:
 - `<!-- gated-development:targeted-check-request:v1 -->`
 - `<!-- gated-development:targeted-check-result:v1 -->`
 
-A targeted-check PASS is not Evidence, does not satisfy an AC/proof obligation by itself, and cannot produce REVIEW READY or PASS. After the final stabilized candidate is handed off normally, an independent formal Evidence / Testing round is still required.
+A targeted-check PASS is not Evidence, does not satisfy an AC/proof obligation by itself, and cannot produce REVIEW READY or PASS. If a check stops before the intended candidate observation because of apparatus/setup failure, repair that apparatus inside Implementation before another dispatch; do not use successive targeted checks as a harness/transport/debug loop. Repeated checks should follow a materially relevant candidate correction or a newly exposed bounded candidate question; an unchanged/unfixed apparatus failure alone is not enough. After the final stabilized candidate is handed off normally, an independent formal Evidence / Testing round is still required.
 
 For CP2 method development only, targeted checks or Discovery Probes may also bind a stable proof ID, canonical method descriptor/fingerprint, and `Method readiness: READY | NOT_READY | INCONCLUSIVE`. READY means the method is executable enough to return to formal Evidence; it is not acceptance proof.
 

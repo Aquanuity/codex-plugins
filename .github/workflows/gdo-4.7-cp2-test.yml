@@ -34,7 +34,7 @@ jobs:
           const root='plugins/gated-development-orchestration/';
           const manifest=JSON.parse(fs.readFileSync(root+'.codex-plugin/plugin.json','utf8'));
           const load=JSON.parse(fs.readFileSync(root+'load-contract.json','utf8'));
-          if(manifest.version!=='4.7.1'||load.version!=='4.7.1') throw new Error('GDO 4.7.1 version mismatch');
+          if(manifest.version!=='4.7.2'||load.version!=='4.7.2') throw new Error('GDO 4.7.2 version mismatch');
           if(load.evidence_economy.repeated_blocked_threshold!==2) throw new Error('CP2 threshold mismatch');
           if(load.evidence_economy.guard_results.join('|')!=='ALLOW|METHOD_DEVELOPMENT_REQUIRED|TRIAGE_REQUIRED') throw new Error('guard result mismatch');
           NODE

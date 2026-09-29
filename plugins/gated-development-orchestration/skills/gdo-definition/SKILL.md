@@ -3,7 +3,7 @@ name: gdo-definition
 description: GDO Definition role for product intent, human-verifiable checkpoints, acceptance criteria, activation, amendments, and thread rebind records.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.7.1"
+  version: "4.7.2"
   role: "Definition"
 ---
 
@@ -40,6 +40,19 @@ A top-level checkpoint is valid when:
 Classes, DTOs, registrations, helpers, individual files, or compilation alone are implementation tasks/sub-checkpoints, not top-level checkpoints.
 
 Human-verifiable does not automatically mean human-blocking. Do not invent mandatory manual sign-off unless the human/checkpoint requires it.
+
+## Pre-Implementation sizing
+
+Before activating Implementation, confirm that the checkpoint:
+1. is one coherent engineering/product claim rather than several loosely coupled outcomes;
+2. has a clear primary ownership/path even when that path spans multiple required layers;
+3. can reasonably converge to one evidence-ready candidate in one persistent Implementation round;
+4. does not contain multiple meaningful product states/claims that would each be independently reviewable if work stopped there;
+5. does not require substantial separately ownable verification/runtime infrastructure in addition to the product change.
+
+Split the checkpoint before Implementation when two or more meaningful independently reviewable product states/claims exist, or when separately ownable verification/runtime infrastructure would otherwise become a second major engineering claim. Preserve the parent intent and acceptance meaning while making the resulting checkpoints independently coherent.
+
+Do not split merely because the diff is large, many files/tests are involved, one coherent claim necessarily crosses API/native/UI layers, or formal Evidence will be broad. Those are execution-cost signals, not decomposition authority by themselves.
 
 Discovery is not synonymous with CP1. If material behavior, ownership, architecture, or source truth is unknown, route to Discovery before deterministic Implementation.
 
