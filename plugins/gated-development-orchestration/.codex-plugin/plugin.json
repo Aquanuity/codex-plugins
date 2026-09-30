@@ -1,6 +1,6 @@
 {
   "name": "gated-development-orchestration",
-  "version": "4.7.2",
+  "version": "4.7.3",
   "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, Evidence Admission, durable proof history, repeated-blocker economy, bounded method development, mechanical correction, and independent review.",
   "author": {
     "name": "Aquanuity"
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Gated Development Orchestration",
     "shortDescription": "Role-scoped checkpoint development orchestration",
-    "longDescription": "GDO 4.7.2 preserves the v3 lifecycle and GDO 4.7.1 probe-readiness hardening while adding pre-Implementation checkpoint sizing and targeted-check apparatus discipline.",
+    "longDescription": "GDO 4.7.3 preserves the v3 lifecycle and prior readiness safeguards while adding owner-aware Evidence Admission continuation: Implementation-owned rejection returns to the same round, infrastructure rejection remains non-round, and TRIAGE_REQUIRED routes to Governance Triage.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
     "capabilities": [
@@ -33,6 +33,7 @@
       "Load the GDO workflow core and only the active role skill.",
       "Perform the authorized GDO round using current GitHub authority and current actor authority.",
       "For new product-code Evidence handoffs, use the opt-in Evidence Admission marker and committed gdo-proof-ledger/v1 contract; admission is control-plane readiness, never acceptance proof.",
+      "Treat Evidence Admission as a non-round owner-aware gate: implementation-owned NOT_READY resumes the same Implementation round; infrastructure-owned NOT_READY creates no lifecycle round; TRIAGE_REQUIRED routes Governance Triage.",
       "For CP2 proof-history-enabled campaigns, respect the deterministic Evidence re-entry guard: repeated same-proof verification-method blockers require durable METHOD READY feedback or an explicit bounded human override before another formal Evidence round.",
       "Use targeted development checks or Discovery Probes for bounded verification-method development; method readiness is development feedback only and cannot satisfy Evidence proof.",
       "Before dispatching a Discovery Probe, establish that its apparatus can reach the material observation with no known setup blocker; keep build/package/deployment/fixture/transport repair inside Discovery and never use successive probes as a build/debug loop.",
