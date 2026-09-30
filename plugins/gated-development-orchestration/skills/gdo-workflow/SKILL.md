@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.7.2"
+  version: "4.7.3"
   protocol: "github-gated-development-v3"
 ---
 
@@ -137,7 +137,7 @@ For a CP2 verification-method-development check only, the request/result may add
 
 ## Evidence Admission
 
-Opt-in READY handoffs marked `gated-development:evidence-admission:v1` bind candidate, recipe and `gdo-proof-ledger/v1`, then pass a non-round gate. Only `ADMITTED` launches Evidence; `NOT_READY | TRIAGE_REQUIRED` do not. Admission is not proof; deterministic failure beats AI; unmarked handoffs stay legacy.
+Opt-in READY handoffs marked `gated-development:evidence-admission:v1` bind candidate, recipe and `gdo-proof-ledger/v1`, then pass a non-round gate. `ADMITTED` launches fresh Evidence. Implementation-owned `NOT_READY` resumes the **same active Implementation round/session** for bounded readiness repair and republication; it does not create Implementation Round N+1. Infrastructure-owned `NOT_READY` creates no lifecycle round and may recheck the same Admission identity after repair. `TRIAGE_REQUIRED` routes Governance Triage. Admission is not proof; deterministic failure beats AI; unmarked handoffs stay legacy.
 
 Admission-enabled Implementation submits `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner renders the canonical record.
 
