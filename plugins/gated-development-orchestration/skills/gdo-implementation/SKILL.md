@@ -3,7 +3,7 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.7.2"
+  version: "4.7.3"
   role: "Implementation"
 ---
 
@@ -139,6 +139,12 @@ A local file is not delivered unless recipient access is established; disclose l
 A result returns to the same persistent Implementation worker. It does not end the Implementation round. The worker should use it immediately as engineering feedback and avoid publishing `READY FOR EVIDENCE / TESTING` until the bounded correction is reasonably stabilized.
 
 When a repeated CP2 Evidence blocker has routed verification-method development here, use the additive Proof ID / Method descriptor / Method fingerprint fields. The result must state `Method readiness: READY | NOT_READY | INCONCLUSIVE`. A changed fingerprint without durable READY does not justify another formal Evidence round. READY closes only the method-development question; fresh Evidence must still execute the acceptance proof independently.
+
+## Evidence Admission feedback continuation
+
+An Implementation-owned Admission `NOT_READY` is control-plane readiness feedback inside the **same active Implementation round**. Fetch the rejected Implementation record and Admission receipt, fix only the bounded readiness defect, preserve unrelated product code/proof content, commit any needed correction, and republish the canonical READY record with the same round number. Do not manufacture a new Implementation round merely because Admission rejected the handoff.
+
+Infrastructure-owned `NOT_READY` is not Implementation work unless the repair actually requires candidate changes; it creates no lifecycle round. `TRIAGE_REQUIRED` belongs to Governance Triage. Admission never supplies acceptance proof.
 
 ## Evidence-ready completion
 
