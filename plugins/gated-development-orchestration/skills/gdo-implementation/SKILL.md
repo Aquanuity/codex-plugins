@@ -82,12 +82,24 @@ Requirements:
 
 A targeted check can be repeated against successive candidate SHAs inside one Implementation round after a materially relevant candidate correction or when a newly exposed bounded candidate question requires external observation. An unchanged or unfixed apparatus failure alone is not sufficient reason for another dispatch. Interim candidates do not need canonical Implementation handoff records.
 
+### Observation sufficiency and recipient access
+
+The parent specifies the minimum observed values, output, or visual state needed to answer the bounded question using the existing Check, Expected, Setup / action, and Artifact requested fields. Prefer decisive captured output inline when it answers the question. A command, exit code, and relevant output can be sufficient for a command-result question; visible rendering may require a screenshot rather than a feature count. A separate attachment is not required when inline data is sufficient.
+
+The executor reports actual observations separately from interpretation, including unexpected/contradictory results and limitations. Preserve enough command/API/input and candidate/runtime context to interpret captured output; do not substitute only PASS/FAIL prose for decisive data. Redact secrets and unrelated private data, and disclose truncation/redaction that limits interpretation. Small Captured output or Limitations sections may follow the canonical fields without duplicating machine fields or introducing lifecycle markers; full session logs are not required.
+
+A file saved locally is not automatically delivered. A local reference is sufficient only when access by the actual receiving worker is established; do not assume access from the worker's role or thread name. Otherwise provide an authorized accessible reference or explicitly describe the delivery/access limitation in Observation/Artifact. Unknown access is not confirmed delivery. Do not invent a URL or bypass the authorized publication path.
+
+Implementation inspects the decisive returned data or requested artifact before relying on it for a correction conclusion that needs that information. Missing delivery is not by itself a product FAIL. An unavailable required screenshot leaves the visual conclusion unresolved; an optional missing attachment does not block a question already answered by sufficient inline data. Keep execution status and delivery limitations distinct under the existing status meanings; this adds no outcome or automatic failure rule.
+
+Recover or deliver the existing capture under its original request/candidate/runtime identity before considering another check. Delivery trouble alone does not authorize a rerun, new check, or mutation of a frozen result; use the existing authorized recovery/publication path. These are feedback-sufficiency rules, not a new bundle, mandatory upload, proof ledger, or acceptance Evidence gate. Existing frozen requests keep their contract.
+
 ### Canonical targeted-check request
 
 ```markdown
 <!-- gated-development:targeted-check-request:v1 -->
-<!-- gated-development:governance-thread:v1 id=<UUID> -->
 <!-- gated-development:implementation-thread:v1 id=<UUID> -->
+<!-- gated-development:governance-thread:v1 id=<UUID> -->
 ## Targeted development check
 
 - Checkpoint: <ID>
@@ -99,7 +111,7 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Check: <one bounded question>
 - Expected: <specific expected observation>
 - Setup / action: <minimal steps or command>
-- Artifact requested: <none or exact screenshot/log/file>
+- Artifact requested: <minimum inline data or exact file needed; none when unnecessary>
 - Proof ID: <stable proof ID> <!-- CP2 method-development only -->
 - Method descriptor: <canonical stable JSON descriptor> <!-- CP2 method-development only -->
 - Method fingerprint: <lowercase SHA-256 of descriptor> <!-- CP2 method-development only -->
@@ -121,8 +133,8 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Candidate tested: <exact sha>
 - Executor: <AUTO | HUMAN>
 - Result: <PASS | FAIL | BLOCKED>
-- Observation: <concise actual observation>
-- Artifact: <none or durable reference>
+- Observation: <actual decisive data, interpretation limits, and any delivery limitation>
+- Artifact: <inline data location, recipient-accessible reference, or none/unavailable with reason>
 - Proof ID: <same stable proof ID> <!-- CP2 method-development only -->
 - Method descriptor: <same canonical stable JSON descriptor> <!-- CP2 method-development only -->
 - Method fingerprint: <same lowercase SHA-256> <!-- CP2 method-development only -->
