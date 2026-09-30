@@ -1,6 +1,6 @@
 # Gated Development Orchestration Plugin 4.7.3
 
-GDO 4.7.3 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while retaining prior evidence/probe safeguards and adding checkpoint-sizing plus targeted-check apparatus discipline.
+GDO 4.7.3 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while adding owner-aware Admission continuation on top of the existing checkpoint-sizing and apparatus-readiness safeguards.
 
 ## Normal loading
 
