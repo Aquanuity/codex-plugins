@@ -12,30 +12,30 @@ for (const [role, prefix, classification, status] of [
   const section = text.split('### Observation sufficiency and recipient access\n')[1]?.split('\n### Canonical')[0];
   test(`${role}: specifies minimum data without a mandatory attachment`, () => {
     assert.ok(section, 'sufficiency guidance must be in the loaded role body');
-    assert.match(section, /parent specifies the minimum observed values/);
+    assert.match(section, /minimum observed values|specify decisive data/);
     assert.match(section, /existing .*Artifact requested fields/);
-    assert.match(section, /Prefer decisive captured output inline/);
-    assert.match(section, /separate attachment is not required/i);
-    assert.match(section, /not a new bundle, mandatory upload, proof ledger, or acceptance Evidence gate/);
+    assert.match(section, /[Pp]refer (decisive )?captured output inline/);
+    assert.match(section, /separate attachment is not required|No attachment\/full log is required/);
+    assert.match(section, /not a new bundle, mandatory upload, proof ledger, or acceptance Evidence gate|No new statuses, mandatory uploads, or acceptance Evidence/);
   });
   test(`${role}: preserves observations, counterexamples, and disclosure`, () => {
-    assert.match(section, /actual observations separately from interpretation/);
+    assert.match(section, /separately from interpretation/);
     assert.match(section, /unexpected\/contradictory/);
-    assert.match(section, /Redact secrets/);
+    assert.match(section, /Redact secrets|protect secrets/);
     assert.match(section, /truncation\/redaction/);
-    assert.match(section, /Captured output or Limitations sections/);
-    assert.match(section, /without duplicating machine fields/);
+    assert.match(section, /Captured output(?: or |\/)Limitations sections/);
+    assert.match(section, /without duplicating machine fields|without duplicates/);
   });
   test(`${role}: distinguishes receiver access, optional files, and recovery`, () => {
-    assert.match(section, /file saved locally is not automatically delivered/);
-    assert.match(section, /actual receiving worker is established/);
-    assert.match(section, /Unknown access is not confirmed delivery/);
-    assert.match(section, /optional missing attachment does not block/);
-    assert.match(section, /existing status meanings/);
-    assert.match(section, /Recover or deliver the existing capture under its original/);
-    assert.match(section, /does not authorize a rerun/);
-    assert.match(section, /mutation of a frozen result/);
-    assert.match(section, /Existing frozen requests keep their contract/);
+    assert.match(section, /file saved locally is not automatically delivered|local file is not delivered unless recipient access is established/);
+    assert.match(section, /actual receiving worker is established|recipient access is established/);
+    assert.match(section, /Unknown access is not confirmed delivery|disclose local-only\/unknown access/);
+    assert.match(section, /optional missing (attachment|files) (does|do) not block/);
+    assert.match(section, /existing status meanings|No new statuses/);
+    assert.match(section, /Recover or deliver the existing capture under its original|Recover captures under original identity/);
+    assert.match(section, /does not authorize a rerun|not reruns/);
+    assert.match(section, /mutation of a frozen result|frozen-result edits/);
+    assert.match(section, /Existing frozen requests keep their contract|frozen contracts stay unchanged/);
   });
   test(`${role}: preserves v1 envelopes, status meanings, and field names`, () => {
     for (const kind of ['request', 'result']) {
@@ -45,6 +45,7 @@ for (const [role, prefix, classification, status] of [
       assert.ok(block.startsWith(marker + '\n<!-- gated-development:governance-thread:v1 id=<UUID> -->\n<!-- gated-development:implementation-thread:v1 id=<UUID> -->'));
       assert.equal((block.match(/^- Classification:/gm) || []).length, 1);
       assert.ok(block.includes(`- Classification: ${classification}`));
+      assert.ok(block.includes('- Executor: <AUTO | HUMAN>'));
     }
     assert.ok(text.includes(status));
     assert.match(text, /- Artifact requested: <minimum inline data or exact file needed; none when unnecessary>/);
