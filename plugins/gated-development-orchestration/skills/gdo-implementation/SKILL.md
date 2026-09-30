@@ -77,7 +77,7 @@ Requirements:
 6. after feedback, either continue correcting, request another bounded check, or publish the normal final Implementation record when engineering-stable;
 7. do not claim Evidence coverage, REVIEW READY, or PASS from targeted checks;
 8. if feedback exposes material architecture/product uncertainty, leave the loop and route Discovery/Definition under normal rules;
-9. if the check stops before the intended candidate observation because of apparatus/setup failure, repair that apparatus inside the active Implementation round and re-establish readiness before another check;
+9. if the check stops before the intended candidate observation because of apparatus/setup failure, repair the apparatus inside the active Implementation round and re-establish readiness before another check;
 10. do not use successive targeted checks as a harness/transport/debug loop.
 
 A targeted check can be repeated against successive candidate SHAs inside one Implementation round after a materially relevant candidate correction or when a newly exposed bounded candidate question requires external observation. An unchanged or unfixed apparatus failure alone is not sufficient reason for another dispatch. Interim candidates do not need canonical Implementation handoff records.
@@ -125,7 +125,7 @@ A local file is not delivered unless recipient access is established; disclose l
 - Check ID: <same id as request>
 - Targeted check request: <request comment URL or id>
 - Candidate tested: <exact sha>
-- Executor: AUTO
+- Executor: <AUTO | HUMAN>
 - Result: <PASS | FAIL | BLOCKED>
 - Observation: <actual decisive data, interpretation limits, and any delivery limitation>
 - Artifact: <inline data location, recipient-accessible reference, or none/unavailable with reason>
@@ -138,7 +138,7 @@ A local file is not delivered unless recipient access is established; disclose l
 
 A result returns to the same persistent Implementation worker. It does not end the Implementation round. The worker should use it immediately as engineering feedback and avoid publishing `READY FOR EVIDENCE / TESTING` until the bounded correction is reasonably stabilized.
 
-When a repeated CP2 Evidence blocker has routed verification-method development here, use the additive Proof ID / Method descriptor / Method fingerprint fields. The result must state `Method readiness: READY | NOT_READY | INCONCLUSIVE>`. A changed fingerprint without durable READY does not justify another formal Evidence round. READY closes only the method-development question; fresh Evidence must still execute the acceptance proof independently.
+When a repeated CP2 Evidence blocker has routed verification-method development here, use the additive Proof ID / Method descriptor / Method fingerprint fields. The result must state `Method readiness: READY | NOT_READY | INCONCLUSIVE`. A changed fingerprint without durable READY does not justify another formal Evidence round. READY closes only the method-development question; fresh Evidence must still execute the acceptance proof independently.
 
 ## Evidence-ready completion
 
