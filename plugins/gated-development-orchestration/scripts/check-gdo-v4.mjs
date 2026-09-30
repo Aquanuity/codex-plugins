@@ -10,7 +10,7 @@ const ensure = (ok, msg) => { if (!ok) throw new Error(msg); };
 
 const manifest = JSON.parse(read('.codex-plugin/plugin.json'));
 const contract = JSON.parse(read('load-contract.json'));
-ensure(manifest.version === '4.7.2', 'manifest version must be 4.7.2');
+ensure(manifest.version === '4.7.3', 'manifest version must be 4.7.3');
 ensure(contract.version === manifest.version, 'load-contract version mismatch');
 ensure(contract.protocol === 'github-gated-development-v3', 'protocol changed unexpectedly');
 
@@ -26,7 +26,7 @@ const skills = {
 for (const [name,p] of Object.entries(skills)) {
   ensure(fs.existsSync(path.join(root,p)), `missing ${name}: ${p}`);
   const body=read(p);
-  ensure(body.includes('version: "4.7.2"'), `${name} frontmatter version mismatch`);
+  ensure(body.includes('version: "4.7.3"'), `${name} frontmatter version mismatch`);
 }
 ensure(bytes(skills.workflow) <= contract.budgets_bytes.core, 'workflow core exceeds byte budget');
 
@@ -90,7 +90,9 @@ for (const marker of [
   'never retry until green',
   'do not use probe dispatches as a build/debug loop',
   'do not use targeted-check dispatches as a harness/transport/debug loop',
-  'route to Definition for decomposition rather than carrying an oversized round indefinitely'
+  'route to Definition for decomposition rather than carrying an oversized round indefinitely',
+  'same active Implementation round/session',
+  'Infrastructure-owned `NOT_READY` creates no lifecycle round'
 ]) ensure(core.includes(marker), `core missing canonical marker/token: ${marker}`);
 
 const definition=read(skills.definition);
@@ -106,7 +108,7 @@ ensure(impl.includes('Correction-round completeness'), 'Implementation correctio
 ensure(impl.includes('directly coupled manifestations'), 'Implementation failure-class inspection rule missing');
 for (const phrase of ['### Reason','### What changed','### Correction packet','### Proof disposition']) ensure(impl.includes(phrase), `Implementation delta-comment field missing: ${phrase}`);
 for (const phrase of ['Targeted development feedback loop','targeted-check-request:v1','targeted-check-result:v1','DEVELOPMENT FEEDBACK ONLY','Executor: <AUTO | HUMAN>','Candidate commit: <exact sha>','Candidate tested: <exact sha>','Method readiness: <READY | NOT_READY | INCONCLUSIVE>','gdo-proof-history-policy/v1','harness/transport/debug loop','build/compile/test execution itself is the bounded question']) ensure(impl.includes(phrase), `Implementation targeted-check/CP2 contract missing: ${phrase}`);
-for (const phrase of ['Admission-enabled structured publication','gdo-proof-ledger/v1','gated-development:lifecycle-publication-request:v1 type=implementation','admission_enabled: true','Proof ledger: <repository-relative gdo-proof-ledger/v1 path@ending-sha>']) ensure(impl.includes(phrase), `Implementation admission contract missing: ${phrase}`);
+for (const phrase of ['Admission-enabled structured publication','gdo-proof-ledger/v1','gated-development:lifecycle-publication-request:v1 type=implementation','admission_enabled: true','Proof ledger: <repository-relative gdo-proof-ledger/v1 path@ending-sha>','Evidence Admission feedback continuation','same active Implementation round']) ensure(impl.includes(phrase), `Implementation admission contract missing: ${phrase}`);
 
 const evidence=read(skills.evidence);
 ensure(evidence.includes('Every automated Evidence round uses a fresh session/context'), 'Evidence fresh-session rule missing');
@@ -139,7 +141,7 @@ for (const phrase of ['Mechanical invocation correction','--mechanical-correctio
 
 const recipe=read('skills/gdo-workflow/references/verification-recipe.md');
 ensure(recipe.includes('not a blanket instruction to rerun every step'), 'Verification recipe later-round economy rule missing');
-for (const phrase of ['Evidence Admission and Proof Ledger v1','gdo-proof-ledger/v1','candidateBinding: "containing-commit"','numeric-bound','semanticAdmission','Optional CP2 proof-history policy','gdo-proof-history-policy/v1','Fingerprint inequality']) ensure(recipe.includes(phrase), `Verification recipe admission/CP2 contract missing: ${phrase}`);
+for (const phrase of ['Evidence Admission and Proof Ledger v1','gdo-proof-ledger/v1','candidateBinding: "containing-commit"','recipePath','recipeSha256','admissionChecks','source-path-exists','uses `path`, not `ref`','semanticAdmission','Use `none` by default','Optional CP2 proof-history policy','gdo-proof-history-policy/v1','Fingerprint inequality']) ensure(recipe.includes(phrase), `Verification recipe admission/CP2 contract missing: ${phrase}`);
 
 ensure(contract.lifecycle_comments?.principle?.includes('Compress prose, never provenance'), 'load-contract lifecycle comment principle missing');
 ensure(Array.isArray(contract.lifecycle_comments?.scan_order) && contract.lifecycle_comments.scan_order.length === 5, 'load-contract lifecycle comment scan order missing');
@@ -166,6 +168,10 @@ ensure(contract.evidence_admission?.marker === 'gated-development:evidence-admis
 ensure(contract.evidence_admission?.lifecycle_effect === 'none', 'Evidence Admission must not become a lifecycle round');
 ensure(contract.evidence_admission?.proof_ledger_schema === 'gdo-proof-ledger/v1', 'Proof ledger schema missing from load contract');
 ensure(contract.evidence_admission?.deterministic_failure_precedence === true, 'Deterministic Admission failure must have precedence');
+ensure(contract.evidence_admission?.owner_aware_continuation?.implementation?.includes('same frozen Implementation round/session'), 'Admission Implementation continuation rule missing');
+ensure(contract.evidence_admission?.owner_aware_continuation?.infrastructure?.includes('same Admission request identity'), 'Admission infrastructure recheck rule missing');
+ensure(contract.evidence_admission?.owner_aware_continuation?.governance?.includes('Governance Triage'), 'Admission Governance route missing');
+ensure(contract.evidence_admission?.proof_ledger_top_level_fields?.join('|') === 'recipePath|recipeSha256|admissionChecks', 'Admission canonical proof-ledger top-level fields mismatch');
 ensure(Array.isArray(contract.evidence_admission?.results) && contract.evidence_admission.results.join('|') === 'ADMITTED|NOT_READY|TRIAGE_REQUIRED', 'Evidence Admission result set mismatch');
 ensure(contract.lifecycle_publication?.input_schema === 'gdo-lifecycle-implementation/v1', 'Structured lifecycle publication schema mismatch');
 
