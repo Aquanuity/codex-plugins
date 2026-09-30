@@ -10,7 +10,7 @@ Dependencies include authority, exact source/build identity, required observatio
 
 In the existing ledger, record remaining obligations, dependencies and deferral reasons. Group only items sharing a dependency; identify all IDs. Resolve unknown safety/dependency before executing that item, not by blocking known-independent items.
 
-A failed assertion is an observed result, not an unattempted test. Preserve it; never retry until green, rerun satisfied unrelated proof, or expand the campaign to stay busy. Work must add valid coverage or bounded diagnosis. Inconvenience or inability to reach overall PASS does not justify deferral.
+A failed assertion is an observed result, not an unattempted test. Preserve it; never retry until green. Rerun retained proof only for a concrete freshness/applicability reason; do not expand the campaign to stay busy. Work must add valid coverage or bounded diagnosis. Inconvenience or inability to reach overall PASS does not justify deferral.
 
 ## Audit before ending, handing off, or freezing
 
@@ -46,4 +46,4 @@ Use existing narrative fields/linked ledger; no new lifecycle JSON fields or dis
 - Artifact completeness: preserved executed-work records, missing campaign artifacts, exact local/durable references and provenance gaps.
 - Publication/delivery: not attempted, unavailable, frozen, uncertain, acknowledged, or delivered as actually observed; actual recipient access.
 
-Never claim completion with independent executable work remaining. If an audit helper is unavailable, record the semantic audit directly; its absence is not a whole-round blocker.
+Never claim completion with eligible independent work remaining. If an audit helper is unavailable, record the semantic audit directly; its absence is not a whole-round blocker.
