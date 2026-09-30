@@ -1,6 +1,6 @@
 {
   "name": "gated-development-orchestration",
-  "version": "4.7.3",
+  "version": "4.7.4",
   "description": "Coordinate human-verifiable checkpoint development through role-scoped rounds, Evidence Admission, durable proof history, repeated-blocker economy, bounded method development, mechanical correction, and independent review.",
   "author": {
     "name": "Aquanuity"
@@ -22,7 +22,7 @@
   "interface": {
     "displayName": "Gated Development Orchestration",
     "shortDescription": "Role-scoped checkpoint development orchestration",
-    "longDescription": "GDO 4.7.3 preserves the v3 lifecycle and prior readiness safeguards while adding owner-aware Evidence Admission continuation: Implementation-owned rejection returns to the same round, infrastructure rejection remains non-round, and TRIAGE_REQUIRED routes to Governance Triage.",
+    "longDescription": "GDO 4.7.4 adds workflow-wide dependency-scoped blockers and a mandatory pre-finalization remaining-work audit while preserving authority, safety, Evidence independence, and terminal publication rules.",
     "developerName": "Aquanuity",
     "category": "Developer Tools",
     "capabilities": [
@@ -31,6 +31,7 @@
     ],
     "defaultPrompt": [
       "Load the GDO workflow core and only the active role skill.",
+      "Scope every blocker to its dependent obligations. Before finalizing or freezing a round, continue all useful safe authorized independent work and report execution, artifact completeness, and delivery separately; preserve authority and terminal publication stops.",
       "Perform the authorized GDO round using current GitHub authority and current actor authority.",
       "For new product-code Evidence handoffs, use the opt-in Evidence Admission marker and committed gdo-proof-ledger/v1 contract; admission is control-plane readiness, never acceptance proof.",
       "Treat Evidence Admission as a non-round owner-aware gate: implementation-owned NOT_READY resumes the same Implementation round; infrastructure-owned NOT_READY creates no lifecycle round; TRIAGE_REQUIRED routes Governance Triage.",

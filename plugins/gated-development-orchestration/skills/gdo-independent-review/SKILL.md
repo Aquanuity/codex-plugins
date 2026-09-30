@@ -3,13 +3,17 @@ name: gdo-independent-review
 description: GDO Independent Review role for fresh whole-claim inspection of authority, source, cumulative diff, proof adequacy, architecture placement, and formal PASS/correction outcomes.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.7.3"
+  version: "4.7.4"
   role: "Independent Review"
 ---
 
 # GDO Independent Review
 
 Required: load `../gdo-workflow/SKILL.md` from the same snapshot. Do not treat Implementation/Evidence summaries as proof. Load detailed recipe/operator schemas only when material to a provenance claim.
+
+## Scoped blocker audit
+
+Apply the workflow core's mandatory remaining-work audit and same-snapshot blocker-scoping reference when blocked and before an incomplete handoff. Missing required proof prevents dependent conclusions and PASS, not independent review of available source/evidence. Complete useful authorized review before the truthful handoff; do not fill missing proof with inference. Put the audit and separate execution/artifact/delivery facts in existing narrative fields or a linked ledger; do not add lifecycle JSON fields. Existing authority and terminal-stop rules retain precedence.
 
 ## Question
 

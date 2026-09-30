@@ -28,7 +28,7 @@ Before each expensive command, identify which obligation it closes. After the ac
 
 Use unique output/report paths for repeated runs.
 
-After a substantive failure, preserve it and continue only independent authorized obligations whose result remains meaningful and safe. Skip/mark blocked any obligation that depends on the failed behavior or invalid state. Aggregate related demonstrated failures when useful; do not continue merely to search speculatively outside the campaign.
+After any failed or blocked operation, preserve it and apply the core scoped blocker audit. The worker must continue only independent authorized obligations whose result remains meaningful and safe, and must not finalize while such useful executable work remains. Skip/mark blocked any obligation that depends on the failed behavior or invalid state. Aggregate related demonstrated failures when useful; do not continue merely to search speculatively outside the campaign.
 
 ## Preserve the contract
 
@@ -53,7 +53,7 @@ If a purely mechanical invocation mistake is corrected manually inside this acti
 
 ## Closure audit
 
-Before selecting Outcome:
+Before selecting Outcome, complete the core remaining-work audit and account for every unexecuted obligation. Keep execution, artifact completeness, and publication/delivery separate. Then:
 1. re-fetch the trigger and current checkpoint authority;
 2. read the ledger line by line;
 3. verify every mandatory item against its exact proof/run identity;

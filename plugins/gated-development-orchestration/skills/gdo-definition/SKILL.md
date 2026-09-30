@@ -3,13 +3,17 @@ name: gdo-definition
 description: GDO Definition role for product intent, human-verifiable checkpoints, acceptance criteria, activation, amendments, and thread rebind records.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.7.3"
+  version: "4.7.4"
   role: "Definition"
 ---
 
 # GDO Definition
 
 Required: load `../gdo-workflow/SKILL.md` from the same package snapshot. Do not load unrelated role bodies.
+
+## Scoped blocker audit
+
+Apply the workflow core's mandatory remaining-work audit and same-snapshot blocker-scoping reference when blocked and before an incomplete handoff. Block only decisions dependent on missing facts or approval; continue independent authorized definition work. Never activate unresolved or unauthorized product decisions. Put the audit and separate execution/artifact/delivery facts in existing narrative fields or a linked ledger; do not add lifecycle JSON fields. Existing authority and terminal-stop rules retain precedence.
 
 ## Question
 

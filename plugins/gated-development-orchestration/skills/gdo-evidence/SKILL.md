@@ -3,7 +3,7 @@ name: gdo-evidence
 description: GDO Evidence / Testing role for fresh independent execution, proof reuse/recovery, tiny repair, exact tested commit, outcomes, and terminal publication behavior.
 compatibility: Load with gdo-workflow from the same package commit and exactly one Evidence operator mode.
 metadata:
-  version: "4.7.3"
+  version: "4.7.4"
   role: "Evidence / Testing"
 ---
 
@@ -19,6 +19,10 @@ Required:
 Strict mode also loads `../gdo-workflow/references/verification-recipe.md`. Do not load Definition/Implementation/Review role bodies.
 
 Every automated Evidence round uses a fresh session/context. A valid Human TAKEOVER may replace the automated Evidence actor in-place when human/native interaction is required; it keeps the same checkpoint, proof obligations, source identity rules, reuse rules, and outcomes.
+
+## Scoped blocker audit
+
+Apply the workflow core's mandatory remaining-work audit and same-snapshot blocker-scoping reference when blocked and before an incomplete handoff. A capability, publication, fixture or test blocker requires the same dependency audit, not only substantive product failures. Complete independent useful checks and capture before finalization; keep missing campaign proof distinct from delivery. Put the audit and separate execution/artifact/delivery facts in existing narrative fields or a linked ledger; do not add lifecycle JSON fields. Existing authority and terminal-stop rules retain precedence.
 
 ## Question
 
@@ -72,7 +76,7 @@ Mechanical helper success never establishes semantic adequacy and never issues P
 
 ## Defect aggregation
 
-A substantive failure does not automatically end useful Evidence execution. Record the failure precisely, then continue other authorized checks only when their results remain independent, meaningful, and safe to obtain.
+Any failed or blocked operation does not automatically end useful Evidence execution. Record the failure precisely, then continue all remaining authorized checks whose results remain independent, meaningful, safe, and within the controlling bounds. This is required even when the round cannot achieve REVIEW READY.
 
 Continue when doing so can characterize the bounded failure cluster or close unaffected obligations without corrupting state or creating misleading proof. Do not continue a check that depends on the failed behavior, uses invalidated fixture/state, risks destructive contamination, or would add material cost without useful diagnostic value; mark it blocked by the demonstrated failure instead.
 
@@ -111,6 +115,10 @@ Evidence may repair only an obvious directly blocking mechanical defect that is 
 Examples: compile typo, missing import, narrow fixture mistake. If reasonable engineers could debate product behavior or architecture, route IMPLEMENTATION REQUIRED.
 
 Record implementation commit received, repair commit/paths/reason, rerun, and final tested commit.
+
+## Pre-finalization remaining-work audit
+
+Before selecting, preparing, or freezing a terminal result, complete the workflow core audit. Publication unavailability before preparation is a delivery blocker, not a reason to defer otherwise executable live work with valid capture and restoration. Preserve the fullest truthful bundle. Record execution/findings, completeness for executed work versus the entire required campaign, and actual publication/recipient access separately. A BLOCKED outcome is not permission to skip independent work.
 
 ## Evidence outcome
 

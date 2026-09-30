@@ -12,7 +12,7 @@ Use the existing deterministic Evidence helper from the runner repository: `scri
 - required dependencies/configuration/fixtures;
 - supported runtime prerequisites.
 
-Missing prerequisites or malformed/unsupported contract are blockers, not permission to fall back silently.
+Missing prerequisites or malformed/unsupported contract block dependent work, not permission to fall back silently. Apply the core scoped blocker audit; an invalid global execution contract still prevents work that requires it.
 
 The helper-generated plan/attempt receipts are the mechanical ledger. Keep only a short worker ACTIVE TASK for semantic coverage/reuse decisions; do not duplicate attempt state by hand.
 
@@ -36,7 +36,7 @@ When the frozen recipe declares an allowed mechanical correction and the failure
 
 Only one corrected attempt is permitted for the obligation. Never use mechanical correction to change product source, expected behavior, assertion/bound, fixture meaning, acceptance criteria, or material runtime interpretation, and never retry until green. If the helper rejects the correction or meaning is ambiguous, route out under normal GDO authority.
 
-After a substantive failure, the Evidence worker may continue other independent authorized steps only when their results remain meaningful and safe. Dependent steps stay blocked rather than being forced through invalid state. Related demonstrated failures may be aggregated into one Implementation-required packet; this does not authorize speculative campaign expansion.
+After any failed or blocked operation, the Evidence worker must continue other independent authorized steps when their results remain meaningful, safe and within the controlling bounds. Complete the core remaining-work audit before finalization. Dependent steps stay blocked rather than being forced through invalid state. Related demonstrated failures may be aggregated into one Implementation-required packet; this does not authorize speculative campaign expansion.
 
 ## Collection and validation
 
@@ -47,6 +47,8 @@ For Playwright v1, preserve the helper's exact result/retry/attachment expectati
 Runtime/package proof binds the actual opened/observed package bytes to verified build outputs; a staging directory alone is insufficient.
 
 ## Bundle and outcome
+
+Perform the core audit before final preparation/freeze. A known publication outage before this boundary does not block independent execution with valid capture/restoration. Account separately for execution/findings, executed-work and campaign artifact completeness, and actual delivery. Preserve existing frozen-publication and uncertain-write restrictions.
 
 The Evidence worker owns semantic coverage assessment, redaction, narrative, and selected Outcome. The helper owns mechanical closure/bundle assembly.
 

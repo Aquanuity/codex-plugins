@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.7.3",
+  "version": "4.7.4",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -8,18 +8,23 @@
     "definition": {
       "path": "skills/gdo-definition/SKILL.md",
       "required": [],
-      "conditional": []
+      "conditional": [
+        "skills/gdo-workflow/references/blocker-scoping.md when an operation fails/is unavailable or before an incomplete handoff"
+      ]
     },
     "discovery": {
       "path": "skills/gdo-discovery/SKILL.md",
       "required": [],
-      "conditional": []
+      "conditional": [
+        "skills/gdo-workflow/references/blocker-scoping.md when an operation fails/is unavailable or before an incomplete handoff"
+      ]
     },
     "implementation": {
       "path": "skills/gdo-implementation/SKILL.md",
       "required": [],
       "conditional": [
-        "skills/gdo-workflow/references/verification-recipe.md for product-code handoff continuing to Evidence"
+        "skills/gdo-workflow/references/verification-recipe.md for product-code handoff continuing to Evidence",
+        "skills/gdo-workflow/references/blocker-scoping.md when an operation fails/is unavailable or before an incomplete handoff"
       ]
     },
     "evidence": {
@@ -36,28 +41,33 @@
             "skills/gdo-workflow/references/verification-recipe.md"
           ]
         }
-      }
+      },
+      "conditional": [
+        "skills/gdo-workflow/references/blocker-scoping.md when an operation fails/is unavailable or before an incomplete handoff"
+      ]
     },
     "independent_review": {
       "path": "skills/gdo-independent-review/SKILL.md",
       "required": [],
       "conditional": [
-        "skills/gdo-workflow/references/verification-recipe.md when recipe/provenance detail is material"
+        "skills/gdo-workflow/references/verification-recipe.md when recipe/provenance detail is material",
+        "skills/gdo-workflow/references/blocker-scoping.md when an operation fails/is unavailable or before an incomplete handoff"
       ]
     },
     "governance_triage": {
       "path": null,
       "required": [],
       "conditional": [
-        "classify the blocker using workflow core only; if executable observation is needed, route to Discovery first; Governance Triage never owns a Discovery Probe"
+        "classify the blocker using workflow core only; if executable observation is needed, route to Discovery first; Governance Triage never owns a Discovery Probe",
+        "skills/gdo-workflow/references/blocker-scoping.md when an operation fails/is unavailable or before an incomplete handoff"
       ]
     }
   },
   "budgets_bytes": {
-    "core": 21500,
-    "standard_role_total": 43500,
-    "evidence_total": 47000,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.3 allows <=21,500 bytes for core, <=43,500 bytes for standard-role required loads, and <=47,000 bytes for Evidence including one selected operator mode. The bounded increase accommodates owner-aware Evidence Admission continuation and explicit proof-ledger authoring rules while preserving existing safeguards; future increases require explicit design disposition."
+    "core": 24000,
+    "standard_role_total": 53000,
+    "evidence_total": 55000,
+    "rationale": "GDO 4.7.4 includes the mandatory workflow-wide remaining-work audit and one conditional blocker-scoping reference. These bounded ceilings include the material conditional load; check-scoped-blockers.mjs prints measured role totals. Existing safeguards are retained; future growth needs explicit disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -75,7 +85,7 @@
     "semantics": "TAKEOVER replaces the actor for one dispatch only; contract effect is NONE; automation resumes only through a new continuation/new dispatch."
   },
   "correction_economy": {
-    "defect_aggregation": "Evidence may continue independent useful authorized checks after a failure when safe; aggregate related demonstrated failures without speculative expansion.",
+    "defect_aggregation": "After any failed/blocked operation, perform the core dependency audit and continue all independent useful safe authorized work before finalizing, within the controlling bounds; no speculative expansion.",
     "implementation_completeness": "Implementation resolves explicit findings and the directly implicated bounded failure class, while avoiding unrelated refactor/scope expansion.",
     "later_round_evidence": "Fresh Evidence round is not a fresh campaign; retain applicable proof and execute only failed, blocked/missing, concretely invalidated, explicitly fresh, or directly affected obligations."
   },
@@ -318,5 +328,25 @@
     "split_signal": "Split when the checkpoint contains multiple meaningful independently reviewable product states/claims or requires substantial separately ownable verification/runtime infrastructure in addition to the product change.",
     "non_signals": "Large diff/file/test count, multi-layer changes required by one coherent claim, or a broad formal Evidence campaign alone are not sufficient reasons to split.",
     "implementation_escape_hatch": "If Implementation later reveals multiple independently reviewable claims or substantial separately ownable verification infrastructure, route to Definition for decomposition rather than carrying an oversized round indefinitely."
+  },
+  "scoped_blockers": {
+    "scope": "all-active-roles-and-actors",
+    "reference": "skills/gdo-workflow/references/blocker-scoping.md",
+    "pre_finalization_audit": "required",
+    "lifecycle_effect": "none",
+    "principle": "A blocker applies only to work that depends on it.",
+    "record_transport": "Existing narrative fields or linked ledger; no new lifecycle JSON fields or outcomes.",
+    "terminal_precedence": [
+      "authority-and-safety",
+      "admission-and-reentry-gates",
+      "frozen-publication",
+      "uncertain-write-reconciliation",
+      "terminal-acknowledgement"
+    ],
+    "status_dimensions": [
+      "execution-progress-and-findings",
+      "executed-work-and-campaign-artifact-completeness",
+      "publication-delivery-and-recipient-access"
+    ]
   }
 }
