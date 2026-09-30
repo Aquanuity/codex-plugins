@@ -84,15 +84,9 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 
 ### Observation sufficiency and recipient access
 
-The parent specifies the minimum observed values, output, or visual state needed to answer the bounded question using the existing Check, Expected, Setup / action, and Artifact requested fields. Prefer decisive captured output inline when it answers the question. A command, exit code, and relevant output can be sufficient for a command-result question; visible rendering may require a screenshot rather than a feature count. A separate attachment is not required when inline data is sufficient.
+Use existing Check/Expected/Artifact requested fields to specify decisive data; prefer captured output inline. No attachment/full log is required when inline data suffices. Report values and unexpected/contradictory results separately from interpretation; disclose limits and truncation/redaction; protect secrets. Captured output/Limitations sections may follow canonical fields without duplicates.
 
-The executor reports actual observations separately from interpretation, including unexpected/contradictory results and limitations. Preserve enough command/API/input and candidate/runtime context to interpret captured output; do not substitute only PASS/FAIL prose for decisive data. Redact secrets and unrelated private data, and disclose truncation/redaction that limits interpretation. Small Captured output or Limitations sections may follow the canonical fields without duplicating machine fields or introducing lifecycle markers; full session logs are not required.
-
-A file saved locally is not automatically delivered. A local reference is sufficient only when access by the actual receiving worker is established; do not assume access from the worker's role or thread name. Otherwise provide an authorized accessible reference or explicitly describe the delivery/access limitation in Observation/Artifact. Unknown access is not confirmed delivery. Do not invent a URL or bypass the authorized publication path.
-
-Implementation inspects the decisive returned data or requested artifact before relying on it for a correction conclusion that needs that information. Missing delivery is not by itself a product FAIL. An unavailable required screenshot leaves the visual conclusion unresolved; an optional missing attachment does not block a question already answered by sufficient inline data. Keep execution status and delivery limitations distinct under the existing status meanings; this adds no outcome or automatic failure rule.
-
-Recover or deliver the existing capture under its original request/candidate/runtime identity before considering another check. Delivery trouble alone does not authorize a rerun, new check, or mutation of a frozen result; use the existing authorized recovery/publication path. These are feedback-sufficiency rules, not a new bundle, mandatory upload, proof ledger, or acceptance Evidence gate. Existing frozen requests keep their contract.
+A local file is not delivered unless recipient access is established; disclose local-only/unknown access, never invent URLs. Inspect data needed for correction conclusions. Missing required captures leave dependent conclusions unresolved; optional missing files do not block sufficient data or imply product FAIL. Recover captures under original identity through authorized publication, not reruns or frozen-result edits. No new statuses, mandatory uploads, or acceptance Evidence; frozen contracts stay unchanged.
 
 ### Canonical targeted-check request
 
@@ -131,7 +125,7 @@ Recover or deliver the existing capture under its original request/candidate/run
 - Check ID: <same id as request>
 - Targeted check request: <request comment URL or id>
 - Candidate tested: <exact sha>
-- Executor: <AUTO | HUMAN>
+- Executor: AUTO
 - Result: <PASS | FAIL | BLOCKED>
 - Observation: <actual decisive data, interpretation limits, and any delivery limitation>
 - Artifact: <inline data location, recipient-accessible reference, or none/unavailable with reason>
@@ -144,7 +138,7 @@ Recover or deliver the existing capture under its original request/candidate/run
 
 A result returns to the same persistent Implementation worker. It does not end the Implementation round. The worker should use it immediately as engineering feedback and avoid publishing `READY FOR EVIDENCE / TESTING` until the bounded correction is reasonably stabilized.
 
-When a repeated CP2 Evidence blocker has routed verification-method development here, use the additive Proof ID / Method descriptor / Method fingerprint fields. The result must state `Method readiness: READY | NOT_READY | INCONCLUSIVE`. A changed fingerprint without durable READY does not justify another formal Evidence round. READY closes only the method-development question; fresh Evidence must still execute the acceptance proof independently.
+When a repeated CP2 Evidence blocker has routed verification-method development here, use the additive Proof ID / Method descriptor / Method fingerprint fields. The result must state `Method readiness: READY | NOT_READY | INCONCLUSIVE>`. A changed fingerprint without durable READY does not justify another formal Evidence round. READY closes only the method-development question; fresh Evidence must still execute the acceptance proof independently.
 
 ## Evidence-ready completion
 
