@@ -219,7 +219,7 @@ Non-dispatch authority/provenance markers:
 
 Machine enum/token values are plain serialization: no emphasis/backticks/quotes or trailing punctuation. Example: `- Next round: Implementation`.
 
-Within one machine-readable GDO record, each canonical field label used for routing or authority (for example `Next round`, `Outcome`, `Round number`, `Dispatch ID`, `Executor`) must be serialized at most once. Explanatory sections may restate the meaning in prose, but must not repeat a machine field as another `- Label: value` line. If a field would be repeated, keep the canonical field once and phrase the later summary as prose.
+Machine field labels must not repeat within a record.
 
 Do not invent executable markers or reinterpret v3 semantics because the package is v4.
 
