@@ -98,8 +98,8 @@ Recover or deliver the existing capture under its original request/candidate/run
 
 ```markdown
 <!-- gated-development:targeted-check-request:v1 -->
-<!-- gated-development:implementation-thread:v1 id=<UUID> -->
 <!-- gated-development:governance-thread:v1 id=<UUID> -->
+<!-- gated-development:implementation-thread:v1 id=<UUID> -->
 ## Targeted development check
 
 - Checkpoint: <ID>
