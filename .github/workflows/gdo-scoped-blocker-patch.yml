@@ -1,0 +1,44 @@
+name: Apply Scoped Blocker Branch Edit
+
+on:
+  push:
+    branches: [fix/gdo-scoped-blockers]
+    paths:
+      - '.gdo-apply-scoped-blockers.mjs'
+      - '.github/workflows/gdo-scoped-blocker-patch.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gdo-scoped-blocker-branch-edit
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    if: github.repository == 'Aquanuity/codex-plugins' && github.actor == 'kelvin-wat' && github.ref == 'refs/heads/fix/gdo-scoped-blockers'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/gdo-scoped-blockers
+      - name: Apply exact-anchor edit and validate
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check .gdo-apply-scoped-blockers.mjs
+          node .gdo-apply-scoped-blockers.mjs
+          node plugins/gated-development-orchestration/scripts/check-gdo-v4.mjs
+          node plugins/gated-development-orchestration/scripts/check-scoped-blockers.mjs
+          node --test plugins/gated-development-orchestration/scripts/check-feedback-observations.mjs plugins/gated-development-orchestration/tests/blocker-scope.test.mjs
+          git diff --check
+      - name: Commit only validated package edits
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add plugins/gated-development-orchestration
+          git commit -m 'feat: require dependency-scoped blockers and pre-finalization audits in GDO 4.7.4'
+          git push origin HEAD:refs/heads/fix/gdo-scoped-blockers
