@@ -62,6 +62,18 @@ If a dispatched probe stops before the material observation because of an appara
 
 Allowed probe work may include a disposable harness, temporary instrumentation, isolated prototype, native/runtime/MCP/browser observation, hardware experiment, or equivalent bounded mechanism. It must not become an excuse to implement the checkpoint in Governance.
 
+### Observation sufficiency and recipient access
+
+The parent specifies the minimum observed values, output, or visual state needed to distinguish the alternatives using the existing Question, Experiment, Expected useful outcomes, and Artifact requested fields. Prefer decisive captured output inline when it answers the question. A separate attachment is not required merely because a probe is material; request a file when the necessary information cannot be represented adequately inline. For example, layout names/URIs can be returned as API output, while a claim about visible rendering may require a screenshot rather than a feature count.
+
+The executor reports actual observations separately from interpretation, including unexpected/contradictory results and limitations. Preserve enough command/API/input and source/runtime context to interpret the captured output; do not replace decisive values with only a success summary. Redact secrets and unrelated private data, and disclose truncation/redaction that limits interpretation. Small Captured output or Limitations sections may follow the canonical fields without duplicating machine fields or introducing lifecycle markers; full session logs are not required.
+
+A file saved locally is not automatically delivered. A local reference is sufficient only when access by the actual receiving worker is established; do not assume access from the worker's role or thread name. Otherwise provide an authorized accessible reference or explicitly describe the delivery/access limitation in Observation/Artifact. Unknown access is not confirmed delivery. Do not invent a URL or bypass the authorized publication path.
+
+Governance inspects the decisive returned data or requested artifact before relying on it for a conclusion that needs that information. An unavailable required screenshot leaves the visual conclusion unresolved even if the executor observed the UI; it does not by itself demonstrate a product defect. An optional missing attachment does not block a question already answered by sufficient inline data. Keep execution status and delivery limitations distinct under the existing status meanings; this adds no outcome or automatic failure rule.
+
+Recover or deliver the existing capture under its original request/source/runtime identity before considering another experiment. Delivery trouble alone does not authorize a rerun, new probe, or mutation of a frozen result; use the existing authorized recovery/publication path. These are feedback-sufficiency rules, not a new bundle, mandatory upload, proof ledger, or acceptance Evidence gate. Existing frozen requests keep their contract.
+
 ### Canonical probe request
 
 ```markdown
@@ -82,7 +94,7 @@ Allowed probe work may include a disposable harness, temporary instrumentation, 
 - Readiness: <why apparatus can reach the material observation; no known setup blocker>
 - Experiment: <minimal experiment; may include tightly coupled observations>
 - Expected useful outcomes: <observations that distinguish the alternatives>
-- Artifact requested: <none or exact screenshot/log/result>
+- Artifact requested: <minimum inline data or exact file needed; none when unnecessary>
 - Probe implementation disposition: <NONE | EPHEMERAL | AUTHORIZED_RESEARCH_ARTIFACT>
 - Proof ID: <stable proof ID> <!-- CP2 verification-method development only -->
 - Method descriptor: <canonical stable JSON descriptor> <!-- CP2 only -->
@@ -113,8 +125,8 @@ Allowed probe work may include a disposable harness, temporary instrumentation, 
 - Runtime identity: <exact identity when required/available, otherwise N/A>
 - Executor: <AUTO | HUMAN>
 - Probe status: <COMPLETED | BLOCKED | INCONCLUSIVE>
-- Observation: <concise factual result; structured sub-observations allowed>
-- Artifact: <durable reference or none>
+- Observation: <actual decisive data, interpretation limits, and any delivery limitation>
+- Artifact: <inline data location, recipient-accessible reference, or none/unavailable with reason>
 - Final probe implementation disposition: <NONE | DISCARDED | PRESERVED_RESEARCH_ARTIFACT:<ref>>
 - Proof ID: <same stable proof ID> <!-- CP2 verification-method development only -->
 - Method descriptor: <same canonical stable JSON descriptor> <!-- CP2 only -->

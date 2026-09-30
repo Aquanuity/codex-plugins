@@ -77,10 +77,16 @@ Requirements:
 6. after feedback, either continue correcting, request another bounded check, or publish the normal final Implementation record when engineering-stable;
 7. do not claim Evidence coverage, REVIEW READY, or PASS from targeted checks;
 8. if feedback exposes material architecture/product uncertainty, leave the loop and route Discovery/Definition under normal rules;
-9. if the check stops before the intended candidate observation because of apparatus/setup failure, repair that apparatus inside the active Implementation round and re-establish readiness before another check;
+9. if the check stops before the intended candidate observation because of apparatus/setup failure, repair the apparatus inside the active Implementation round and re-establish readiness before another check;
 10. do not use successive targeted checks as a harness/transport/debug loop.
 
 A targeted check can be repeated against successive candidate SHAs inside one Implementation round after a materially relevant candidate correction or when a newly exposed bounded candidate question requires external observation. An unchanged or unfixed apparatus failure alone is not sufficient reason for another dispatch. Interim candidates do not need canonical Implementation handoff records.
+
+### Observation sufficiency and recipient access
+
+Use existing Check/Expected/Artifact requested fields to specify decisive data; prefer captured output inline. No attachment/full log is required when inline data suffices. Report values and unexpected/contradictory results separately from interpretation; disclose limits and truncation/redaction; protect secrets. Captured output/Limitations sections may follow canonical fields without duplicates.
+
+A local file is not delivered unless recipient access is established; disclose local-only/unknown access, never invent URLs. Inspect data needed for correction conclusions. Missing required captures leave dependent conclusions unresolved; optional missing files do not block sufficient data or imply product FAIL. Recover captures under original identity through authorized publication, not reruns or frozen-result edits. No new statuses, mandatory uploads, or acceptance Evidence; frozen contracts stay unchanged.
 
 ### Canonical targeted-check request
 
@@ -99,7 +105,7 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Check: <one bounded question>
 - Expected: <specific expected observation>
 - Setup / action: <minimal steps or command>
-- Artifact requested: <none or exact screenshot/log/file>
+- Artifact requested: <minimum inline data or exact file needed; none when unnecessary>
 - Proof ID: <stable proof ID> <!-- CP2 method-development only -->
 - Method descriptor: <canonical stable JSON descriptor> <!-- CP2 method-development only -->
 - Method fingerprint: <lowercase SHA-256 of descriptor> <!-- CP2 method-development only -->
@@ -121,8 +127,8 @@ A targeted check can be repeated against successive candidate SHAs inside one Im
 - Candidate tested: <exact sha>
 - Executor: <AUTO | HUMAN>
 - Result: <PASS | FAIL | BLOCKED>
-- Observation: <concise actual observation>
-- Artifact: <none or durable reference>
+- Observation: <actual decisive data, interpretation limits, and any delivery limitation>
+- Artifact: <inline data location, recipient-accessible reference, or none/unavailable with reason>
 - Proof ID: <same stable proof ID> <!-- CP2 method-development only -->
 - Method descriptor: <same canonical stable JSON descriptor> <!-- CP2 method-development only -->
 - Method fingerprint: <same lowercase SHA-256> <!-- CP2 method-development only -->
