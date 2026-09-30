@@ -28,7 +28,9 @@ New opt-in handoffs reference one committed `gdo-proof-ledger/v1` at the exact e
 
 Each proof declares unique `id`, `criteria`, boolean `required` (plus a condition when false), `mode`, executable `method {type,ref}`, nonsecret `fixtures`, and `freshness`. The ledger cannot make an authority-required proof optional.
 
-Admission checks are readiness only: `command`, `source-path-exists`, `filesystem-path-exists`, `env-present`, or `numeric-bound`; `onFailure` is `NOT_READY` or `TRIAGE_REQUIRED`. Deterministic failure cannot be overridden by AI. `semanticAdmission` is `none | optional | required` and is never acceptance proof.
+The canonical v1 top-level fields are `recipePath`, `recipeSha256`, and `admissionChecks`; do not invent nested `recipe` objects or aliases such as `readinessChecks`. A `source-path-exists` admission check uses `path`, not `ref`.
+
+Admission checks are readiness only: `command`, `source-path-exists`, `filesystem-path-exists`, `env-present`, or `numeric-bound`; `onFailure` is `NOT_READY` or `TRIAGE_REQUIRED`. Deterministic failure cannot be overridden by AI. `semanticAdmission` is `none | optional | required` and is never acceptance proof. Use `none` by default unless an explicitly configured/authorized semantic-admission provider exists; do not set `required` merely as a caution flag.
 
 Evidence keeps the same proof IDs across RETAIN/RECOVER/EXECUTE/INVALIDATED dispositions. Admission-enabled publication uses `gated-development:lifecycle-publication-request:v1 type=implementation` + `gdo-lifecycle-implementation/v1`; runner code renders the canonical Implementation record.
 

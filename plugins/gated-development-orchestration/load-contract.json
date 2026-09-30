@@ -1,6 +1,6 @@
 {
   "schema": "gdo-role-load/v1",
-  "version": "4.7.2",
+  "version": "4.7.3",
   "protocol": "github-gated-development-v3",
   "workflow": "skills/gdo-workflow/SKILL.md",
   "compatibility": "skills/gated-development-orchestration/SKILL.md",
@@ -54,10 +54,10 @@
     }
   },
   "budgets_bytes": {
-    "core": 21000,
-    "standard_role_total": 42000,
+    "core": 21500,
+    "standard_role_total": 43500,
     "evidence_total": 47000,
-    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.2 allows <=21,000 bytes for core, <=42,000 bytes for standard-role required loads, and <=47,000 bytes for Evidence including one selected operator mode. The bounded increases accommodate checkpoint-sizing and targeted-check readiness rules while preserving existing safeguards; future increases require explicit design disposition."
+    "rationale": "Reviewable anti-bloat ceilings, not runtime correctness limits. GDO 4.7.3 allows <=21,500 bytes for core, <=43,500 bytes for standard-role required loads, and <=47,000 bytes for Evidence including one selected operator mode. The bounded increase accommodates owner-aware Evidence Admission continuation and explicit proof-ledger authoring rules while preserving existing safeguards; future increases require explicit design disposition."
   },
   "actor_override": {
     "schema": "gated-development:actor-override:v1",
@@ -253,9 +253,20 @@
       "NOT_READY",
       "TRIAGE_REQUIRED"
     ],
-    "semantics": "Runner control-plane readiness only. ADMITTED may launch the normal fresh Evidence worker; NOT_READY/TRIAGE_REQUIRED launch no Evidence round. Admission never closes proof, REVIEW READY, or PASS.",
+    "semantics": "Runner control-plane readiness only. ADMITTED launches normal fresh Evidence. Implementation-owned NOT_READY returns feedback to the same active Implementation round/session; infrastructure-owned NOT_READY creates no lifecycle round and is rechecked under the same Admission identity after repair; TRIAGE_REQUIRED routes Governance Triage. Admission never closes proof, REVIEW READY, or PASS.",
     "deterministic_failure_precedence": true,
-    "frozen_request_rule": "Handoffs without the explicit admission marker retain legacy direct-Evidence routing; package/version changes never opt frozen work in."
+    "frozen_request_rule": "Handoffs without the explicit admission marker retain legacy direct-Evidence routing; package/version changes never opt frozen work in.",
+    "owner_aware_continuation": {
+      "implementation": "NOT_READY -> resume the same frozen Implementation round/session; repair readiness and republish READY without incrementing the Implementation round.",
+      "infrastructure": "NOT_READY -> no GDO lifecycle round; repair control-plane/runtime prerequisite, then re-evaluate the same Admission request identity.",
+      "governance": "TRIAGE_REQUIRED -> Governance Triage."
+    },
+    "proof_ledger_top_level_fields": [
+      "recipePath",
+      "recipeSha256",
+      "admissionChecks"
+    ],
+    "semantic_admission_default": "none unless an explicitly configured/authorized semantic-admission provider exists; do not declare required merely as a caution flag."
   },
   "lifecycle_publication": {
     "request_marker": "gated-development:lifecycle-publication-request:v1 type=implementation",
