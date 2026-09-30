@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.7.3
+# Gated Development Orchestration Plugin 4.7.4
 
-GDO 4.7.3 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while adding owner-aware Admission continuation on top of the existing checkpoint-sizing and apparatus-readiness safeguards.
+GDO 4.7.4 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while adding owner-aware Admission continuation on top of the existing checkpoint-sizing and apparatus-readiness safeguards.
 
 ## Normal loading
 
@@ -95,6 +95,10 @@ For product-code work continuing to Evidence, Implementation owns:
 - exact ending commit and handoff.
 
 Checks actually performed during Implementation are recorded separately from verification assigned to Evidence. Evidence-owned runtime execution is not automatically an Implementation limitation.
+
+## Scoped blockers and stop decisions
+
+GDO 4.7.4 makes blocker scope and the remaining-work audit workflow-wide requirements. One blocked operation does not justify abandoning independent safe authorized work. Audit before finalization/publication freeze; separate execution, artifacts and delivery. Authority, safety, admission/re-entry and terminal publication boundaries remain controlling. See `skills/gdo-workflow/references/blocker-scoping.md` and `maintenance/blocker-scope-evaluation.md` for the contract, action-trace tests and opt-in model evaluation. Reference/mutation CI tests are not live model-compliance results.
 
 ## Owner-aware Evidence Admission continuation
 

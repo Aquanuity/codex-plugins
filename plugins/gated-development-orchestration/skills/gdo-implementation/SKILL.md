@@ -3,13 +3,17 @@ name: gdo-implementation
 description: GDO Implementation role for actual authorized repository changes, durable tests, committed verification recipe, exact ending commit, and Evidence handoff.
 compatibility: Load with gdo-workflow from the same package commit. Product-code Evidence handoff also loads the shared verification-recipe contract.
 metadata:
-  version: "4.7.3"
+  version: "4.7.4"
   role: "Implementation"
 ---
 
 # GDO Implementation
 
 Required: load `../gdo-workflow/SKILL.md` from the same snapshot. For product-code work that continues to Evidence, also load `../gdo-workflow/references/verification-recipe.md`. Do not load Evidence operator internals.
+
+## Scoped blocker audit
+
+Apply the workflow core's mandatory remaining-work audit and same-snapshot blocker-scoping reference when blocked and before an incomplete handoff. Missing local execution or publication does not by itself prevent independent authorized edits, durable regression work, or source inspection. Disclose unexecuted required checks; do not invent readiness. Put the audit and separate execution/artifact/delivery facts in existing narrative fields or a linked ledger; do not add lifecycle JSON fields. Existing authority and terminal-stop rules retain precedence.
 
 ## Question
 
@@ -33,7 +37,7 @@ Missing repository-write capability and missing runtime/test execution are diffe
 
 Implementation does not redefine product intent/architecture, approve its own coverage, treat its own tests as independent acceptance, or issue PASS. This remains true when the actor is human: Human TAKEOVER changes the actor, not the contract.
 
-If material product/architecture meaning becomes unresolved, stop and route DISCOVERY REQUIRED.
+If material product/architecture meaning becomes unresolved, stop work that depends on that meaning. Complete the scoped blocker audit and any independent authorized work before routing DISCOVERY REQUIRED; do not make the unresolved decision yourself.
 
 ## Human actor
 

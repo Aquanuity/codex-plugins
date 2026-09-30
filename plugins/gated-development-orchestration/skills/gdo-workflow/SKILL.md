@@ -3,7 +3,7 @@ name: gdo-workflow
 description: Core GDO authority, lifecycle, worker separation, routing, and bounded role loading. Load with exactly one active role skill.
 compatibility: Preserves existing v3 lifecycle markers and worker identities.
 metadata:
-  version: "4.7.3"
+  version: "4.7.4"
   protocol: "github-gated-development-v3"
 ---
 
@@ -152,6 +152,16 @@ The default threshold is two consecutive formal BLOCKED attempts on the same man
 Method development creates no sixth round or persistent worker: deterministic fixture/harness/invocation work stays in Implementation + targeted development checks; native/runtime uncertainty routes Discovery + optional probe; contract contradiction routes Definition; infrastructure prerequisites route infrastructure/control-plane repair; ambiguity fails closed to Governance Triage.
 
 Inside one active Evidence session, a mechanical verification invocation correction is allowed only when frozen authority explicitly permits that non-semantic correction and product source, proof/claim, assertions/bounds, fixture meaning, expected behavior, acceptance criteria, and material runtime interpretation remain unchanged. Preserve the original attempt, link the corrected attempt, and allow at most one correction—never retry until green. Ambiguity or semantic change routes out under normal GDO authority.
+
+## Scoped blockers and pre-finalization audit
+
+A blocker applies only to work that depends on it. On any failed/unavailable operation, and before finalizing an incomplete round or freezing publication, load `references/blocker-scoping.md` from this same snapshot. This is required for every active role and actor, including Governance Triage; it does not load another role. Reference/tool unavailability is itself scoped: apply this core rule to known-independent work and disclose unresolved detail.
+
+Preserve the attempt, enumerate remaining authorized obligations in the existing ledger, identify their actual dependencies, and continue all work that is independent, meaningful, safe, executable, and within the original scope/resource bounds. Dependencies include exact source/build, shared state, required observation/artifact capture and restoration, not merely task names. Publication unavailability before freeze does not itself block independent execution with valid local preservation.
+
+Stop the whole round only when no useful independent authorized work can proceed, current authority/safety requires stopping, or a genuine terminal lifecycle condition applies. Audit before selecting/finalizing a result or freezing/handing off; selecting BLOCKED or publishing early cannot manufacture an exemption. Existing admission/re-entry gates, takeover, frozen bytes, uncertain-write reconciliation and terminal publication stop rules retain precedence. Do not absorb the next role or bypass any gate.
+
+Stop reports must identify the blocked operation, dependent obligations and dependency reasons, independent work completed, every remaining deferral and its concrete justification, and the stop basis. Report execution progress/findings, executed-work versus campaign artifact completeness, and publication/delivery/access separately. Use existing narrative fields or a linked ledger, not new lifecycle JSON fields or statuses.
 
 ## Shared rules
 

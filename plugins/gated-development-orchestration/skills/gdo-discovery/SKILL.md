@@ -3,13 +3,17 @@ name: gdo-discovery
 description: GDO Discovery role for source-backed investigation, architecture/ownership tracing, source-of-truth and architecture-lock decisions, and downstream routing.
 compatibility: Load with gdo-workflow from the same package commit.
 metadata:
-  version: "4.7.3"
+  version: "4.7.4"
   role: "Discovery"
 ---
 
 # GDO Discovery
 
 Required: load `../gdo-workflow/SKILL.md` from the same package snapshot. Do not load Implementation, Evidence, or Review instructions unless the workflow later routes there.
+
+## Scoped blocker audit
+
+Apply the workflow core's mandatory remaining-work audit and same-snapshot blocker-scoping reference when blocked and before an incomplete handoff. An unavailable probe/interface does not block independent source or architecture investigation. Do not redispatch an unchanged broken apparatus or assume unavailable observations. Put the audit and separate execution/artifact/delivery facts in existing narrative fields or a linked ledger; do not add lifecycle JSON fields. Existing authority and terminal-stop rules retain precedence.
 
 ## Question
 
