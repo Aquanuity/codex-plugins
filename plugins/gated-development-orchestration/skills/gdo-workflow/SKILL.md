@@ -219,6 +219,8 @@ Non-dispatch authority/provenance markers:
 
 Machine enum/token values are plain serialization: no emphasis/backticks/quotes or trailing punctuation. Example: `- Next round: Implementation`.
 
+Machine field labels must not repeat within a record.
+
 Do not invent executable markers or reinterpret v3 semantics because the package is v4.
 
 ## Role paths
