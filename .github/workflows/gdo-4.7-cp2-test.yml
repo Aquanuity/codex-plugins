@@ -35,7 +35,23 @@ jobs:
           const root='plugins/gated-development-orchestration/';
           const manifest=JSON.parse(fs.readFileSync(root+'.codex-plugin/plugin.json','utf8'));
           const load=JSON.parse(fs.readFileSync(root+'load-contract.json','utf8'));
-          if(manifest.version!=='4.7.3'||load.version!=='4.7.3') throw new Error('GDO 4.7.3 version mismatch');
+          if(manifest.version!=='4.7.4'||load.version!=='4.7.4') throw new Error('GDO 4.7.4 version mismatch');
           if(load.evidence_economy.repeated_blocked_threshold!==2) throw new Error('CP2 threshold mismatch');
           if(load.evidence_economy.guard_results.join('|')!=='ALLOW|METHOD_DEVELOPMENT_REQUIRED|TRIAGE_REQUIRED') throw new Error('guard result mismatch');
           NODE
+      - name: Scoped blocker contracts and action-trace regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check plugins/gated-development-orchestration/scripts/eval-blocker-agent.mjs
+          node plugins/gated-development-orchestration/scripts/check-scoped-blockers.mjs | tee scoped-blocker-contract.json
+          node --test plugins/gated-development-orchestration/tests/blocker-scope.test.mjs | tee scoped-blocker-tests.tap
+      - name: Preserve deterministic validation reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scoped-blocker-validation
+          path: |
+            scoped-blocker-contract.json
+            scoped-blocker-tests.tap
+          if-no-files-found: warn
