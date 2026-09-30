@@ -119,6 +119,8 @@ Activation is an authority event, not transport decoration. Both persistent thre
 
 Use `Next round: Implementation` instead when Implementation is authorized. Values must follow the core's plain-token serialization rule.
 
+Do not repeat `Next round`, `Round number`, `Dispatch ID`, or other canonical machine fields later in a Definition disposition/result section. A later summary should say, for example, `Routes to Discovery` in prose rather than emitting a second `- Next round: Discovery` line.
+
 Activation authorizes only the current checkpoint contract and declared next round. Do not insert a strict Evidence execution marker into activation before its real post-commit values exist.
 
 ## Thread rebind
