@@ -1,6 +1,6 @@
-# Gated Development Orchestration Plugin 4.7.2
+# Gated Development Orchestration Plugin 4.7.3
 
-GDO 4.7.2 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while retaining prior evidence/probe safeguards and adding checkpoint-sizing plus targeted-check apparatus discipline.
+GDO 4.7.3 keeps the established v3 lifecycle, Human TAKEOVER, Evidence Admission, proof reuse, targeted development checks, Discovery Probes and concise lifecycle comments while retaining prior evidence/probe safeguards and adding checkpoint-sizing plus targeted-check apparatus discipline.
 
 ## Normal loading
 
@@ -95,6 +95,10 @@ For product-code work continuing to Evidence, Implementation owns:
 - exact ending commit and handoff.
 
 Checks actually performed during Implementation are recorded separately from verification assigned to Evidence. Evidence-owned runtime execution is not automatically an Implementation limitation.
+
+## Owner-aware Evidence Admission continuation
+
+Evidence Admission remains a non-round hard gate. `ADMITTED` starts fresh Evidence. Implementation-owned `NOT_READY` returns exact readiness feedback to the same frozen Implementation round/session; after repair that round republishes READY. Infrastructure-owned `NOT_READY` creates no lifecycle round and can be rechecked under the same Admission identity after infrastructure repair. `TRIAGE_REQUIRED` routes Governance Triage. A rejected Admission alone never increments the Implementation round.
 
 ## CP2 repeated-blocker economy
 
